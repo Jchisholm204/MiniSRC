@@ -72,7 +72,6 @@ assign oRegB =  (iAddrB == 4'b0001) ? r1_out  :
                 (iAddrB == 4'b1101) ? r13_out :
                 (iAddrB == 4'b1110) ? r14_out :
                 (iAddrB == 4'b1111) ? r15_out :
-                (iAddrB == 4'b10000) ? r16_out :
                 32'd0;
 
 // Registers
