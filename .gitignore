@@ -3,4 +3,6 @@
 modelsim.ini
 vlog.opt
 work/*
-
+.hdl_checker/*
+*.bak
+transcript
