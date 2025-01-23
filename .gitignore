@@ -1,0 +1,6 @@
+*.mpf
+*.wlf
+modelsim.ini
+vlog.opt
+work/*
+
