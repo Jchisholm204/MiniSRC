@@ -6,3 +6,4 @@ work/*
 .hdl_checker/*
 *.bak
 transcript
+*.mti
