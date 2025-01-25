@@ -169,41 +169,9 @@ module Processor(
 
 endmodule
 
-/*
-// Testing Layout
-// Clock Cycle 1
-- Instruction memory read
-- rf_read
-- addr a, b, c for rf
-- IR_enable high
-
-// Clock cycle 2
-- Decode instruction
-- ra_enable high - always?
-- rb_enable high - always?
-
-// Clock cycle 3
-- mb_select
-- alu_control
-- rz0_enable high
-- rz1_enable high
-- rm_high
-
-// Clock cycle 4
-- data memory read
-- my_select
-- ry_enable high
-
-// Clock cycle 5
-- rf_write
-- mc_select
-
-*/
 
 `timescale 1ns/10ps
 module Processor_tb();
-    reg tb_clock, tb_nRst;
-    reg [31:0] tb_instruction_mem_in;
     wire clock, nRst;
     wire [31:0] mem_data_out, mem_data_in, mem_addr, instruction_mem_in, instruction_mem_addr;
     wire mem_read, mem_write, instruction_mem_read;
@@ -222,12 +190,54 @@ module Processor_tb();
 
     reg [3:0] p_state = 5;
 
+    reg clock_reg, nRst_reg;
+    reg [31:0] mem_data_out_reg, mem_data_in_reg, mem_addr_reg, instruction_mem_in_reg, instruction_mem_addr_reg;
+    reg mem_read_reg, mem_write_reg, instruction_mem_read_reg;
+
+    reg ra_enable_reg, rb_enable_reg, rz0_enable_reg, rz1_enable_reg, rm_enable_reg, ir_enable_reg, ry_enable_reg, rpc_enable_reg, rpc_temp_enable_reg;
+    reg mb_select_reg, minc_select_reg;
+    reg rf_write_reg;
+    reg [1:0] my_select_reg, mc_select_reg;
+    reg [3:0] alu_control_reg;
+
+    // For connection between modules
+
+    assign clock = clock_reg;
+    assign nRst = nRst_reg;
+    assign mem_data_out = mem_data_out_reg;
+    assign mem_data_in = mem_data_in_reg;
+    assign mem_addr = mem_addr_reg;
+    assign instruction_mem_in = instruction_mem_in_reg;
+    assign instruction_mem_addr = instruction_mem_addr_reg;
+    assign mem_read = mem_read_reg;
+    assign mem_write = mem_write_reg;
+    assign instruction_mem_read = instruction_mem_read_reg;
+
+    // Assign regs to wires with p. prefix
+    assign p.ra_enable = ra_enable_reg;
+    assign p.rb_enable = rb_enable_reg;
+    assign p.rz0_enable = rz0_enable_reg;
+    assign p.rz1_enable = rz1_enable_reg;
+    assign p.rm_enable = rm_enable_reg;
+    assign p.ir_enable = ir_enable_reg;
+    assign p.ry_enable = ry_enable_reg;
+    assign p.rpc_enable = rpc_enable_reg;
+    assign p.rpc_temp_enable = rpc_temp_enable_reg;
+
+    assign p.mb_select = mb_select_reg;
+    assign p.minc_select = minc_select_reg;
+    assign p.rf_write = rf_write_reg;
+    assign p.my_select = my_select_reg;
+    assign p.mc_select = mc_select_reg;
+    assign p.alu_control = alu_control_reg;
+
     // Generates clock signal
-    initial tb_clock = 0;
-    always #10 tb_clock = ~ tb_clock;
-    assign clock = tb_clock;
-    assign nRst = tb_nRst;
-    assign instruction_mem_in = tb_instruction_mem_in;
+
+    initial
+        begin
+            clock_reg = 0;
+            forever #10 clock_reg = ~ clock_reg;
+        end
 
     // Cycles through 0-4 for a 5 cycle processor
     always @(posedge clock)
@@ -245,29 +255,42 @@ module Processor_tb();
     // Simulates control signals
     initial begin
         // Initialize inputs
-        tb_nRst = 0; // Active low reset
+        nRst_reg = 0; // Active low reset
         // tb_mem_data_in = 0;
-        tb_instruction_mem_in = 0;
+        instruction_mem_in_reg = 0;
 
-        #5 tb_nRst = 1; 
+        #5 nRst_reg = 1;
         
         // Cycle 1: Fetch instruction
         #15 begin
-            tb_instruction_mem_in = 32'hDEADBEEF; 
+            rf_write_reg = 0;
+            ir_enable_reg = 1;
+            instruction_mem_in_reg = 32'b00000000100110101000000000000000;
         end
 
         // Cycle 2: Decode instruction
         #20 begin
-            // Enable IR (instruction register) and other decode logic
+            ir_enable_reg = 0;
+            ra_enable_reg = 1;
+            rb_enable_reg = 1;
         end
 
         // Cycle 3: Execute instruction
         #20 begin
+            ra_enable_reg = 0;
+            rb_enable_reg = 0;
+            mb_select_reg = 0;
+            rz0_enable_reg = 1;
+            rz0_enable_reg = 1;
+            alu_control_reg = 4'd0;
+
             // Assign ALU control signals and register enables
         end
 
         // Cycle 4: Memory access
         #20 begin
+            rz0_enable_reg = 0;
+            rz0_enable_reg = 0;
             // Simulate memory read/write and assign memory-related signals
         end
 
