@@ -79,26 +79,27 @@ output wire [31:0] sum_out;
 output wire c_out;
 
 wire c;
+wire a0p, a0g, a1p, a1g;
 
 sixteenBitAdder a0(
     .x_in(x_in[15:0]),
     .y_in(y_in[15:0]),
     .c_in(c_in),
     .sum_out(sum_out[15:0]),
-    .p_out(),
-    .g_out()
+    .p_out(a0p),
+    .g_out(a0g)
 );
 
-assign c = a0.g_out | a0.p_out & c_in;
+assign c = a0g | a0p & c_in;
 
 sixteenBitAdder a1(
     .x_in(x_in[31:16]),
     .y_in(y_in[31:16]),
     .c_in(c),
     .sum_out(sum_out[31:16]),
-    .p_out(),
-    .g_out()
+    .p_out(a1p),
+    .g_out(a1g)
 );
 
-assign c_out = a1.g_out | a1.p_out & a0.g_out | a1.p_out & a0.p_out & c_in;
+assign c_out = a1g | a1p & a0g | a1p & a0p & c_in;
 endmodule
