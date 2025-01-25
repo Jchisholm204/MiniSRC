@@ -1,10 +1,10 @@
 
-module ALU(A, B, C0, C1, control, conditions);
+module ALU(A, B, C0, C1, control, zero);
 
 input wire [31:0] A, B;
 input wire [3:0] control;
 output wire [31:0 ]C0, C1;
-output wire conditions;
+output wire zero;
 
 wire [31:0] adder_out, subtraction_out, or_out, and_out, divide_out, multiplication_out;
 
