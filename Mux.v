@@ -17,11 +17,47 @@ module Mux4_1_32b (
     output wire [31:0] out
 );
 
-assign out =    (sel == 3'b00) ? in0 :
-                (sel == 3'b01) ? in1 :
-                (sel == 3'b10) ? in2 :
-                (sel == 3'b11) ? in3 :
-                32'b0; // Default output 
+assign out =    (sel == 2'b00) ? in0 :
+                (sel == 2'b01) ? in1 :
+                (sel == 2'b10) ? in2 :
+                (sel == 2'b11) ? in3 :
+                32'd0; // Default output 
+endmodule
+
+module Mux4_1_4b (
+    input wire [3:0] in0,
+    input wire [3:0] in1,
+    input wire [3:0] in2,
+    input wire [3:0] in3,
+    input wire [1:0] sel, 
+    output wire [3:0] out
+);
+
+assign out =    (sel == 2'b00) ? in0 :
+                (sel == 2'b01) ? in1 :
+                (sel == 2'b10) ? in2 :
+                (sel == 2'b11) ? in3 :
+                4'd0; // Default output 
+endmodule
+
+module Mux5_1_32b (
+    input wire [31:0] in0,
+    input wire [31:0] in1,
+    input wire [31:0] in2,
+    input wire [31:0] in3,
+    input wire [31:0] in4,
+    input wire [31:0] in5,
+    input wire [2:0] sel, 
+    output wire [31:0] out
+);
+
+assign out =    (sel == 3'b000) ? in0 :
+                (sel == 3'b001) ? in1 :
+                (sel == 3'b010) ? in2 :
+                (sel == 3'b011) ? in3 :
+                (sel == 3'b100) ? in4 :
+                (sel == 3'b101) ? in5 :
+                32'd0; // Default output 
 endmodule
 
 module Mux16_1_32b (
@@ -62,6 +98,6 @@ module Mux16_1_32b (
                  (sel == 4'b1101) ? in13 :
                  (sel == 4'b1110) ? in14 :
                  (sel == 4'b1111) ? in15 :
-                 32'b0; // Default output
+                 32'd0; // Default output
 
 endmodule

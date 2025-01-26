@@ -17,16 +17,18 @@ module Processor(
     output wire [31:0] mem_data_out, mem_addr, instruction_mem_addr;
 
     // For control unit
-    wire ra_enable, rb_enable, rz0_enable, rz1_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable;
+    wire ra_enable, rb_enable, rz0_enable, rz1_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable;
     wire mb_select, minc_select;
     wire rf_write;
     wire [1:0] my_select, mc_select;
     wire [3:0] alu_control;
+    wire alu_zero_flag, rz_b31;
 
     // For connection between modules
-    wire [31:0] rfa_to_ra, rfb_to_rb, ra_to_alua, rb_to_mb, mb_to_alub, aluc0_to_rz0, aluc1_to_rz1, rz0_to_my, rz1_to_my, my_to_ry, ry_to_rfc, rb_to_rm, mc_to_rfac, ir_out;
-    wire [31:0] mpc_to_rpc, rpc_out, rpc_temp_to_my, pcadderc_to_mpc, minc_to_pcaddera;
-    wire alu_zero_flag;
+    wire [31:0] rfa_to_ra, rfb_to_rb, ra_to_alua, rb_to_mb, mb_to_alub, aluc0_to_rz0, aluc1_to_rz1, rz0_out, rz1_to_my, my_to_ry, ry_to_rfc, rb_to_rm, mc_to_rfac, ir_out;
+    wire [31:0] mpc_to_rpc, rpc_out, rpc_temp_to_my, pcadderc_to_mpc, minc_to_pcaddera, rlo_to_my;
+
+    assign rz_b31 = rz0_out[31];
 
     REG32 ir(
         .iClk(iClk),
@@ -48,7 +50,7 @@ module Processor(
         .iRegC(ry_to_rfc)
     );
 
-    Mux4_1_32b mc(              // needs to be 4 bit mux oops
+    Mux4_1_4b mc(              // needs to be 4 bit mux oops
         .in0(ir_out[22:19]),    //addres b
         .in1(ir_out[18:15]),    // address c
         .in2(32'd0),            // link reg
@@ -56,6 +58,8 @@ module Processor(
         .sel(mc_select),
         .out(mc_to_rfac)
     );
+
+    
 
     REG32 ra(
         .iClk(iClk),
@@ -102,7 +106,7 @@ module Processor(
         .iEn(rz0_enable),
         .nRst(nRst),               // idk where to connect this
         .iD(aluc0_to_rz0),            // output of register file port A
-        .oQ(rz0_to_my)                   // input 0 of Mux y
+        .oQ(rz0_out)                   // input 0 of Mux y
     );
     REG32 rz1(
         .iClk(iClk),
@@ -111,14 +115,22 @@ module Processor(
         .iD(aluc1_to_rz1),            // output of register file port A
         .oQ(rz1_to_my)                   // input 0 of Mux b 
     );
+    REG32 rlo(
+        .iClk(iClk),
+        .iEn(rlo_enable),
+        .nRst(nRst),                    // idk where to connect this
+        .iD(aluc1_to_rz1),              // output of register file port A
+        .oQ(rlo_to_my)                  // input 0 of Mux b 
+    );
 
-    Mux4_1_32b my(
-        .in0(rz0_to_my),
-        .in1(rz1_to_my),
-        .in2(mem_data_in),                 // memory in
-        .in3(32'd0),                 // return address
-        .sel(my_select),        // mux y select control signal
-        .out(my_to_ry)                  // register y
+    Mux5_1_32b my(
+        .in0(rz0_out),                      // rz
+        .in1(rz1_to_my),                    // HI
+        .in2(mem_data_in),                  // memory in
+        .in3(rlo_to_my),                    // LO
+        .in4(rpc_temp_to_my),                        // link register/ pc_temp
+        .sel(my_select),                    // mux y select control signal
+        .out(my_to_ry)                      // register y
     );
 
     REG32 ry(
