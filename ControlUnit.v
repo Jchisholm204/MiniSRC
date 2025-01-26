@@ -8,7 +8,7 @@ module ControlUnit(
     input wire [31:0]ir;
     input wire zero, rz_b31;
     output wire ra_enable, rb_enable, rz0_enable, rz1_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable;    
-    output wire mb_select, minc_select;
+    output wire mb_select, minc_select, mpc_select;
     output wire rf_write;
     output wire [1:0] my_select, mc_select;
     output wire [3:0] alu_control;
@@ -41,17 +41,21 @@ module ControlUnit(
     1 when reading hi
     2 mem in
     3 lo
-    4 link reg
+    4 pc_temp reg - jal instruction saves return address
     */
     assign my_select =  (ir[31:27] == 5'b11001) ? 4'd1 :   // read hi
                         (ir[31:27] == 5'b11000) ? 4'd3 :   // read lo
                         (ir[31:27] == 5'b00000) ? 4'd2 :   // mem - load
                         (ir[31:27] == 5'b00001) ? 4'd2 :   // mem - load imm
-                        (ir[31:27] == 5'b10101) ? 4'd4 :   // link register
+                        (ir[31:27] == 5'b10100) ? 4'd4 :   // pc_temp register jal
                         4'd0;
 
+    assign mpc_select = (ir[31:27] == 5'b10100) ? 1 :
+                        (ir[31:27] == 5'b10101) ? 1 :
+                        0;
 
-    // assign mc_select =
+
+    // assign mc_select = 
                                         //   op     |  alu_signal
     assign alu_control =    (ir[31:27] == 5'b00011) ? 4'b0000 :         // add
                             (ir[31:27] == 5'b00100) ? 4'b0001 :         // sub

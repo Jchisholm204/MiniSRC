@@ -18,7 +18,7 @@ module Processor(
 
     // For control unit
     wire ra_enable, rb_enable, rz0_enable, rz1_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable;
-    wire mb_select, minc_select;
+    wire mb_select, minc_select, mpc_select;
     wire rf_write;
     wire [1:0] my_select, mc_select;
     wire [3:0] alu_control;
@@ -50,11 +50,11 @@ module Processor(
         .iRegC(ry_to_rfc)
     );
 
-    Mux4_1_4b mc(              // needs to be 4 bit mux oops
-        .in0(ir_out[22:19]),    //addres b
-        .in1(ir_out[18:15]),    // address c
-        .in2(32'd0),            // link reg
-        .in3(ir_out[26:23]),    // address a
+    Mux4_1_4b mc(               // needs to be 4 bit mux oops
+        .in0(ir_out[26:23]),    // address a
+        .in1(ir_out[22:19]),    // address b
+        .in2(ir_out[18:15]),    // address c
+        .in2(4'b1111),          // r15
         .sel(mc_select),
         .out(mc_to_rfac)
     );
@@ -158,7 +158,7 @@ module Processor(
     );
 
     Mux2_1_32b mpc(
-        .in0(32'd0),                     // RA
+        .in0(ra_to_alua),           // RA
         .in1(pcadderc_to_mpc),      // PcAdder
         .sel(mpc_select),
         .out(mpc_to_rpc) 
