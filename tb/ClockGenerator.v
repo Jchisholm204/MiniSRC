@@ -21,11 +21,11 @@ reg  Clk = 1'b0;
 assign oClk = Clk & nRst; // Ensure output clock is low on reset (active low reset)
 
 // Run Clk on rising edge of reset
-always @(posedge nRst) begin
-    while (nRst == 1'b1) begin // While reset is not enabled (active low)
+always begin
+    // while (nRst == 1'b1) begin // While reset is not enabled (active low)
         #(ClockPeriod/2); // Simulation Delay (not synthesizable)
         Clk = ~Clk & nRst; // assign Clk to oposite of Clk // Ensure Clk is low on reset (active low)
-    end
+    // end
 end
 
 endmodule
