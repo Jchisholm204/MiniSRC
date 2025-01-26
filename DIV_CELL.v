@@ -2,7 +2,7 @@ module DIV_CELL(
     iA, iB, 
     iMode, oMode,
     iCarry, oCarry,
-    oSum, oB,
+    oSum, oB
 );
 
 input wire iA, iB, iMode, iCarry;
@@ -10,12 +10,12 @@ output wire oMode, oCarry, oSum, oB;
 
 wire B;
 assign oMode = ~iMode;
-assign B = iB;
-assign oB = ~B;
+assign B = iMode ^ iB;
+assign oB = ~iB;
 
 FA adder(
-    .iB(iMode ^ B),
-    .iB(iA),
+    .iB(B),
+    .iA(iA),
     .iCarry(iCarry),
     .oCarry(oCarry),
     .oSum(oSum)
