@@ -275,11 +275,16 @@ module Processor_tb();
         end
 
         #100 begin
-        instruction_mem_in_reg = 32'b00011000100010010000000000000000;
+        instruction_mem_in_reg = 32'b10000000100010000000000000000000;
+        // LO and HI <= R1 * R1
+        end
 
+        #100 begin
+        instruction_mem_in_reg = 32'b11000000100000000000000000000000;
+        // RA <= LO
         end
         // End of simulation
-        #20 $finish;
+        #120 $finish;
     end
 
 

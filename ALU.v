@@ -7,29 +7,32 @@ output wire [31:0 ]C0, C1;
 output wire zero;
 
 wire [31:0] adder_out, subtraction_out, or_out, and_out, div_out, mul_out, shr_out, shra_out, shl_out, neg_out, not_out, rotr_out, rotl_out;
+wire [31:0] sub_out;
 
 /*
 / ------------ Addition and Subtraction Logic --------------
 */
-wire [31:0] B_xor, m1_out;
-// ~c3 & ~c2 & ~c1 & c0
-wire sub_en = (~control[3]) & (~control[2]) & (~control[1]) & control[0];
+assign adder_out = A + B;
+assign sub_out = A - B;
+// wire [31:0] B_xor, m1_out;
+// // ~c3 & ~c2 & ~c1 & c0
+// wire sub_en = (~control[3]) & (~control[2]) & (~control[1]) & control[0];
 
-assign B_xor = B ^ 32'hFFFFFFFF;
+// assign B_xor = B ^ 32'hFFFFFFFF;
 
-Mux2_1_32b m1(
-    .in0(A),
-    .in1(B_xor),
-    .out(m1_out),
-    .sel(sub_en)
-);
+// Mux2_1_32b m1(
+//     .in0(A),
+//     .in1(B_xor),
+//     .out(m1_out),
+//     .sel(sub_en)
+// );
 
-FastAdder a(
-    .x_in(A),
-    .y_in(m1_out),
-    .c_in(sub_en),
-    .sum_out(adder_out)
-);
+// FastAdder a(
+//     .x_in(A),
+//     .y_in(m1_out),
+//     .c_in(sub_en),
+//     .sum_out(adder_out)
+// );
 
 /*
 / ------------ OR Logic --------------
@@ -91,7 +94,8 @@ assign not_out = ~A;
 Mux16_1_32b m(
     .sel(control),
     .in0(adder_out),    // add
-    .in1(adder_out),    // sub
+    // .in1(adder_out),    // sub
+    .in1(sub_out),
     .in2(and_out),      
     .in3(or_out),
     .in4(rotr_out),
