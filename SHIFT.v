@@ -12,24 +12,24 @@ output wire [31:0] oD;
 wire [31:0] left, right_arith, right_logic, right;
 
 SHIFT_LEFT leftshift(
-    .iD(iD).
+    .iD(iD),
     .iShamt(iShamt),
     .oD(left)
 );
 
-SHIFT_RIGHT_ARITH right_arith(
+SHIFT_RIGHT_ARITH rightarith(
     .iD(iD),
     .iShamt(iShamt),
     .oD(right_arith)
 );
 
-SHIFT_RIGHT_LOGIC right_logic(
+SHIFT_RIGHT_LOGIC rightlogic(
     .iD(iD),
     .iShamt(iShamt),
     .oD(right_logic)
 );
 
-assign right = nArith ? right_logic ? right_arith;
+assign right = nArith ? right_logic : right_arith;
 assign oD = nLeft ? left : right;
 
 endmodule
@@ -41,10 +41,9 @@ module SHIFT_LEFT(
 
 input wire [31:0] iD;
 input wire [4:0]  iShamt;
-input wire nArith;
 output wire [31:0] oD;
 
-wire S1, S2, S3, S4, S5;
+wire [31:0] S1, S2, S3, S4, S5;
 
 assign S1 = iShamt[0] ? {iD[30:0],  1'd0} : iD;
 assign S2 = iShamt[1] ? {S1[29:0],  2'd0} : S1;
@@ -63,10 +62,9 @@ module SHIFT_RIGHT_ARITH(
 
 input wire [31:0] iD;
 input wire [4:0]  iShamt;
-input wire nArith;
 output wire [31:0] oD;
 
-wire S1, S2, S3, S4, S5;
+wire [31:0] S1, S2, S3, S4, S5;
 
 assign S1 = iShamt[0] ? {{1{iD[31]}}, iD[31:1]}  : iD;
 assign S2 = iShamt[1] ? {{2{S1[31]}}, S1[31:2]}  : S1;
@@ -85,10 +83,9 @@ module SHIFT_RIGHT_LOGIC(
 
 input wire [31:0] iD;
 input wire [4:0]  iShamt;
-input wire nArith;
 output wire [31:0] oD;
 
-wire S1, S2, S3, S4, S5;
+wire [31:0] S1, S2, S3, S4, S5;
 
 assign S1 = iShamt[0] ? {1'd0,  iD[31:1]}  : iD;
 assign S2 = iShamt[1] ? {2'd0,  S1[31:2]}  : S1;
