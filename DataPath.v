@@ -17,24 +17,25 @@ module Processor(
     output wire [31:0] mem_data_out, mem_addr, instruction_mem_addr;
 
     // For control unit
-    wire ra_enable, rb_enable, rz0_enable, rz1_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable;
-    wire mb_select, minc_select, mpc_select;
+    wire ra_enable, rb_enable, rz0_enable, rl0_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable;
+
     wire rf_write;
     wire [2:0] my_select;
-    wire [1:0] mc_select;
+    wire mb_select, minc_select, mpc_select, msrc2_select, mdst_select;
+
     wire [3:0] alu_control;
     wire alu_zero_flag, rz_b31;
 
     // For connection between modules
-    wire [31:0] rfa_to_ra, rfb_to_rb, ra_to_alua, rb_to_mb, mb_to_alub, aluc0_to_rz0, aluc1_to_rz1, rz0_out, rz1_to_my, my_to_ry, ry_to_rfc, rb_to_rm, mc_to_rfac, ir_out;
-    wire [31:0] mpc_to_rpc, rpc_out, rpc_temp_to_my, pcadderc_to_mpc, minc_to_pcaddera, rlo_to_my;
+    wire [31:0] rfa_out, rfb_out, ra_out, mb_out, aluc0_out, aluc1_out, rz0_out, rl0_out, my_out, ry_out, rb_out, mc_out, ir_out;
+    wire [31:0] mpc_out, rpc_out, rpc_temp_out, pcadderc_out, minc_out, rlo_out, msrc2_out, mdst_out;
 
     assign rz_b31 = rz0_out[31];
 
     ControlUnit cu(
         ir_out, nRst, iClk,
-        mb_select, minc_select, rf_write, my_select, mc_select, alu_control, mpc_select,
-        ra_enable, rb_enable, rz0_enable, rz1_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable,
+        mb_select, minc_select, rf_write, my_select, alu_control, mpc_select, msrc2_select, mdst_select,
+        ra_enable, rb_enable, rz0_enable, rl0_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable,
         alu_zero_flag, rz_b31
     );
 
@@ -50,68 +51,64 @@ module Processor(
         .iClk(iClk), 
         .nRst(nRst), 
         .iWrite(rf_write),
-        .iAddrA(ir_out[26:23]), 
-        .iAddrB(ir_out[22:19]),
-        .iAddrC(mc_to_rfac),        // should also be 4 bit oopss
-        .oRegA(rfa_to_ra), 
-        .oRegB(rfb_to_rb), 
-        .iRegC(ry_to_rfc)
+        .iAddrA(ir_out[22:19]),         // RB
+        .iAddrB(msrc2_out),             // RC or RA - on imm val path
+        .iAddrC(mdst_out),              // RA or R15
+        .oRegA(rfa_out), 
+        .oRegB(rfb_out), 
+        .iRegC(ry_out)
     );
 
-    //////////// THis is fucked up bc i did it for NIOS 2 /////////
-    // in to address for writing should always be ra or r15 for jump and link
-    // what changes in the operand addresses
-    // if 3 registers a <- b [op] c
-    // is 2 registers a <- [op] b
-    // if 1  a <- smt in terms of rf
-    //              
-    Mux4_1_4b mc(               // needs to be 4 bit mux oops
-        .in0(ir_out[26:23]),    // address a
-        .in1(ir_out[22:19]),    // address b
-        .in2(ir_out[18:15]),    // address c
-        .in3(4'b1111),          // r15
-        .sel(mc_select),
-        .out(mc_to_rfac)
+    Mux2_1_4b msrc2(
+        .in0(ir_out[18:15]),    // RC
+        .in1(ir_out[26:23]),    // RA
+        .out(msrc2_out),
+        .sel(msrc2_select)
     );
 
-    
+    Mux2_1_4b mdst(
+        .in0(ir_out[26:23]),    // RA
+        .in1(4'b1111),          // R15
+        .out(mdst_out),
+        .sel(mdst_select)
+    );
 
     REG32 ra(
         .iClk(iClk),
         .iEn(ra_enable),
         .nRst(nRst),               // idk where to connect this
-        .iD(rfa_to_ra),                  // output of register file port A
-        .oQ(ra_to_alua)                   // input to ALU port A
+        .iD(rfa_out),                  // output of register file port A
+        .oQ(ra_out)                   // input to ALU port A
     );
 
     REG32 rb(
         .iClk(iClk),
         .iEn(rb_enable),
         .nRst(nRst),               // idk where to connect this
-        .iD(rfb_to_rb),                  // output of register file port A
-        .oQ(rb_to_mb)                   // input 0 of Mux b 
+        .iD(rfb_out),                  // output of register file port A
+        .oQ(rb_out)                   // input 0 of Mux b 
     );
 
     REG32 rm(
         .iClk(iClk),
         .iEn(rm_enable),
         .nRst(nRst),              // idk where to connect this
-        .iD(rb_to_rm),
+        .iD(rb_out),
         .oQ(mem_data_out)       // input 0 of Mux b 
     );
 
     Mux2_1_32b mb(
-        .in0(rb_to_mb),
+        .in0(rb_out),
         .in1(32'd0),                 // immediate value
         .sel(mb_select),
-        .out(mb_to_alub)                  // input B of ALU
+        .out(mb_out)                  // input B of ALU
     );
 
     ALU alu(
-        .A(ra_to_alua), 
-        .B(mb_to_alub), 
-        .C0(aluc0_to_rz0),                  // input to rz0
-        .C1(aluc1_to_rz1),                  // input to rz1 
+        .A(ra_out), 
+        .B(mb_out), 
+        .C0(aluc0_out),                  // input to rz0
+        .C1(aluc1_out),                  // input to rl0 
         .control(alu_control),              // 0000 add, 0001, subtract, 0010 or, 0011 and , 0100 divide, 0101 multiply
         .zero(alu_zero_flag)          // output for branch instructions
     );
@@ -120,47 +117,47 @@ module Processor(
         .iClk(iClk),
         .iEn(rz0_enable),
         .nRst(nRst),               // idk where to connect this
-        .iD(aluc0_to_rz0),            // output of register file port A
+        .iD(aluc0_out),            // output of register file port A
         .oQ(rz0_out)                   // input 0 of Mux y
     );
-    REG32 rz1(
+    REG32 rl0(
         .iClk(iClk),
-        .iEn(rz1_enable),
+        .iEn(rl0_enable),
         .nRst(nRst),               // idk where to connect this
-        .iD(aluc1_to_rz1),            // output of register file port A
-        .oQ(rz1_to_my)                   // input 0 of Mux b 
+        .iD(aluc1_out),            // output of register file port A
+        .oQ(rl0_out)                   // input 0 of Mux b 
     );
     REG32 rlo(
         .iClk(iClk),
         .iEn(rlo_enable),
         .nRst(nRst),                    // idk where to connect this
-        .iD(aluc1_to_rz1),              // output of register file port A
-        .oQ(rlo_to_my)                  // input 0 of Mux b 
+        .iD(aluc1_out),              // output of register file port A
+        .oQ(rlo_out)                  // input 0 of Mux b 
     );
 
     Mux5_1_32b my(
         .in0(rz0_out),                      // rz
-        .in1(rz1_to_my),                    // HI
+        .in1(rl0_out),                    // HI
         .in2(mem_data_in),                  // memory in
-        .in3(rlo_to_my),                    // LO
-        .in4(rpc_temp_to_my),                        // link register/ pc_temp
+        .in3(rlo_out),                    // LO
+        .in4(rpc_temp_out),                        // link register/ pc_temp
         .sel(my_select),                    // mux y select control signal
-        .out(my_to_ry)                      // register y
+        .out(my_out)                      // register y
     );
 
     REG32 ry(
         .iClk(iClk),
         .iEn(ry_enable),
         .nRst(nRst),                // idk where to connect this
-        .iD(my_to_ry),              // output of mux y
-        .oQ(ry_to_rfc)              // input of register file
+        .iD(my_out),              // output of mux y
+        .oQ(ry_out)              // input of register file
     );
 
     REG32 rpc(
         .iClk(iClk),
         .iEn(rpc_enable),
         .nRst(nRst),
-        .iD(mpc_to_rpc),
+        .iD(mpc_out),
         .oQ(rpc_out)
     );
 
@@ -169,27 +166,27 @@ module Processor(
         .iEn(rpc_temp_enable),
         .nRst(nRst),
         .iD(rpc_out),
-        .oQ(rpc_temp_to_my)
+        .oQ(rpc_temp_out)
     );
 
     Mux2_1_32b mpc(
-        .in0(ra_to_alua),           // RA
-        .in1(pcadderc_to_mpc),      // PcAdder
+        .in0(ra_out),           // RA
+        .in1(pcadderc_out),      // PcAdder
         .sel(mpc_select),
-        .out(mpc_to_rpc) 
+        .out(mpc_out) 
     );
 
     Mux2_1_32b minc(
         .in0(32'd4),                // 4
         .in1(ir_out[18:0]),         // sign extend?
         .sel(minc_select),
-        .out(minc_to_pcaddera) 
+        .out(minc_out) 
     );
 
     FastAdder pcadder(
         .x_in(rpc_out), 
-        .y_in(minc_to_pcaddera), 
-        .sum_out(pcadderc_to_mpc), 
+        .y_in(minc_out), 
+        .sum_out(pcadderc_out), 
         .c_in(32'd0), 
         .c_out()                    // idk what to connect this to?
     );
@@ -221,11 +218,6 @@ module Processor_tb();
     reg [31:0] mem_data_out_reg, mem_data_in_reg, mem_addr_reg, instruction_mem_in_reg, instruction_mem_addr_reg;
     reg mem_read_reg, mem_write_reg, instruction_mem_read_reg;
 
-    reg ra_enable_reg, rb_enable_reg, rz0_enable_reg, rz1_enable_reg, rm_enable_reg, ir_enable_reg, ry_enable_reg, rpc_enable_reg, rpc_temp_enable_reg;
-    reg mb_select_reg, minc_select_reg;
-    reg rf_write_reg;
-    reg [1:0] my_select_reg, mc_select_reg;
-    reg [3:0] alu_control_reg;
 
     // For connection between modules
 
@@ -274,14 +266,17 @@ module Processor_tb();
         // Cycle 1: Fetch instruction
         #15 begin
         instruction_mem_in_reg = 32'b00011000100100011000000000000000;
+        // R1 <= R2 + R3
         end
 
         #100 begin 
-        instruction_mem_in_reg = 32'b00011000100100011000000000000000;
-
+        instruction_mem_in_reg = 32'b00011000100010010000000000000000;
+        // R1 <= R1 + R2
         end
 
         #100 begin
+        instruction_mem_in_reg = 32'b00011000100010010000000000000000;
+
         end
         // End of simulation
         #20 $finish;

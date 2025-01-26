@@ -1,17 +1,16 @@
 module ControlUnit(
     ir, nRst, clock,
-    mb_select, minc_select, rf_write, my_select, mc_select, alu_control, mpc_select,
-    ra_enable, rb_enable, rz0_enable, rz1_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable,
+    mb_select, minc_select, rf_write, my_select, alu_control, mpc_select, msrc2_select, mdst_select,
+    ra_enable, rb_enable, rz0_enable, lo_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable,
     zero, rz_b31
 );
     input wire nRst, clock;
     input wire [31:0]ir;
     input wire zero, rz_b31;
-    output wire ra_enable, rb_enable, rz0_enable, rz1_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable;    
-    output wire mb_select, minc_select, mpc_select;
+    output wire ra_enable, rb_enable, rz0_enable, lo_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable;    
+    output wire mb_select, minc_select, mpc_select, msrc2_select, mdst_select;
     output wire rf_write;
     output wire [2:0] my_select;
-    output wire [2:0] mc_select;
     output wire [3:0] alu_control;
     
     reg [2:0]cycle;
@@ -38,7 +37,7 @@ module ControlUnit(
     assign mb_select = (ir[31:28] == 4'b0000) ? 1 : 0 | (ir[31:27] == 5'b00010) ? 1 : 0 | (ir[31:28] == 4'b0110) ? 1 : 0 | (ir[31:27] == 5'b01110) ? 1 : 0;
     assign minc_select = (ir[31:27] == 5'b10011) & ((~ir[22] & ~ir[21] & zero) | (ir[22] & ~ir[21] & ~zero) | (~ir[22] & ir[21] & ~rz_b31) | (ir[22] & ir[21] & rz_b31));
 
-    assign rf_write = ~((ir[31:27] == 5'b00010) ? 1 : 0 | (ir[31:27] == 5'b10011) ? 1 : 0 | (ir[31:27] == 5'b10101) ? 1 : 0  | (ir[31:27] == 5'b10111) ? 1 : 0 | (ir[31:28] == 4'b1101) ? 1 : 0 | (ir[31:27] == 5'b01111) ? 1 : 0 | (ir[31:27] == 5'b10000) ? 1 : 0);
+    assign rf_write = (cycle == 3'd5) ? 1 : 0 & ~((ir[31:27] == 5'b00010) ? 1 : 0 | (ir[31:27] == 5'b10011) ? 1 : 0 | (ir[31:27] == 5'b10101) ? 1 : 0  | (ir[31:27] == 5'b10111) ? 1 : 0 | (ir[31:28] == 4'b1101) ? 1 : 0 | (ir[31:27] == 5'b01111) ? 1 : 0 | (ir[31:27] == 5'b10000) ? 1 : 0);
     
     /*
     0 default
@@ -54,25 +53,17 @@ module ControlUnit(
                         (ir[31:27] == 5'b10100) ? 3'd4 :   // pc_temp register jal
                         3'd0;
 
+
     assign mpc_select = (ir[31:27] == 5'b10100) ? 1 :
                         (ir[31:27] == 5'b10101) ? 1 :
                         0;
 
+    assign msrc2_select =   (ir[31:27] == 5'b01111) ? 1:
+                            (ir[31:27] == 5'b10000) ? 1:
+                            (ir[31:27] == 5'b10111) ? 1:
+                            0;
 
-    /*
-    0 - rz0
-    1 - rz1 / HI
-    2 - memory in
-    3 - LO
-    4 - pc_temp
-    */
-    assign mc_select =  (ir[31:27] == 5'b11001) ? 2'd1 :    // move hi
-                        (ir[31:27] == 5'b11000) ? 2'd3 :    // move lo
-                        (ir[31:27] == 5'b00000) ? 2'd2 :    // memory in
-                        (ir[31:27] == 5'b00001) ? 2'd2 :    // memory in
-                        (ir[31:27] == 5'b10100) ? 2'd4 :    // pc_temp
-                        2'd0;                                  // default is rz0
-
+    assign mdst_select =    (ir[31:27] == 5'b1010) ? 1 : 0;               
                                         //   op     |  alu_signal
     assign alu_control =    (ir[31:27] == 5'b00011) ? 4'b0000 :         // add
                             (ir[31:27] == 5'b00100) ? 4'b0001 :         // sub
@@ -92,8 +83,8 @@ module ControlUnit(
                             (ir[31:27] == 5'b10010) ? 4'b1100 :         // not
                             4'b0000;
 
-    assign rz1_enable = (ir[31:27] == 5'b01111) ? 1 : 0 | (ir[31:27] == 5'b10000) ? 1 : 0;
-    assign rlo_enable = rz1_enable;
+    assign lo_enable = (ir[31:27] == 5'b01111) ? 1 : 0 | (ir[31:27] == 5'b10000) ? 1 : 0;
+    assign rlo_enable = lo_enable;
 
     assign ra_enable = 1;
     assign rb_enable = 1;

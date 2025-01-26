@@ -8,6 +8,16 @@ assign out = ({32{~sel}} & in0) | ({32{sel}} & in1);
 
 endmodule
 
+module Mux2_1_4b(in0, in1, sel, out);
+
+input wire [3:0] in0, in1;
+input wire sel;
+output wire [3:0] out;
+
+assign out = (sel == 0) ? in0 : in1;
+
+endmodule
+
 module Mux4_1_32b (
     input wire [31:0] in0,
     input wire [31:0] in1,
