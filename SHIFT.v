@@ -30,7 +30,7 @@ SHIFT_RIGHT_LOGIC rightlogic(
 );
 
 assign right = nArith ? right_logic : right_arith;
-assign oD = nLeft ? left : right;
+assign oD = nLeft ? right : left;
 
 endmodule
 
