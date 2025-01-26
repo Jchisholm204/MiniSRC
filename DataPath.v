@@ -20,7 +20,8 @@ module Processor(
     wire ra_enable, rb_enable, rz0_enable, rz1_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable;
     wire mb_select, minc_select, mpc_select;
     wire rf_write;
-    wire [1:0] my_select, mc_select;
+    wire [2:0] my_select;
+    wire [1:0] mc_select;
     wire [3:0] alu_control;
     wire alu_zero_flag, rz_b31;
 
@@ -29,6 +30,13 @@ module Processor(
     wire [31:0] mpc_to_rpc, rpc_out, rpc_temp_to_my, pcadderc_to_mpc, minc_to_pcaddera, rlo_to_my;
 
     assign rz_b31 = rz0_out[31];
+
+    ControlUnit cu(
+        ir_out, nRst, iClk,
+        mb_select, minc_select, rf_write, my_select, mc_select, alu_control, mpc_select,
+        ra_enable, rb_enable, rz0_enable, rz1_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable,
+        alu_zero_flag, rz_b31
+    );
 
     REG32 ir(
         .iClk(iClk),
@@ -50,11 +58,18 @@ module Processor(
         .iRegC(ry_to_rfc)
     );
 
+    //////////// THis is fucked up bc i did it for NIOS 2 /////////
+    // in to address for writing should always be ra or r15 for jump and link
+    // what changes in the operand addresses
+    // if 3 registers a <- b [op] c
+    // is 2 registers a <- [op] b
+    // if 1  a <- smt in terms of rf
+    //              
     Mux4_1_4b mc(               // needs to be 4 bit mux oops
         .in0(ir_out[26:23]),    // address a
         .in1(ir_out[22:19]),    // address b
         .in2(ir_out[18:15]),    // address c
-        .in2(4'b1111),          // r15
+        .in3(4'b1111),          // r15
         .sel(mc_select),
         .out(mc_to_rfac)
     );
@@ -258,32 +273,16 @@ module Processor_tb();
         
         // Cycle 1: Fetch instruction
         #15 begin
+        instruction_mem_in_reg = 32'b00011000100100011000000000000000;
+        end
+
+        #100 begin 
+        instruction_mem_in_reg = 32'b00011000100100011000000000000000;
 
         end
 
-        // Cycle 2: Decode instruction
-        #20 begin
-
+        #100 begin
         end
-
-        // Cycle 3: Execute instruction
-        #20 begin
-
-
-            // Assign ALU control signals and register enables
-        end
-
-        // Cycle 4: Memory access
-        #20 begin
-
-            // Simulate memory read/write and assign memory-related signals
-        end
-
-        // Cycle 5: Write-back
-        #20 begin
-            // Simulate register write-back logic
-        end
-
         // End of simulation
         #20 $finish;
     end

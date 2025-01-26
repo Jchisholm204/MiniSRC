@@ -89,7 +89,7 @@ assign not_out = ~A;
 
 // 16-1 Mux to select which module to connect to C1
 Mux16_1_32b m(
-    .sel(5'd0 | control),
+    .sel(control),
     .in0(adder_out),    // add
     .in1(adder_out),    // sub
     .in2(and_out),      
