@@ -31,45 +31,54 @@ module sixteenBitAdder(x_in, y_in, c_in, sum_out, c_out, g_out, p_out);
     output wire g_out, p_out;
 
     wire [3:1] c;
+    wire a0p, a0g, a1p, a1g, a2p, a2g, a3p, a3g;
 
     fourBitAdder a0 (
         .x_in(x_in[3:0]),
         .y_in(y_in[3:0]),
         .c_in(c_in),
-        .sum_out(sum_out[3:0])
+        .sum_out(sum_out[3:0]),
+        .p_out(a0p),
+        .g_out(a0g)
     );
 
-    assign c[1] = a0.g_out | a0.p_out & c_in;
+    assign c[1] = a0g | a0p & c_in;
 
     fourBitAdder a1 (
         .x_in(x_in[7:4]),
         .y_in(y_in[7:4]),
         .c_in(c[1]),
-        .sum_out(sum_out[7:4])
+        .sum_out(sum_out[7:4]),
+        .p_out(a1p),
+        .g_out(a1g)
     );
 
-    assign c[2] = a1.g_out | a1.p_out & a0.g_out | a1.p_out & a0.p_out & c_in;
+    assign c[2] = a1g | a1p & a0g | a1p & a0p & c_in;
 
     fourBitAdder a2 (
         .x_in(x_in[11:8]),
         .y_in(y_in[11:8]),
         .c_in(c[2]),
-        .sum_out(sum_out[11:8])
+        .sum_out(sum_out[11:8]),
+        .p_out(a2p),
+        .g_out(a2g)
     );
 
-    assign c[3] = a2.g_out | a2.p_out & a1.g_out | a2.p_out & a1.p_out & a0.g_out | a2.p_out & a1.p_out & a0.p_out * c_in;
+    assign c[3] = a2g | a2p & a1g | a2p & a1p & a0g | a2p & a1p & a0p * c_in;
 
     fourBitAdder a3 (
         .x_in(x_in[15:12]),
         .y_in(y_in[15:12]),
         .c_in(c[3]),
-        .sum_out(sum_out[15:12])
+        .sum_out(sum_out[15:12]),
+        .p_out(a3p),
+        .g_out(a3g)
     );
 
-    assign c_out = a3.g_out | a3.p_out & a2.g_out | a3.p_out & a2.p_out & a1.g_out | a3.p_out & a2.p_out & a1.p_out & a0.g_out | a3.p_out & a2.p_out & a1.p_out & a0.p_out * c_in;
+    assign c_out = a3g | a3p & a2g | a3p & a2p & a1g | a3p & a2p & a1p & a0g | a3p & a2p & a1p & a0p & c_in;
 
-    assign g_out = a3.g_out | a3.p_out & a2.g_out | a3.p_out & a2.p_out & a1.g_out | a3.p_out & a2.p_out & a1.p_out & a0.g_out;
-    assign p_out = a3.p_out & a2.p_out & a1.p_out & a0.p_out;
+    assign g_out = a3g | a3p & a2g | a3p & a2p & a1g | a3p & a2p & a1p & a0g;
+    assign p_out = a3p & a2p & a1p & a0p;
 endmodule
 
 module FastAdder (x_in, y_in, sum_out, c_in, c_out);

@@ -6,7 +6,7 @@ input wire [3:0] control;
 output wire [31:0 ]C0, C1;
 output wire zero;
 
-wire [31:0] adder_out, subtraction_out, or_out, and_out, divide_out, multiplication_out;
+wire [31:0] adder_out, subtraction_out, or_out, and_out, div_out, mul_out, shr_out, shra_out, shl_out, neg_out, not_out, rotr_out, rotl_out;
 
 /*
 / ------------ Addition and Subtraction Logic --------------
@@ -42,14 +42,49 @@ assign or_out = A | B;
 assign and_out = A & B;
 
 /*
+/ ------------ Rotate RIght Logic --------------
+*/
+assign rotr_out = A>>B;
+
+/*
+/ ------------ Rotate Left Logic --------------
+*/
+assign rotl_out = A<<B;
+
+/*
+/ ------------ Shift Right Logic --------------
+*/
+assign shr_out = A>>B;           
+
+/*
+/ ------------ Shift Right A Logic --------------
+*/
+assign shra_out = A>>B;                               // what do i put for this?
+
+/*
+/ ------------ Shift Left Logic --------------
+*/
+assign shl_out = A<<B;
+
+/*
 / ------------ Division Logic --------------
 */
-assign divide_out = A/B;
+assign div_out = A/B;
 
 /*
 / ------------ Multiplication Logic --------------
 */
-assign multiplication_out = A*B;
+assign mul_out = A*B;
+
+/*
+/ ------------ Negate Logic --------------
+*/
+assign neg_out = ~A;
+
+/*
+/ ------------ NOT Logic --------------      // what do i put for this?
+*/
+assign not_out = ~A;
 
 
 // 16-1 Mux to select which module to connect to C1
@@ -57,20 +92,20 @@ Mux16_1_32b m(
     .sel(control),
     .in0(adder_out),    // add
     .in1(adder_out),    // subtract
-    .in2(or_out),       // orr
-    .in3(and_out),
-    .in4(divide_out),
-    .in5(multiplication_out),
-    // .int6(32'd0),
-    // .int7(32'd0),
-    // .int8(32'd0),
-    // .int9(32'd0),
-    // .int10(32'd0),
-    // .int11(32'd0),
-    // .int12(32'd0),
-    // .int13(32'd0),
-    // .int14(32'd0),
-    // .int15(32'd0),
+    .in2(and_out),      
+    .in3(or_out),
+    .in4(rotr_out),
+    .in5(rotl_out),
+    .in6(shr_out),
+    .in7(shra_out),
+    .in8(shl_out),
+    .in9(div_out),
+    .in10(mul_out),
+    .in11(neg_out),
+    .in12(not_out),
+    .in13(32'd0),
+    .in14(32'd0),
+    .in15(32'd0),
     .out(C0)
 );
 

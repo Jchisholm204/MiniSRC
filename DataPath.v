@@ -42,13 +42,13 @@ module Processor(
         .iWrite(rf_write),
         .iAddrA(ir_out[26:23]), 
         .iAddrB(ir_out[22:19]),
-        .iAddrC(mc_to_rfac), // mux rf 
+        .iAddrC(mc_to_rfac),        // should also be 4 bit oopss
         .oRegA(rfa_to_ra), 
         .oRegB(rfb_to_rb), 
         .iRegC(ry_to_rfc)
     );
 
-    Mux4_1_32b mc(
+    Mux4_1_32b mc(                  // needs to be 4 bit mux oops
         .in0(ir_out[23:19]),
         .in1(ir_out[18:15]),
         .in2(32'd0),     // link reg
@@ -115,7 +115,7 @@ module Processor(
     Mux4_1_32b my(
         .in0(rz0_to_my),
         .in1(rz1_to_my),
-        .in2(32'd0),                 // memory out
+        .in2(mem_data_in),                 // memory in
         .in3(32'd0),                 // return address
         .sel(my_select),        // mux y select control signal
         .out(my_to_ry)                  // register y
