@@ -17,7 +17,7 @@ module Processor(
     output wire [31:0] mem_data_out, mem_addr, instruction_mem_addr;
 
     // For control unit
-    wire ra_enable, rb_enable, rz0_enable, rl0_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable;
+    wire ra_enable, rb_enable, rz0_enable, rhi_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable;
 
     wire rf_write;
     wire [2:0] my_select;
@@ -27,7 +27,7 @@ module Processor(
     wire alu_zero_flag, rz_b31;
 
     // For connection between modules
-    wire [31:0] rfa_out, rfb_out, ra_out, mb_out, aluc0_out, aluc1_out, rz0_out, rl0_out, my_out, ry_out, rb_out, mc_out, ir_out;
+    wire [31:0] rfa_out, rfb_out, ra_out, mb_out, aluc0_out, aluc1_out, rz0_out, rhi_out, my_out, ry_out, rb_out, mc_out, ir_out;
     wire [31:0] mpc_out, rpc_out, rpc_temp_out, pcadderc_out, minc_out, rlo_out, msrc2_out, mdst_out;
 
     assign rz_b31 = rz0_out[31];
@@ -35,7 +35,7 @@ module Processor(
     ControlUnit cu(
         ir_out, nRst, iClk,
         mb_select, minc_select, rf_write, my_select, alu_control, mpc_select, msrc2_select, mdst_select,
-        ra_enable, rb_enable, rz0_enable, rl0_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable,
+        ra_enable, rb_enable, rz0_enable, rhi_enable, rm_enable, ir_enable, ry_enable, rpc_enable, rpc_temp_enable, rlo_enable,
         alu_zero_flag, rz_b31
     );
 
@@ -108,7 +108,7 @@ module Processor(
         .A(ra_out), 
         .B(mb_out), 
         .C0(aluc0_out),                  // input to rz0
-        .C1(aluc1_out),                  // input to rl0 
+        .C1(aluc1_out),                  // input to rhi 
         .control(alu_control),              // 0000 add, 0001, subtract, 0010 or, 0011 and , 0100 divide, 0101 multiply
         .zero(alu_zero_flag)          // output for branch instructions
     );
@@ -120,26 +120,26 @@ module Processor(
         .iD(aluc0_out),            // output of register file port A
         .oQ(rz0_out)                   // input 0 of Mux y
     );
-    REG32 rl0(
+    REG32 rhi(
         .iClk(iClk),
-        .iEn(rl0_enable),
+        .iEn(rlo_enable),
         .nRst(nRst),               // idk where to connect this
         .iD(aluc1_out),            // output of register file port A
-        .oQ(rl0_out)                   // input 0 of Mux b 
+        .oQ(rhi_out)                   // input 0 of Mux b 
     );
     REG32 rlo(
         .iClk(iClk),
         .iEn(rlo_enable),
         .nRst(nRst),                    // idk where to connect this
-        .iD(aluc1_out),              // output of register file port A
+        .iD(aluc0_out),              // output of register file port A
         .oQ(rlo_out)                  // input 0 of Mux b 
     );
 
     Mux5_1_32b my(
         .in0(rz0_out),                      // rz
-        .in1(rl0_out),                    // HI
+        .in1(rhi_out),                      // HI
         .in2(mem_data_in),                  // memory in
-        .in3(rlo_out),                    // LO
+        .in3(rlo_out),                      // LO
         .in4(rpc_temp_out),                        // link register/ pc_temp
         .sel(my_select),                    // mux y select control signal
         .out(my_out)                      // register y
