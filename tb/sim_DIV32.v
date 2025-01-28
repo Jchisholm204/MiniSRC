@@ -13,8 +13,6 @@ DIV32 divider(
 );
 
 initial begin
-    // #20 regnRst = 1'b1;
-    // #20 regnRst = 1'b0;
     Q = 32'd8;
     D = 32'd3;
     #1
@@ -29,6 +27,13 @@ initial begin
     #1
     Q = 32'd3000;
     D = 32'd200;
+    #1
+    Q = 32'd300;
+    D = 32'd20;
+    #1
+    Q = 32'd30;
+    D = 32'd2;
+
 end
 
 
