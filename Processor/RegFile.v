@@ -1,4 +1,4 @@
-module registers(
+module RegFile(
     iClk, nRst, iWrite,
     iAddrA, iAddrB, iAddrC,
     oRegA, oRegB, iRegC
