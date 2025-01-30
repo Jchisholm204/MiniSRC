@@ -1,118 +1,167 @@
-
-module ALU(A, B, C0, C1, control, zero);
-
-input wire [31:0] A, B;
-input wire [3:0] control;
-output wire [31:0 ]C0, C1;
-output wire zero;
-
-wire [31:0] adder_out, subtraction_out, or_out, and_out, div_out, mul_out, shr_out, shra_out, shl_out, neg_out, not_out, rotr_out, rotl_out;
-wire [31:0] sub_out;
-
-/*
-/ ------------ Addition and Subtraction Logic --------------
-*/
-assign adder_out = A + B;
-assign sub_out = A - B;
-// wire [31:0] B_xor, m1_out;
-// // ~c3 & ~c2 & ~c1 & c0
-// wire sub_en = (~control[3]) & (~control[2]) & (~control[1]) & control[0];
-
-// assign B_xor = B ^ 32'hFFFFFFFF;
-
-// Mux2_1_32b m1(
-//     .in0(A),
-//     .in1(B_xor),
-//     .out(m1_out),
-//     .sel(sub_en)
-// );
-
-// FastAdder a(
-//     .x_in(A),
-//     .y_in(m1_out),
-//     .c_in(sub_en),
-//     .sum_out(adder_out)
-// );
-
-/*
-/ ------------ OR Logic --------------
-*/
-assign or_out = A | B;
-
-/*
-/ ------------ AND Logic --------------
-*/
-assign and_out = A & B;
-
-/*
-/ ------------ Rotate RIght Logic --------------
-*/
-assign rotr_out = A>>B;
-
-/*
-/ ------------ Rotate Left Logic --------------
-*/
-assign rotl_out = A<<B;
-
-/*
-/ ------------ Shift Right Logic --------------
-*/
-assign shr_out = A>>B;           
-
-/*
-/ ------------ Shift Right A Logic --------------
-*/
-assign shra_out = A>>B;                               // what do i put for this?
-
-/*
-/ ------------ Shift Left Logic --------------
-*/
-assign shl_out = A<<B;
-
-/*
-/ ------------ Division Logic --------------
-*/
-assign div_out = A/B;
-
-/*
-/ ------------ Multiplication Logic --------------
-*/
-assign mul_out = A*B;
-
-/*
-/ ------------ Negate Logic --------------
-*/
-assign neg_out = ~A;
-
-/*
-/ ------------ NOT Logic --------------      // what do i put for this?
-*/
-assign not_out = ~A;
-
-
-// 16-1 Mux to select which module to connect to C1
-Mux16_1_32b m(
-    .sel(control),
-    .in0(adder_out),    // add
-    // .in1(adder_out),    // sub
-    .in1(sub_out),
-    .in2(and_out),      
-    .in3(or_out),
-    .in4(rotr_out),
-    .in5(rotl_out),
-    .in6(shr_out),
-    .in7(shra_out),
-    .in8(shl_out),
-    .in9(div_out),
-    .in10(mul_out),
-    .in11(neg_out),
-    .in12(not_out),
-    .in13(32'd0),
-    .in14(32'd0),
-    .in15(32'd0),
-    .out(C0)
+module ALU(
+    // 32 bit Inputs
+    iA, iB, 
+    // Control Signal
+    iCtrl,
+    // 64 bit output
+    oC, 
+    // Zero Output / Negative Output
+    oZero, oNeg
 );
 
-assign zero = (C0 == 32'd0) ? 1 : 0;
+input wire [31:0] iA, iB;
+input wire [3:0] iCtrl;
+output wire [63:0] oC;
+output wire oZero, oNeg;
+
+// Control Parameters
+parameter ALUC_ADD = 4'h0;
+parameter ALUC_SUB = 4'h1;
+parameter ALUC_OR  = 4'h2;
+parameter ALUC_XOR = 4'h3;
+parameter ALUC_AND = 4'h4;
+parameter ALUC_MUL = 4'h5;
+parameter ALUC_DIV = 4'h6;
+parameter ALUC_SLL = 4'h7;
+parameter ALUC_SRL = 4'h8;
+parameter ALUC_SRA = 4'h9;
+
+// Module output
+wire [31:0] out_hi, out_lo;
+
+// Adder IO
+wire [31:0] cla_out, cla_iB;
+wire cla_iCarry, cla_oCarry, cla_overflow, cla_zero, cla_neg;
+
+// OR/XOR/AND IO
+wire [31:0] or_out, xor_out, and_out;
+
+// Shifter IO
+wire [31:0] sft_data, sft_out;
+wire [4:0] sft_shamt;
+wire sft_arith, sft_left;
+
+// Multiplier IO
+wire [63:0] mul_out;
+wire mul_neg;
+
+// Divider IO
+wire [31:0] div_q, div_r, div_m, div_d;
+wire [31:0] div_rmdr, div_qtnt;
+wire div_iNegA, div_iNegB, div_neg;
+
+// Adder/Subtract
+
+// XOR input B for subtraction and set carry to 1
+assign cla_iB = (iCtrl == ALUC_SUB) ? 32'hFFFFFFFF ^ iB : iB;
+assign cla_iCarry = (iCtrl == ALUC_SUB);
+
+CLA cla(
+    .iX(iA),
+    .iY(cla_iB),
+    .iCarry(cla_iCarry),
+    .oS(cla_out),
+    .oCarry(cla_oCarry),
+    .oOverflow(cla_overflow),
+    .oZero(cla_zero),
+    .oNegative(cla_neg)
+);
+
+// OR
+OR bor(
+    .iA(iA),
+    .iB(iB),
+    .oC(or_out)
+);
+
+// XOR
+XOR bxor(
+    .iA(iA),
+    .iB(iB),
+    .oC(xor_out)
+);
+
+// AND
+AND band(
+    .iA(iA),
+    .iB(iB),
+    .oC(and_out)
+);
+
+// Bit Shifter
+assign sft_data = iA;
+assign sft_shamt = iB[4:0];
+// Negate Arithmetic shift (logic low)
+assign sft_arith = ~(iCtrl == ALUC_SRA);
+assign sft_left  = (iCtrl == ALUC_SLL);
+
+SHIFT sft(
+    .iD(sft_data),
+    .iShamt(sft_shamt),
+    .nArith(sft_arith),
+    .nLeft(sft_left),
+    .oD(sft_out)
+);
+
+// Multiplier
+
+assign mul_out = iA * iB;
+assign mul_neg = mul_out[63];
+
+// Divider
+assign div_iNegA = iA[31];
+assign div_iNegB = iB[31];
+
+// If either is negative, the quotient must be negative
+assign div_neg = div_iNegA ^ div_iNegB;
+
+// If the divisor or dividend is negative, make it positive
+assign div_m = div_iNegA ? 32'hFFFFFFFF ^ (iA - 1) : iA;
+assign div_d = div_iNegB ? 32'hFFFFFFFF ^ (iB - 1) : iB;
+
+DIV32 div(
+    .iQ(div_m),
+    .iD(div_d),
+    .oQ(div_q),
+    .oR(div_r)
+);
+
+// Quotient will be negative if A or B is negative but not both
+assign div_qtnt = div_neg ? (32'hFFFFFFFF ^ div_q) + 1 : div_q;
+// Remainder carries the same sign as the dividend
+assign div_rmdr = div_iNegB ? (32'hFFFFFFFF ^ div_r) + 1 : div_r;
+
+// Module Outputs
+// Set low output register
+assign out_lo = (iCtrl == ALUC_ADD) ? cla_out :
+                (iCtrl == ALUC_SUB) ? cla_out :
+                (iCtrl == ALUC_OR)  ? or_out  :
+                (iCtrl == ALUC_XOR) ? xor_out :
+                (iCtrl == ALUC_AND) ? and_out :
+                (iCtrl == ALUC_MUL) ? mul_out[31:0] :
+                (iCtrl == ALUC_DIV) ? div_rmdr :
+                (iCtrl == ALUC_SLL) ? sft_out :
+                (iCtrl == ALUC_SRL) ? sft_out :
+                (iCtrl == ALUC_SRA) ? sft_out :
+                32'h00000000;
+
+// Set high output register (Zero on anything not needing 64 bits)
+assign out_hi = (iCtrl == ALUC_MUL) ? mul_out[63:32] :
+                (iCtrl == ALUC_DIV) ? div_qtnt :
+                32'h00000000;
+
+// Output register combines out high and low
+assign oC = {out_hi, out_lo};
+
+// Assign the negative outputs based on the control inputs
+assign oNeg =   (iCtrl == ALUC_ADD) ? cla_neg :
+                (iCtrl == ALUC_SUB) ? cla_neg :
+                (iCtrl == ALUC_MUL) ? mul_neg :
+                (iCtrl == ALUC_DIV) ? div_neg :
+                out_lo[31];
+
+// Assign zero if both the high and low registers are zero
+assign oZero = ({out_hi, out_lo} == 64'd0);
+
 
 endmodule
