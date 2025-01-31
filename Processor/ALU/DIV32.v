@@ -1,3 +1,4 @@
+// ONLY Accepts positive numbers
 module DIV32(
     iQ, iD,
     oQ, oR

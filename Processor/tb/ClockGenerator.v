@@ -1,5 +1,6 @@
 `timescale 1ms/1ps
 
+// Default clock speed = 50Mhz (DE2 CCO)
 module ClockGenerator #(
     parameter ClockFrequency = 50e6
 ) (
