@@ -4,14 +4,14 @@ module ALU(
     // Control Signal
     iCtrl,
     // 64 bit output
-    oC, 
+    oC_hi, oC_lo,
     // Zero Output / Negative Output
     oZero, oNeg
 );
 
 input wire [31:0] iA, iB;
 input wire [3:0] iCtrl;
-output wire [63:0] oC;
+output wire [31:0] oC_hi, oC_lo;
 output wire oZero, oNeg;
 
 // Control Parameters
@@ -150,8 +150,9 @@ assign out_hi = (iCtrl == ALUC_MUL) ? mul_out[63:32] :
                 (iCtrl == ALUC_DIV) ? div_qtnt :
                 32'h00000000;
 
-// Output register combines out high and low
-assign oC = {out_hi, out_lo};
+// Output register 
+assign oC_lo = out_lo;
+assign oC_hi = out_hi;
 
 // Assign the negative outputs based on the control inputs
 assign oNeg =   (iCtrl == ALUC_ADD) ? cla_neg :

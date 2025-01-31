@@ -10,7 +10,8 @@ ALU alu(
     .iA(A),
     .iB(B),
     .iCtrl(Ctrl),
-    .oC({C_hi, C_lo}),
+    .oC_hi(C_hi),
+    .oC_lo(C_lo),
     .oZero(zero),
     .oNeg(neg)
 );
@@ -89,8 +90,9 @@ initial begin
     for(i = 1000; i < 5000; i = i + 1) begin
         A = -i;
         for(j = 0; j < 1000; j = j + 1) begin
-            B = 500 - j;
             #1
+            B = 500 - j;
+            // #1
             // Must verify manually - negative division has issues in v
             // if(C_hi != (A / B) || C_lo != (A % B))
             //     $display ("DIV Failure %0d / %0d = %0d %0d", A, B, C_hi, C_lo);
