@@ -12,7 +12,7 @@ module PC #(
 input wire iClk, iEn, nRst;
 input wire iJmpEn, iLoadRA, iLoadImm;
 input wire [31:0] iRA, iImm32;
-output wire [31:0] oPC;
+output wire [31:0] oPC, oPC_tmp;
 
 wire [31:0] pc_out, pc_tmp_out, add_in, add_out, pc_in;
 
@@ -36,7 +36,7 @@ assign pc_in  = iLoadImm ? iImm32 :
                 iLoadRA  ? iRA    :
                 add_out;
 
-REG32 pc(
+REG32 #(.RESET(StartAddr)) pc(
     .iClk(iClk),
     .nRst(nRst),
     .iEn(iEn),

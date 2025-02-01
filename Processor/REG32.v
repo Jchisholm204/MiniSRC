@@ -1,4 +1,4 @@
-module REG32(
+module REG32 #(parameter RESET = 32'd0)(
     iClk,
     nRst, iEn,
     iD, oQ
@@ -10,7 +10,8 @@ output reg [31:0] oQ;
 
 always@(posedge iClk or negedge nRst)
 begin
-    if(!nRst) oQ = 32'd1;
+    if(!nRst)
+        oQ = RESET;
     else begin
         if(iEn) oQ = iD;
     end
