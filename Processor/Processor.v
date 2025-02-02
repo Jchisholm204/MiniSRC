@@ -34,13 +34,16 @@ wire RZH_en, RZL_en;
 wire [31:0] RZH_out, RZL_out, RZ_out;
 // ALU Storage Registers
 wire RAS_en;
-wire [31:0] RASH_out, RASL_out;
+wire [31:0] RASH_out, RASL_out, RAS_out;
+// ALU Output
+wire [31:0] RZX_out;
 
 // Memory Signals
+wire RMA_en, RMD_en;
 wire [31:0] MemAddr_out, MemData_out;
 
 // Multiplexer Signals
-wire MUL_B, MUL_RZ, MUL_MD, MUL_MA;
+wire MUL_B, MUL_RZHS, MUL_WB, MUL_MA, MUL_AS;
 
 // Control Signals
 wire [31:0] CT_imm32;
@@ -101,10 +104,20 @@ REG32 RZH(.iClk(iClk), .nRst(nRst), .iEn(RAS_en), .iD(ALU_oC_hi), .oQ(RASH_out))
 REG32 RZL(.iClk(iClk), .nRst(nRst), .iEn(RAS_en), .iD(ALU_oC_lo), .oQ(RASL_out));
 
 // 32 bit ALU result selection
-assign RZ_out = MUL_RZ ? RZH_out : RZL_out;
+assign RAS_out = MUL_RZHS ? RASH_out : RASL_out;
+assign RZ_out  = MUL_RZHS ? RZH_out : RZL_out;
+// Select between storage or current registers
+assign RZX_out = MUL_AS ? RZ_out : RAS_out;
 
 // Memory
-assign MemAddr_out = MUX_MA ? RZ_out : PC;
-assign RF_iRegC = MUX_MD ? RZ_out : iMemData;
+assign MemAddr_out = MUX_MA ? RZX_out : PC;
+assign MemData_out = RA_out;
+
+// Memory Registers
+REG32 RMA(.iClk(iClk), .nRst(nRst), .iEn(RMA_en), .iD(MemAddr_out), .oQ(oMemAddr));
+REG32 RMD(.iClk(iClk), .nRst(nRst), .iEn(RMD_en), .iD(MemData_out), .oQ(oMemData));
+
+// Write Back
+assign RF_iRegC = MUX_WB ? RZX_out : iMemData;
 
 endmodule
