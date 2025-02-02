@@ -20,7 +20,7 @@ integer seed1 = 1;
 integer seed2 = 2;
 
 initial begin: test
-    // edge cases
+        // edge cases
     I = 64'h00000000_00000000; // 0 success
     #1;
     I = 64'hFFFFFFFF_FFFFFFFF; // 1 success
@@ -31,11 +31,19 @@ initial begin: test
     #1;
     I = 64'h7FFFFFFF_80000000; // success
     #1;
-    I = 64'h80000000_7FFFFFFF; // FAILURE: p_sim=bfffffff_80000000, p_ref=c0000000_80000000
-    #1;
     I = 64'h80000000_7FFFFFFE; // FAILURE: p_sim=bfffffff_00000000, p_ref=c0000001_00000000
     #1;
-    // These always fail on the top 32 bits.
+    I = 64'h80000000_7FFFFFFF; // FAILURE: p_sim=bfffffff_80000000, p_ref=c0000000_80000000
+    #1;
+    I = 64'h80000000_00000000; // success 
+    #1;
+    I = 64'h80000000_00000001; // success
+    #1;
+    I = 64'h80000000_00000002; // FAILURE: p_sim=fffffffd00000000, p_ref=ffffffff00000000
+    #1;
+    I = 64'h80000001_7FFFFFFF; // success
+    #1;
+    // These always fail on the top 32 bits, if: 1 < I[31:0] or I[31:0] < -1.
     // while (1) begin
     //     I[63:32] = 32'h80000000;
     //     I[31:0] = $random(seed2);

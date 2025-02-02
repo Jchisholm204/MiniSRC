@@ -1,3 +1,8 @@
+// TODO: Fix failure on edge cases.
+// TODO: Figure out how to limit the width of the carry-save adders (don't need 64 bits at each level).
+// TODO: Implement the ability to do this with unsigned numbers also. 
+// EXTRA: index the carry-save adder structure so this multiplier works for N being any power of 2.
+
 // FAILS on edge cases, see sim_MUL32.v.
 // This assumes that the inputs are 32-bit 2's-complement signed integers.
 // Multiply (multiplicand) A by (multiplier) B to get (product) P.
