@@ -43,7 +43,7 @@ wire RMA_en, RMD_en;
 wire [31:0] MemAddr_out, MemData_out;
 
 // Multiplexer Signals
-wire MUL_B, MUL_RZHS, MUL_WB, MUL_MA, MUL_AS;
+wire MUX_B, MUX_RZHS, MUX_WB, MUX_MA, MUX_AS;
 
 // Control Signals
 wire [31:0] CT_imm32;
@@ -82,7 +82,7 @@ REG32 RB(.iClk(iClk), .nRst(nRst), .iEn(RB_en), .iD(RF_oRegB), .oQ(RB_out));
 // ALU Input Multiplexers
 
 assign ALU_iA = RA_out;
-assign ALU_iB = MUL_B ? CT_imm32 : RB_out;
+assign ALU_iB = MUX_B ? CT_imm32 : RB_out;
 
 // ALU
 ALU alu(
@@ -100,17 +100,17 @@ REG32 RZH(.iClk(iClk), .nRst(nRst), .iEn(RZH_en), .iD(ALU_oC_hi), .oQ(RZH_out));
 REG32 RZL(.iClk(iClk), .nRst(nRst), .iEn(RZL_en), .iD(ALU_oC_lo), .oQ(RZL_out));
 
 // ALU Storage Registers - Persist data until reset or next H/L transaction
-REG32 RZH(.iClk(iClk), .nRst(nRst), .iEn(RAS_en), .iD(ALU_oC_hi), .oQ(RASH_out));
-REG32 RZL(.iClk(iClk), .nRst(nRst), .iEn(RAS_en), .iD(ALU_oC_lo), .oQ(RASL_out));
+REG32 RASH(.iClk(iClk), .nRst(nRst), .iEn(RAS_en), .iD(ALU_oC_hi), .oQ(RASH_out));
+REG32 RASL(.iClk(iClk), .nRst(nRst), .iEn(RAS_en), .iD(ALU_oC_lo), .oQ(RASL_out));
 
 // 32 bit ALU result selection
-assign RAS_out = MUL_RZHS ? RASH_out : RASL_out;
-assign RZ_out  = MUL_RZHS ? RZH_out : RZL_out;
+assign RAS_out = MUX_RZHS ? RASH_out : RASL_out;
+assign RZ_out  = MUX_RZHS ? RZH_out : RZL_out;
 // Select between storage or current registers
-assign RZX_out = MUL_AS ? RZ_out : RAS_out;
+assign RZX_out = MUX_AS ? RZ_out : RAS_out;
 
 // Memory
-assign MemAddr_out = MUX_MA ? RZX_out : PC;
+assign MemAddr_out = MUX_MA ? RZX_out : PC_out;
 assign MemData_out = RA_out;
 
 // Memory Registers
