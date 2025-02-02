@@ -12,13 +12,14 @@ output wire [31:0] oMemData, oMemAddr;
 
 wire Clk;
 assign Clk = iClk & ~nRst;
+wire pipe_rst;
 
 // Program Counter Signals
-wire PC_en, PC_jmp, PC_loadRA, PC_loadImm;
+wire PC_nRst, PC_en, PC_jmp, PC_loadRA, PC_loadImm;
 wire [31:0] PC_out, PC_tOut;
 
 // Register File IO
-wire RF_nRst, RF_iWrite;
+wire RF_iWrite;
 wire [3:0] RF_iAddrA, RF_iAddrB, RF_iAddrC;
 wire [31:0] RF_oRegA, RF_oRegB, RF_iRegC;
 
@@ -52,7 +53,7 @@ wire [31:0] CT_imm32;
 PC pc(
     .iClk(Clk),
     .iEn(PC_en),
-    .nRst(nRst),
+    .nRst(PC_nRst),
     .iJmpEn(PC_jmp),
     .iLoadRA(PC_loadRA),
     .iLoadImm(PC_loadImm),
@@ -66,7 +67,7 @@ PC pc(
 // Register File
 RegFile RF(
     .iClk(Clk),
-    .nRst(RF_nRst),
+    .nRst(pipe_rst),
     .iWrite(RF_iWrite),
     .iAddrA(RF_iAddrA),
     .iAddrB(RF_iAddrB),
@@ -76,8 +77,8 @@ RegFile RF(
     .iRegC(RF_iRegC)
 );
 
-REG32 RA(.iClk(iClk), .nRst(nRst), .iEn(RA_en), .iD(RF_oRegA), .oQ(RA_out));
-REG32 RB(.iClk(iClk), .nRst(nRst), .iEn(RB_en), .iD(RF_oRegB), .oQ(RB_out));
+REG32 RA(.iClk(iClk), .nRst(pipe_rst), .iEn(RA_en), .iD(RF_oRegA), .oQ(RA_out));
+REG32 RB(.iClk(iClk), .nRst(pipe_rst), .iEn(RB_en), .iD(RF_oRegB), .oQ(RB_out));
 
 // ALU Input Multiplexers
 
@@ -96,12 +97,12 @@ ALU alu(
 );
 
 // ALU Result Registers
-REG32 RZH(.iClk(iClk), .nRst(nRst), .iEn(RZH_en), .iD(ALU_oC_hi), .oQ(RZH_out));
-REG32 RZL(.iClk(iClk), .nRst(nRst), .iEn(RZL_en), .iD(ALU_oC_lo), .oQ(RZL_out));
+REG32 RZH(.iClk(iClk), .nRst(pipe_rst), .iEn(RZH_en), .iD(ALU_oC_hi), .oQ(RZH_out));
+REG32 RZL(.iClk(iClk), .nRst(pipe_rst), .iEn(RZL_en), .iD(ALU_oC_lo), .oQ(RZL_out));
 
 // ALU Storage Registers - Persist data until reset or next H/L transaction
-REG32 RASH(.iClk(iClk), .nRst(nRst), .iEn(RAS_en), .iD(ALU_oC_hi), .oQ(RASH_out));
-REG32 RASL(.iClk(iClk), .nRst(nRst), .iEn(RAS_en), .iD(ALU_oC_lo), .oQ(RASL_out));
+REG32 RASH(.iClk(iClk), .nRst(pipe_rst), .iEn(RAS_en), .iD(ALU_oC_hi), .oQ(RASH_out));
+REG32 RASL(.iClk(iClk), .nRst(pipe_rst), .iEn(RAS_en), .iD(ALU_oC_lo), .oQ(RASL_out));
 
 // 32 bit ALU result selection
 assign RAS_out = MUX_RZHS ? RASH_out : RASL_out;
@@ -114,8 +115,8 @@ assign MemAddr_out = MUX_MA ? RZX_out : PC_out;
 assign MemData_out = RA_out;
 
 // Memory Registers
-REG32 RMA(.iClk(iClk), .nRst(nRst), .iEn(RMA_en), .iD(MemAddr_out), .oQ(oMemAddr));
-REG32 RMD(.iClk(iClk), .nRst(nRst), .iEn(RMD_en), .iD(MemData_out), .oQ(oMemData));
+REG32 RMA(.iClk(iClk), .nRst(pipe_rst), .iEn(RMA_en), .iD(MemAddr_out), .oQ(oMemAddr));
+REG32 RMD(.iClk(iClk), .nRst(pipe_rst), .iEn(RMD_en), .iD(MemData_out), .oQ(oMemData));
 
 // Write Back
 assign RF_iRegC = MUX_WB ? RZX_out : iMemData;

@@ -5,12 +5,20 @@ module Control (
     // Memory IO
     iMemData, oMemAddr,
     oMemRead, oMemWrite,
-    // ALU/Data path Control
-    oALUOP, oRA, oRB, oRC,
-    // ALU MUX A/B Select
-    oMAS, oMBS,
-    // Memory Mux Select / Mux Y Select
-    oMMS, oMYS,
+    // Pipe Control
+    oPipe_nRst,
+    // Program Counter Control
+    oPC_nRst, oPC_en, oPC_jmp, oPC_loadRA, oPC_loadImm,
+    // Register File Control
+    oRF_Write,
+    oRF_AddrA, oRF_AddrB, oRF_AddrC,
+    // ALU Control
+    oALU_Ctrl, oRA_en, oRB_en,
+    oRZH_en, oRZL_en, oRAS_en,
+    // Memory Control
+    oRMA_en, oRMD_en;
+    // Multiplexers
+    oMUX_B, oMUX_RZHS, oMUX_WB, oMUX_MA, oMUX_AS;
     // Imm32 Output
     oImm32
 );
