@@ -66,11 +66,11 @@ output wire [31:0] oD;
 
 wire [31:0] S1, S2, S3, S4, S5;
 
-assign S1 = iShamt[0] ? {{1{iD[31]}}, iD[31:1]}  : iD;
-assign S2 = iShamt[1] ? {{2{S1[31]}}, S1[31:2]}  : S1;
-assign S3 = iShamt[2] ? {{4{S2[31]}}, S2[31:4]}  : S2;
-assign S4 = iShamt[3] ? {{8{S3[31]}}, S3[31:8]}  : S3;
-assign S5 = iShamt[4] ? {{16{S4[31]}}, S4[31:8]} : S4;
+assign S1 = iShamt[0] ? {{1{iD[31]}}, iD[31:1]}   : iD;
+assign S2 = iShamt[1] ? {{2{S1[31]}}, S1[31:2]}   : S1;
+assign S3 = iShamt[2] ? {{4{S2[31]}}, S2[31:4]}   : S2;
+assign S4 = iShamt[3] ? {{8{S3[31]}}, S3[31:8]}   : S3;
+assign S5 = iShamt[4] ? {{16{S4[31]}}, S4[31:16]} : S4;
 
 assign oD = S5;
 

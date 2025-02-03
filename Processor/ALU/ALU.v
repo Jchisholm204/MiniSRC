@@ -25,6 +25,8 @@ parameter ALUC_DIV = 4'h6;
 parameter ALUC_SLL = 4'h7;
 parameter ALUC_SRL = 4'h8;
 parameter ALUC_SRA = 4'h9;
+parameter ALUC_ROR = 4'hA;
+parameter ALUC_ROL = 4'hB;
 
 // Module output
 wire [31:0] out_hi, out_lo;
@@ -49,6 +51,9 @@ wire mul_neg;
 wire [31:0] div_q, div_r, div_m, div_d;
 wire [31:0] div_rmdr, div_qtnt;
 wire div_iNegA, div_iNegB, div_neg;
+
+// ROL / ROR IO
+wire [31:0] ROR_out, ROL_out;
 
 // Adder/Subtract
 
@@ -131,6 +136,10 @@ assign div_qtnt = div_neg ? (32'hFFFFFFFF ^ div_q) + 1 : div_q;
 // Remainder carries the same sign as the dividend
 assign div_rmdr = div_iNegB ? (32'hFFFFFFFF ^ div_r) + 1 : div_r;
 
+// ROR
+
+// ROL
+
 // Module Outputs
 // Set low output register
 assign out_lo = (iCtrl == ALUC_ADD) ? cla_out :
@@ -143,6 +152,8 @@ assign out_lo = (iCtrl == ALUC_ADD) ? cla_out :
                 (iCtrl == ALUC_SLL) ? sft_out :
                 (iCtrl == ALUC_SRL) ? sft_out :
                 (iCtrl == ALUC_SRA) ? sft_out :
+                (iCtrl == ALUC_ROR) ? ROR_out:
+                (iCtrl == ALUC_ROL) ? ROL_out:
                 32'h00000000;
 
 // Set high output register (Zero on anything not needing 64 bits)
