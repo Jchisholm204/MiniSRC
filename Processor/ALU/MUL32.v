@@ -68,10 +68,9 @@ ss0000000000zzzz
 wire signed [2*N-1:0] shiftedInitialValue[BTH-1:0];
 generate
     for (i = 0; i < BTH; i = i + 1) begin : gen_shiftedInitialValue
-        assign shiftedInitialValue[i] = {{(N-2*i){initialValue[i][N]}}, initialValue[i], {(2*i){1'b0}}};
+        assign shiftedInitialValue[i] = {{(N-2*i){initialValue[i][N+1]}}, initialValue[i], {(2*i){1'b0}}};
     end
 endgenerate
-assign oP = shiftedInitialValue[0] + shiftedInitialValue[1] + shiftedInitialValue[2] + shiftedInitialValue[3] + shiftedInitialValue[4] + shiftedInitialValue[5] + shiftedInitialValue[6] + shiftedInitialValue[7] + shiftedInitialValue[8] + shiftedInitialValue[9] + shiftedInitialValue[10] + shiftedInitialValue[11] + shiftedInitialValue[12] + shiftedInitialValue[13] + shiftedInitialValue[14] + shiftedInitialValue[15];
 // CSA Layer 1: 16 numbers (34-bit each+shifts) -> 4*4-to-2 reducers. -> 8 numbers (64-bit each).
 // Carry-Save Addition using 4-to-2 reducers.
 /* same as this but with 32-bit numbers.
