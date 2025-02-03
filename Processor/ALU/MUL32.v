@@ -102,36 +102,34 @@ generate
 endgenerate
 
 // CSA Layer 2: 8 numbers -> 2*4-to-2 reducers. -> 4 numbers
-wire [2*N:2] iCSA2[1:0][3:0];
-wire [2*N+1:2] oCSA2[1:0][1:0];
+wire [2*N-1:2] iCSA2[1:0][3:0];
+wire [2*N:2] oCSA2[1:0][1:0];
 generate
     for (i = 0; i < 2; i = i + 1) begin : gen_CSA2
         for (j = 0; j < 4; j = j + 1)
             assign iCSA2[i][j] = oCSA1[2*i+j/2][j%2][2*N-1:2];
-        Reducer4to2_Nbit #(2*N-1) CSA2_i(
+        Reducer4to2_Nbit #(2*N-2) CSA2_i(
             .iW(iCSA2[i][3]), .iX(iCSA2[i][2]), .iY(iCSA2[i][1]), .iZ(iCSA2[i][0]), .iCarry(1'b0), 
-            .oSum1(oCSA2[i][1][2*N+1:3]), .oSum0(oCSA2[i][0][2*N+1:2]));
+            .oSum1(oCSA2[i][1][2*N:3]), .oSum0(oCSA2[i][0][2*N:2]));
         assign oCSA2[i][1][2] = 1'b0;
     end
 endgenerate
 
 // CSA Layer 3: 4 numbers -> 1*4-to-2 reducer -> 2 numbers
-wire [2*N+1:2] iCSA3[3:0];
-wire [2*N+2:2] oCSA3[1:0];
+wire [2*N-1:2] iCSA3[3:0];
+wire [2*N:2] oCSA3[1:0];
 generate
     for (i = 0; i < 4; i = i + 1) 
-        assign iCSA3[i] = oCSA2[i/2][i%2][2*N:2];
+        assign iCSA3[i] = oCSA2[i/2][i%2][2*N-1:2];
 endgenerate
-Reducer4to2_Nbit #(2*N) CSA3(
+Reducer4to2_Nbit #(2*N-2) CSA3(
     .iW(iCSA3[3]), .iX(iCSA3[2]), .iY(iCSA3[1]), .iZ(iCSA3[0]), .iCarry(1'b0), 
-    .oSum1(oCSA3[1][2*N+2:3]), .oSum0(oCSA3[0][2*N+2:2]));
+    .oSum1(oCSA3[1][2*N:3]), .oSum0(oCSA3[0][2*N:2]));
 assign oCSA3[1][2] = 1'b0;
 
 // Carry-Propagate Addition using final 2 outputs from carry-save adders.
 // Should change to use the CLA adder.
-wire [2*N+3:2] oP_ext; 
-assign oP_ext = oCSA3[1] + oCSA3[0];
-assign oP = {oP_ext[2*N-1:2], initialValue[0][1:0]};
+assign oP = {oCSA3[1][2*N-1:2] + oCSA3[0][2*N-1:2], initialValue[0][1:0]};
 
 endmodule
 
