@@ -155,48 +155,50 @@ assign OPF_M  =  (OP_NOP || OP_HLT);
 
 // Assign Control outputs based on Codes and Cycle
 
-assign oPipe_nRst;
+// Pipe Reset Signal
+assign oPipe_nRst = nRst;
 // Program Counter Control Signals
-assign oPC_nRst;
-assign oPC_en;
-assign oPC_jmp;
-assign oPC_loadRA;
-assign oPC_loadImm;
+assign oPC_nRst = nRst;
+assign oPC_en = Cycle[1] || (Cycle[3] && (OP_BRx || OP_JAL || OP_JFR));
+assign oPC_jmp = Cycle[3] && OP_BRx;
+assign oPC_loadRA = Cycle[3] && (OP_JFR || OP_JAL);
+assign oPC_loadImm = 1'b0;
 
 // Register File Control Signals
-assign oRF_Write;
-assign oRF_AddrA;
-assign oRF_AddrB;
-assign oRF_AddrC;
+assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL));
+// Need to adjust this later to use R0 when not specified in INS type
+assign oRF_AddrA = ID_RA;
+assign oRF_AddrB = ID_RB;
+assign oRF_AddrC = ID_RC;
 
 // ALU Control Signals
-assign oALU_Ctrl;
-assign oRA_en; 
-assign oRB_en;
+assign oALU_Ctrl = 4'b0; // NOT DOING THIS NOW
+assign oRA_en = 1'b1; 
+assign oRB_en = 1'b1;
 
 // ALU Result High Load EN
-assign oRZH_en;
+assign oRZH_en = 1'b1;
 // ALU Result Low Load EN
-assign oRZL_en;
+assign oRZL_en = 1'b1;
 // ALU Result Save EN
-assign oRAS_en;
+assign oRAS_en = (OP_DIV || OP_MUL);
 
 // Memory Address Register EN
-assign oRMA_en;
+assign oRMA_en = 1'b1;
 // Memory Data Register EN
-assign oRMD_en;
+assign oRMD_en = 1'b1;
 // ALU B Input Select
-assign oMUX_B;
+assign oMUX_B = OPF_I;
 // ALU Result High Select
-assign oMUX_RZHS;
+assign oMUX_RZHS = (OP_MFH);
 // RF Write Back Select
-assign oMUX_WB;
+assign oMUX_WB = ~(OP_LD || OP_LI);
 // Memory Address Output Select
-assign oMUX_MA;
+assign oMUX_MA = ~Cycle[1];
 // ALU Storage Select
-assign oMUX_AS;
+assign oMUX_AS = (OP_MFL || OP_MFH);
 // Immediate value output
-assign oImm32;
+assign oImm32 = ID_imm32;
 
 
 endmodule
