@@ -1,5 +1,6 @@
 // TODO: Fix failure on edge cases.
 // TODO: Implement the ability to do this with unsigned numbers also. 
+// TODO: Combine all the carry-save adder generate blocks into one generate block.
 // EXTRA: index the carry-save adder structure so this multiplier works for N being any power of 2.
 
 // FAILS on edge cases, see sim_MUL32.v.
@@ -86,6 +87,7 @@ endgenerate
 */
 // need to make sure that sign extension is done properly.
 // The lowest 2 bits are piped directly to the output.
+// We can ignore the upper bit from each reducer because it is place value 2*N, and the final result (oP) is only 2*N bits (not 2*N+1).
 wire signed [2*N-1:2] iCSA1[3:0][3:0];
 wire signed [2*N:2] oCSA1[3:0][1:0];
 genvar j;
