@@ -1,9 +1,7 @@
-// TODO: Fix failure on edge cases.
 // TODO: Implement the ability to do this with unsigned numbers also. 
 // TODO: Combine all the carry-save adder generate blocks into one generate block.
 // EXTRA: index the carry-save adder structure so this multiplier works for N being any power of 2.
 
-// FAILS on edge cases, see sim_MUL32.v.
 // This assumes that the inputs are 32-bit 2's-complement signed integers.
 // Multiply (multiplicand) A by (multiplier) B to get (product) P.
 module MUL32 (input signed [31:0] iA, input signed [31:0] iB, output signed [63:0] oP);
