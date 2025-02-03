@@ -39,7 +39,7 @@ REG32 IR(.iClk(iClk), .nRst(nRst), .iEn(IR_en), .iD(iMemData), .oQ(IR_out));
 
 // Decoder IO
 wire [3:0] ID_RA, ID_RB, ID_RC;
-wire [4:0] ID_CODE;
+wire [4:0] ID_OpCode;
 wire [31:0] ID_imm32, ID_JFR, ID_JMP;
 
 // Opcode Signatures
@@ -68,17 +68,57 @@ localparam INS_NOT = 5'b10010;
 localparam INS_BRx = 5'b10011;
 // J Format Instructions
 localparam INS_JAL = 5'b10100;
-localparam INS_JR  = 5'b10101;
+localparam INS_JFR = 5'b10101;
 localparam INS_MFL = 5'b11000;
 localparam INS_MFH = 5'b11001;
 // M Format Instructions
 localparam INS_NOP = 5'b11010;
 localparam INS_HLT = 5'b11011;
 
-// OpCode Wires
+// OpCode R-Format Wires
+wire OP_LD, OP_LI,  OP_ST,  OP_ADD, OP_SUB, OP_AND, 
+     OP_OR, OP_ROR, OP_ROL, OP_SRL, OP_SRA, OP_SLL;
+// OpCode I-Format Wires
+wire OP_ADDI, OP_ANDI, OP_ORI, OP_DIV, OP_MUL, OP_NEG, OP_NOT;
+// OpCode B-Format Wires
+wire OP_BRx;
+// OpCode J-Format Wires
+wire OP_JAL, OP_JFR, OP_MFL, OP_MFH;
+// OpCode M-Format Wires
+wire OP_NOP, OP_HLT;
 
-// Opcode Signatures
-wire OPR_LD, OPR_ST;
+// Assign R-Format Wires
+assign OP_LD  = (ID_OpCode == INS_LD);
+assign OP_LI  = (ID_OpCode == INS_LI);
+assign OP_ST  = (ID_OpCode == INS_ST);
+assign OP_ADD = (ID_OpCode == INS_ADD);
+assign OP_SUB = (ID_OpCode == INS_SUB);
+assign OP_AND = (ID_OpCode == INS_AND);
+assign OP_OR  = (ID_OpCode == INS_OR);
+assign OP_ROR = (ID_OpCode == INS_ROR);
+assign OP_ROL = (ID_OpCode == INS_ROL);
+assign OP_SRL = (ID_OpCode == INS_SRL);
+assign OP_SRA = (ID_OpCode == INS_SRA);
+assign OP_SLL = (ID_OpCode == INS_SLL);
+// Assign I-Format Wires
+assign OP_ADDI = (ID_OpCode == INS_ADDI);
+assign OP_ANDI = (ID_OpCode == INS_ANDI);
+assign OP_ORI  = (ID_OpCode == INS_ORI);
+assign OP_DIV  = (ID_OpCode == INS_DIV);
+assign OP_MUL  = (ID_OpCode == INS_MUL);
+assign OP_NEG  = (ID_OpCode == INS_NEG);
+assign OP_NOT  = (ID_OpCode == INS_NOT);
+// Assign B-Format Wires
+assign OP_BRx = (ID_OpCode == INS_BRx);
+// Assign J-Format Wires
+assign OP_JAL = (ID_OpCode == INS_JAL);
+assign OP_JFR = (ID_OpCode == INS_JFR);
+assign OP_MFL = (ID_OpCode == INS_MFL);
+assign OP_MFH = (ID_OpCode == INS_MFH);
+// Assign M-Format Wires
+assign OP_NOP = (ID_OpCode == INS_NOP);
+assign OP_HLT = (ID_OpCode == INS_HLT);
+
 
 // Load/Store Instructions
 
@@ -90,6 +130,7 @@ Decode decoder(
     .oRa(ID_RA),
     .oRb(ID_RB),
     .oRc(ID_RC),
+    .oCode(ID_OpCode)
     .oJFR(ID_JFR),
     .oJMP(ID_JMP),
 );
