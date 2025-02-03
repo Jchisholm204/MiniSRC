@@ -27,17 +27,21 @@ localparam BTH = (N+1)/2; // = 16
 // Extend by 1 bit to handle negation
 wire signed [N+1:0] A, negA;
 wire signed [N+1:0] A2, negA2;
+wire [N+1:0] notA;
 wire [BTH-1:0] booth_sign;
 wire [1:0] booth_magnitude [BTH-1:0];
 wire [2*BTH-1:0] flat_booth_magnitude;
 
 assign A = {{2{iA[N-1]}}, iA};
-assign negA = -iA;
+assign negA = notA + 1'b1;
 assign A2 = {iA[N-1], iA, 1'b0};
-assign negA2 = {negA, 1'b0};
+assign negA2 = {negA[N:0], 1'b0};
 
 genvar i;
 generate
+for (i = 0; i < N+2; i = i + 1) begin : gen_notA
+    assign notA[i] = ~A[i];
+end
 for (i = 0; i < BTH; i = i + 1) begin : map_booth_magnitude
     assign booth_magnitude[i] = {flat_booth_magnitude[i+BTH], flat_booth_magnitude[i]};
 end
@@ -58,10 +62,10 @@ endgenerate
 /*
 can ignore the uppermost bit since it is always a sign extension.
          00000000
--000000 000000000
--0000 000000000
--00 000000000
-- 000000000
+000000 0000000000
+0000 0000000000
+00 0000000000
+00000000000
 */
 wire signed [2*N-1:0] shiftedInitialValue[BTH-1:0];
 generate
@@ -81,18 +85,18 @@ endgenerate
 ....................... i = 1, j = 0
 */
 // need to make sure that sign extension is done properly.
-wire signed [2*N-1:0] iCSA1[3:0][3:0];
-wire signed [2*N:0] oCSA1[3:0][1:0];
+wire signed [2*N-1:2] iCSA1[3:0][3:0];
+wire signed [2*N:2] oCSA1[3:0][1:0];
 genvar j;
 generate
     // i is the index of each reducer in the first layer.
     for (i = 0; i < 4; i = i + 1) begin : gen_CSA1
         for (j = 0; j < 4; j = j + 1)
-            assign iCSA1[i][j] = shiftedInitialValue[4*i+j];
-        Reducer4to2_Nbit #(2*N) CSA1_i(
+            assign iCSA1[i][j] = shiftedInitialValue[4*i+j][2*N-1:2];
+        Reducer4to2_Nbit #(2*N-2) CSA1_i(
             .iW(iCSA1[i][3]), .iX(iCSA1[i][2]), .iY(iCSA1[i][1]), .iZ(iCSA1[i][0]), .iCarry(1'b0), 
-            .oSum1(oCSA1[i][1][2*N:1]), .oSum0(oCSA1[i][0][2*N:0]));
-        assign oCSA1[i][1][0] = 1'b0;
+            .oSum1(oCSA1[i][1][2*N:3]), .oSum0(oCSA1[i][0][2*N:2]));
+        assign oCSA1[i][1][2] = 1'b0;
     end
 endgenerate
 
@@ -127,39 +131,39 @@ endgenerate
 // 63:25 for c14, 62:24 for s14, and 63:63 for c_out14 (last bit of s).
 
 // CSA Layer 2: 8 numbers -> 2*4-to-2 reducers. -> 4 numbers
-wire [2*N:0] iCSA2[1:0][3:0];
-wire [2*N+1:0] oCSA2[1:0][1:0];
+wire [2*N:2] iCSA2[1:0][3:0];
+wire [2*N+1:2] oCSA2[1:0][1:0];
 generate
     for (i = 0; i < 2; i = i + 1) begin : gen_CSA2
         for (j = 0; j < 4; j = j + 1)
-            assign iCSA2[i][j] = oCSA1[2*i+j/2][j%2][2*N-1:0];
-        Reducer4to2_Nbit #(2*N+1) CSA2_i(
+            assign iCSA2[i][j] = oCSA1[2*i+j/2][j%2][2*N-1:2];
+        Reducer4to2_Nbit #(2*N-1) CSA2_i(
             .iW(iCSA2[i][3]), .iX(iCSA2[i][2]), .iY(iCSA2[i][1]), .iZ(iCSA2[i][0]), .iCarry(1'b0), 
-            .oSum1(oCSA2[i][1][2*N+1:1]), .oSum0(oCSA2[i][0][2*N+1:0]));
-        assign oCSA2[i][1][0] = 1'b0;
+            .oSum1(oCSA2[i][1][2*N+1:3]), .oSum0(oCSA2[i][0][2*N+1:2]));
+        assign oCSA2[i][1][2] = 1'b0;
     end
 endgenerate
 
 
 // CSA Layer 3: 4 numbers -> 1*4-to-2 reducer -> 2 numbers
-wire [2*N+1:0] iCSA3[3:0];
-wire [2*N+2:0] oCSA3[1:0];
+wire [2*N+1:2] iCSA3[3:0];
+wire [2*N+2:2] oCSA3[1:0];
 generate
     for (i = 0; i < 4; i = i + 1) 
-        assign iCSA3[i] = oCSA2[i/2][i%2][2*N:0];
+        assign iCSA3[i] = oCSA2[i/2][i%2][2*N:2];
 endgenerate
-Reducer4to2_Nbit #(2*N + 2) CSA3(
+Reducer4to2_Nbit #(2*N) CSA3(
     .iW(iCSA3[3]), .iX(iCSA3[2]), .iY(iCSA3[1]), .iZ(iCSA3[0]), .iCarry(1'b0), 
-    .oSum1(oCSA3[1][2*N+2:1]), .oSum0(oCSA3[0][2*N+2:0]));
-assign oCSA3[1][0] = 1'b0;
+    .oSum1(oCSA3[1][2*N+2:3]), .oSum0(oCSA3[0][2*N+2:2]));
+assign oCSA3[1][2] = 1'b0;
 
 
 // Carry-Propagate Addition using final 2 outputs from carry-save adders.
 
 // // Should change to use the CLA adder.
-wire [2*N+3:0] oP_ext; 
+wire [2*N+3:2] oP_ext; 
 assign oP_ext = oCSA3[1] + oCSA3[0];
-assign oP = oP_ext[2*N-1:0];
+assign oP = {oP_ext[2*N-1:2], initialValue[0][1:0]};
 
 endmodule
 

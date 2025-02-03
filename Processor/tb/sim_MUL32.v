@@ -51,18 +51,18 @@ initial begin: test
     I = 64'h80000001_7FFFFFFF; // success
     #1;
     // These always fail on the top 32 bits, if: 1 < I[31:0] or I[31:0] < -1.
-    i = 0;
-    while (1) begin
-        I[63:32] = 32'h80000000;
-        I[31:0] = i;
-        i = i + 1;
-        #1;
-    end
-    // random cases
+    // i = 0;
     // while (1) begin
-    //     I = {$random(seed1), $random(seed2)};
+    //     I[63:32] = 32'h80000000;
+    //     I[31:0] = i;
+    //     i = i + 1;
     //     #1;
     // end
+    // random cases
+    while (1) begin
+        I = {$random(seed1), $random(seed2)};
+        #1;
+    end
 end
 
 always @(p_sim) begin
