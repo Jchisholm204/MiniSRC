@@ -43,11 +43,45 @@ wire [4:0] ID_CODE;
 wire [31:0] ID_imm32, ID_JFR, ID_JMP;
 
 // Opcode Signatures
-wire INS_R, INS_I, INS_B, INS_J, INS_M;
-wire INS_MEM, INS_ADD, INS_SUB, INS_AND,
-     INS_DEV, INS_MUL, INS_NOT, INS_OR,
-     INS_SRL, INS_SRA, INS_SLL, INS_ROR,
-     INS_ROL, INS_MFx, INS_BRx, INS_Jxx;
+// R Format Instructions
+localparam INS_LD  = 5'b00000;
+localparam INS_LI  = 5'b00001;
+localparam INS_ST  = 5'b00010;
+localparam INS_ADD = 5'b00011;
+localparam INS_SUB = 5'b00100;
+localparam INS_AND = 5'b00101;
+localparam INS_OR  = 5'b00110;
+localparam INS_ROR = 5'b00111;
+localparam INS_ROL = 5'b01000;
+localparam INS_SRL = 5'b01001;
+localparam INS_SRA = 5'b01010;
+localparam INS_SLL = 5'b01011;
+// I Format Instructions
+localparam INS_ADDI = 5'b01100;
+localparam INS_ANDI = 5'b01101;
+localparam INS_ORI  = 5'b01110;
+localparam INS_DIV = 5'b01111;
+localparam INS_MUL = 5'b10000;
+localparam INS_NEG = 5'b10001;
+localparam INS_NOT = 5'b10010;
+// B Format Instructions
+localparam INS_BRx = 5'b10011;
+// J Format Instructions
+localparam INS_JAL = 5'b10100;
+localparam INS_JR  = 5'b10101;
+localparam INS_MFL = 5'b11000;
+localparam INS_MFH = 5'b11001;
+// M Format Instructions
+localparam INS_NOP = 5'b11010;
+localparam INS_HLT = 5'b11011;
+
+// OpCode Wires
+
+// Opcode Signatures
+wire OPR_LD, OPR_ST;
+
+// Load/Store Instructions
+
 
 // Decoder
 Decode decoder(
