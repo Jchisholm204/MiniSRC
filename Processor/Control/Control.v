@@ -27,10 +27,13 @@ output wire oPipe_nRst;
 output wire oPC_nRst, oPC_en, oPC_jmp, oPC_loadRA, oPC_loadImm;
 output wire oRF_Write, oRF_AddrA, oRF_AddrB, oRF_AddrC;
 output wire oALU_Ctrl, oRA_en, oRB_en;
-output wire oRZH_en, oRZL_en, oRAS_en,
+output wire oRZH_en, oRZL_en, oRAS_en;
 output wire oRMA_en, oRMD_en;
 output wire oMUX_B, oMUX_RZHS, oMUX_WB, oMUX_MA, oMUX_AS;
 output wire [31:0] oImm32;
+
+// Step Counter
+reg [5:1] Cycle;
 
 // IR
 wire IR_en;
@@ -86,6 +89,32 @@ wire OP_BRx;
 wire OP_JAL, OP_JFR, OP_MFL, OP_MFH;
 // OpCode M-Format Wires
 wire OP_NOP, OP_HLT;
+// OpCode Format Wires
+wire OPF_R, OPF_I, OPF_B, OPF_J, OPF_M;
+
+// Assign Cycle
+always @(posedge iClk or negedge nRst)
+begin
+    if(!nRst)
+        Cycle = 5'b00001;
+    else begin
+        if(iRdy) Cycle = {Cycle[4:1], Cycle[5]};
+    end
+end
+
+// Decoder
+Decode decoder(
+    .iINS(IR_out),
+    .oImm32(ID_imm32),
+    .oRa(ID_RA),
+    .oRb(ID_RB),
+    .oRc(ID_RC),
+    .oCode(ID_OpCode)
+    .oJFR(ID_JFR),
+    .oJMP(ID_JMP),
+);
+
+// Assign OP-Code Types
 
 // Assign R-Format Wires
 assign OP_LD  = (ID_OpCode == INS_LD);
@@ -100,6 +129,7 @@ assign OP_ROL = (ID_OpCode == INS_ROL);
 assign OP_SRL = (ID_OpCode == INS_SRL);
 assign OP_SRA = (ID_OpCode == INS_SRA);
 assign OP_SLL = (ID_OpCode == INS_SLL);
+assign OPF_R  = (OP_LD || OP_LI || OP_ST || OP_ADD || OP_SUB || OP_AND || OP_OR || OP_ROR || OP_ROL || OP_SRL || OP_SRA || OP_SLL);
 // Assign I-Format Wires
 assign OP_ADDI = (ID_OpCode == INS_ADDI);
 assign OP_ANDI = (ID_OpCode == INS_ANDI);
@@ -108,31 +138,65 @@ assign OP_DIV  = (ID_OpCode == INS_DIV);
 assign OP_MUL  = (ID_OpCode == INS_MUL);
 assign OP_NEG  = (ID_OpCode == INS_NEG);
 assign OP_NOT  = (ID_OpCode == INS_NOT);
+assign OPF_I   = (OP_ADDI || OP_ANDI || OP_ORI || OP_DIV || OP_MUL || OP_NEG || OP_NOT);
 // Assign B-Format Wires
 assign OP_BRx = (ID_OpCode == INS_BRx);
+assign OPF_B = OP_BRx;
 // Assign J-Format Wires
 assign OP_JAL = (ID_OpCode == INS_JAL);
 assign OP_JFR = (ID_OpCode == INS_JFR);
 assign OP_MFL = (ID_OpCode == INS_MFL);
 assign OP_MFH = (ID_OpCode == INS_MFH);
+assign OPF_J  = (OP_JAL || OP_JFR || OP_MFL || OP_MFH);
 // Assign M-Format Wires
 assign OP_NOP = (ID_OpCode == INS_NOP);
 assign OP_HLT = (ID_OpCode == INS_HLT);
+assign OPF_M  =  (OP_NOP || OP_HLT);
 
+// Assign Control outputs based on Codes and Cycle
 
-// Load/Store Instructions
+assign oPipe_nRst;
+// Program Counter Control Signals
+assign oPC_nRst;
+assign oPC_en;
+assign oPC_jmp;
+assign oPC_loadRA;
+assign oPC_loadImm;
 
+// Register File Control Signals
+assign oRF_Write;
+assign oRF_AddrA;
+assign oRF_AddrB;
+assign oRF_AddrC;
 
-// Decoder
-Decode decoder(
-    .iINS(IR_out),
-    .oImm32(ID_imm32),
-    .oRa(ID_RA),
-    .oRb(ID_RB),
-    .oRc(ID_RC),
-    .oCode(ID_OpCode)
-    .oJFR(ID_JFR),
-    .oJMP(ID_JMP),
-);
+// ALU Control Signals
+assign oALU_Ctrl;
+assign oRA_en; 
+assign oRB_en;
+
+// ALU Result High Load EN
+assign oRZH_en;
+// ALU Result Low Load EN
+assign oRZL_en;
+// ALU Result Save EN
+assign oRAS_en;
+
+// Memory Address Register EN
+assign oRMA_en;
+// Memory Data Register EN
+assign oRMD_en;
+// ALU B Input Select
+assign oMUX_B;
+// ALU Result High Select
+assign oMUX_RZHS;
+// RF Write Back Select
+assign oMUX_WB;
+// Memory Address Output Select
+assign oMUX_MA;
+// ALU Storage Select
+assign oMUX_AS;
+// Immediate value output
+assign oImm32;
+
 
 endmodule
