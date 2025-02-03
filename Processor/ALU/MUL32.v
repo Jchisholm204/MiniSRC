@@ -6,14 +6,12 @@
 // FAILS on edge cases, see sim_MUL32.v.
 // This assumes that the inputs are 32-bit 2's-complement signed integers.
 // Multiply (multiplicand) A by (multiplier) B to get (product) P.
-// It would be nice if there was a way to make this work for both signed and unsigned numbers.
 module MUL32 (input signed [31:0] iA, input signed [31:0] iB, output signed [63:0] oP);
 
 // Compute the Booth Encoding of the multiplier (B).
 localparam N = 32;
 
-// -2A, -A, 0, A, 2A selection and shifts using Booth Encoding.
-// The number of booth encoded values is N/2.
+// The number of booth encoded values.
 localparam BTH = (N+1)/2; // = 16
 // For an ideal cascade of 4-to-2 reducers to align with the number of inputs, we need N to be a power of 2.
 // Number of levels of Carry-Save Addition (CSA) using 4-to-2 reducers.
@@ -58,7 +56,6 @@ generate
             : {(N+1){1'b0}});
     end
 endgenerate
-// Now testing to ensure the initial values are calculated correctly.
 /*
 the s's in this diagram represent the sign bit of the initial values.
 the z's in this diagram represent the padded zero bit of the initial values.
@@ -74,8 +71,8 @@ generate
         assign shiftedInitialValue[i] = {{(N-2*i){initialValue[i][N]}}, initialValue[i], {(2*i){1'b0}}};
     end
 endgenerate
-
-// CSA Layer 1: 16 numbers (33-bit each+shifts) -> 4*4-to-2 reducers. -> 8 numbers (64-bit each).
+assign oP = shiftedInitialValue[0] + shiftedInitialValue[1] + shiftedInitialValue[2] + shiftedInitialValue[3] + shiftedInitialValue[4] + shiftedInitialValue[5] + shiftedInitialValue[6] + shiftedInitialValue[7] + shiftedInitialValue[8] + shiftedInitialValue[9] + shiftedInitialValue[10] + shiftedInitialValue[11] + shiftedInitialValue[12] + shiftedInitialValue[13] + shiftedInitialValue[14] + shiftedInitialValue[15];
+// CSA Layer 1: 16 numbers (34-bit each+shifts) -> 4*4-to-2 reducers. -> 8 numbers (64-bit each).
 // Carry-Save Addition using 4-to-2 reducers.
 /* same as this but with 32-bit numbers.
 0 0000 0000 0000 0000
