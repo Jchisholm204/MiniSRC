@@ -24,24 +24,20 @@ localparam BTH = (N+1)/2; // = 16
 // localparam reducers_in_CSA_level3 = CSA_level2*2/4; // = 1
 // Final Carry-Propagate Addition (CPA) is done using the final 2 outputs from the last level of CSA.
 
-wire signed [N-1:0] notA, negA;
-wire signed [N:0] A2, negA2;
-wire signed [N:0] A_ext, negA_ext;
+// Extend by 1 bit to handle negation
+wire signed [N+1:0] A, negA;
+wire signed [N+1:0] A2, negA2;
 wire [BTH-1:0] booth_sign;
 wire [1:0] booth_magnitude [BTH-1:0];
 wire [2*BTH-1:0] flat_booth_magnitude;
 
-assign negA = notA + 1'b1;
-assign A2 = {iA, 1'b0};
+assign A = {{2{iA[N-1]}}, iA};
+assign negA = -iA;
+assign A2 = {iA[N-1], iA, 1'b0};
 assign negA2 = {negA, 1'b0};
-assign A_ext = {iA[N-1], iA};
-assign negA_ext = {negA[N-1], negA};
 
 genvar i;
 generate
-for (i = 0; i < N; i = i + 1) begin : gen_notA
-    assign notA[i] = ~iA[i];
-end
 for (i = 0; i < BTH; i = i + 1) begin : map_booth_magnitude
     assign booth_magnitude[i] = {flat_booth_magnitude[i+BTH], flat_booth_magnitude[i]};
 end
@@ -49,70 +45,32 @@ endgenerate
 
 BoothEncode_2bit_Nbit #(N) be2bit(iB, booth_sign, flat_booth_magnitude[2*BTH-1:BTH], flat_booth_magnitude[BTH-1:0]);
 
-// if sign is negative, then we have to do sign extension.
-// if booth is 0, then just add with zero.
-// if booth is 1, then add A with an input carry of 0.
-// if booth is 2, then add A shifted left by one with an input carry of 0.
-// if booth is -2, then add notA shifted left by one with an input carry of 2. (since notA will be shifted, we can accomplish an input carry of 2 by replacing the least significant bit with 1 and having a carry in of 1)
-// if booth is -1, then add notA with an input carry of 1.
-// We know that it's impossible to have consecutive -2 or 2 in the booth encoding. Look at the table to see why.
-// After a 0, you can have either -2, or +2.
-// After a +1, you can have either a 0, +1, or -2, -1. (so just not +2)
-// After a +2, you can have either a +1, or -1.
-// After a -2, you can have either a +1, or -1.
-// After a -1, you can have either a +1, or -1, or +2, or 0. (so just not -2)
-
-
-// There will be N/2 Booth Encoded values to be added.
-// If they are all 2A or -2A, then they are all N+1 bits long.
-
-wire signed [N:0] initialValue[BTH-1:0];
+wire signed [N+1:0] initialValue[BTH-1:0];
 
 generate
     for (i = 0; i < BTH; i = i + 1) begin : gen_initialValue
         assign initialValue[i] = booth_magnitude[i][1] ? (booth_sign[i] ? negA2 : A2)
-            : (booth_magnitude[i][0] ? (booth_sign[i] ? negA_ext : A_ext) 
+            : (booth_magnitude[i][0] ? (booth_sign[i] ? negA : A) 
             : {(N+1){1'b0}});
     end
 endgenerate
 // Now testing to ensure the initial values are calculated correctly.
 /*
+can ignore the uppermost bit since it is always a sign extension.
          00000000
-0000000 000000000
-00000 000000000
-000 000000000
-0 000000000
+-000000 000000000
+-0000 000000000
+-00 000000000
+- 000000000
 */
 wire signed [2*N-1:0] shiftedInitialValue[BTH-1:0];
 generate
     for (i = 0; i < BTH; i = i + 1) begin : gen_shiftedInitialValue
-        assign shiftedInitialValue[i] = {{(N-1-2*i){initialValue[i][32]}}, initialValue[i], {(2*i){1'b0}}};
+        assign shiftedInitialValue[i] = {{(N-2*i){initialValue[i][N]}}, initialValue[i], {(2*i){1'b0}}};
     end
 endgenerate
 
-// assign oP = shiftedInitialValue[0] + shiftedInitialValue[1] + shiftedInitialValue[2] + shiftedInitialValue[3] + shiftedInitialValue[4] + shiftedInitialValue[5] + shiftedInitialValue[6] + shiftedInitialValue[7] + shiftedInitialValue[8] + shiftedInitialValue[9] + shiftedInitialValue[10] + shiftedInitialValue[11] + shiftedInitialValue[12] + shiftedInitialValue[13] + shiftedInitialValue[14] + shiftedInitialValue[15];
-
-
-// need to make sure that sign extension is done properly.
-// wire signed [38:0] iCSA1[3:0][3:0];
-// wire signed [39:0] oCSA1[3:0][1:0];
-// genvar j;
-// generate
-//     // i is the index of each reducer in the first layer.
-//     for (i = 0; i < 4; i = i + 1) begin : gen_CSA1
-//         for (j = 0; j < 4; j = j + 1)
-//             assign iCSA1[i][j] = {{(6-2*j){initialValue[4*i+j][32]}}, initialValue[4*i+j], {2*j{1'b0}}};
-//         Reducer4to2_Nbit #(39) CSA1_i(
-//             .iW(iCSA1[i][3]), .iX(iCSA1[i][2]), .iY(iCSA1[i][1]), .iZ(iCSA1[i][0]), .iCarry(1'b0), 
-//             .oSum1(oCSA1[i][1][39:1]), .oSum0(oCSA1[i][0][39:0]));
-//         assign oCSA1[i][1][0] = 1'b0;
-//     end
-// endgenerate
-
-// assign oP = iCSA1[0][0] + iCSA1[0][1] + iCSA1[0][2] + iCSA1[0][3] + {iCSA1[1][0], 8'b0} + {iCSA1[1][1], 8'b0} + {iCSA1[1][2], 8'b0} + {iCSA1[1][3], 8'b0} + {iCSA1[2][0], 16'b0} + {iCSA1[2][1], 16'b0} + {iCSA1[2][2], 16'b0} + {iCSA1[2][3], 16'b0} + {iCSA1[3][0], 24'b0} + {iCSA1[3][1], 24'b0} + {iCSA1[3][2], 24'b0} + {iCSA1[3][3], 24'b0};
-
-// assign oP = {{24{oCSA1[0][0][39]}}, oCSA1[0][0]} + {{24{oCSA1[0][1][39]}}, oCSA1[0][1]} + {{16{oCSA1[1][0][39]}}, oCSA1[1][0], 8'b0} + {{16{oCSA1[1][1][39]}}, oCSA1[1][1], 8'b0} + {{8{oCSA1[2][0][39]}}, oCSA1[2][0], 16'b0} + {{8{oCSA1[2][1][39]}}, oCSA1[2][1], 16'b0} + {oCSA1[3][0], 24'b0} + {oCSA1[3][1], 24'b0};
-
+// CSA Layer 1: 16 numbers (33-bit each+shifts) -> 4*4-to-2 reducers. -> 8 numbers (64-bit each).
 // Carry-Save Addition using 4-to-2 reducers.
 /* same as this but with 32-bit numbers.
 0 0000 0000 0000 0000
@@ -138,127 +96,70 @@ generate
     end
 endgenerate
 
-// assign oP = oCSA1[0][0] + oCSA1[0][1] + oCSA1[1][0] + oCSA1[1][1] + oCSA1[2][0] + oCSA1[2][1] + oCSA1[3][0] + oCSA1[3][1];
+// 1st number shifted 0 -> (30{32})32:0 (62:0)
+// 2nd number shifted 2 -> (28{34})34:2 (62:2)
+// 3rd number shifted 4 -> (26{36})36:4 (62:4)
+// 4th number shifted 6 -> (24{38})38:6 (62:6)
+// 64-bit vectors coming out of CSA11. shifted by 0.
+// 63:1 for c11, 62:0 for s11, and 63:63 for c_out11 (last bit of s).
+// actually, first 2 bits of 1st number can be assigned directly to oP[1:0].
 
-// CSA Layer 1: 16 numbers (33-bit each+shifts) -> 4*4-to-2 reducers. -> 8 numbers (40-bit each + shifts)
+// 5th number shifted 8  -> (22{40})40:8 (62:8)
+// 6th number shifted 10 -> (20{42})42:10 (62:10)
+// 7th number shifted 12 -> (18{44})44:12 (62:12)
+// 8th number shifted 14 -> (16{46})46:14 (62:14)
+// lower 8 bits (7:0) are all zeros in this adder.
+// 64-bit vectors coming out of CSA11. shifted by 0.
+// 63:1 for c12, 62:0 for s12, and 63:63 for c_out11 (last bit of s).
 
-// 1 shift may occur due to multiplication by 2 (just condidering numbers as 33 bit for this sake). 2 shifts due to increase in place value.
+// 9th number shifted 16  -> (14{48})48:16 (62:16)
+// 10th number shifted 18 -> (12{50})50:18 (62:18)
+// 11th number shifted 20 -> (10{52})52:20 (62:20)
+// 12th number shifted 22 -> (8{54})54:22 (62:22)
+// 64-bit vectors coming out of CSA11. shifted by 0.
+// 63:1 for c12, 62:0 for s12, and 63:63 for c_out11 (last bit of s).
 
-// 1st number shifted 0 -> 32:0 (33 bit)
-// 2nd number shifted 2 -> 34:2
-// 3rd number shifted 4 -> 36:4 
-// 4th number shifted 6 -> 38:6 
-// 38-0+1=39-bit vectors coming out of CSA11. shifted by 0.
-// 39:1 for c11, 38:0 for s11, and 39:39 for c_out11 (last bit of s).
-// may be fewer bits since there is some missed overlap. (the first 2 bits can go straight to the output)
-
-// 5th number shifted 8   -> 40:8
-// 6th number shifted 10 -> 42:10
-// 7th number shifted 12 -> 44:12
-// 8th number shifted 14 -> 46:14
-// 46-8+1=39-bit vectors coming out of CSA11. shifted by 8.
-// 47:9 for c12, 46:8 for s12, and 47:47 for c_out12 (last bit of s).
-
-// 9th number shifted 16  -> 48:16
-// 10th number shifted 18 -> 50:18
-// 11th number shifted 20 -> 52:20
-// 12th number shifted 22 -> 54:22
-// 54-16+1=39-bit vectors coming out of CSA11. shifted by 16.
-// 55:17 for c13, 54:16 for s13, and 55:55 for c_out13 (last bit of s).
-
-// 13th number shifted 24 -> 56:24
-// 14th number shifted 26 -> 58:26
-// 15th number shifted 28 -> 60:28
-// 16th number shifted 30 -> 62:30
+// 13th number shifted 24 -> 56:24 (63:24)
+// 14th number shifted 26 -> 58:26 (63:26)
+// 15th number shifted 28 -> 60:28 (63:28)
+// 16th number shifted 30 -> 62:30 (63:30)
 // 62-24+1=39-bit vectors coming out of CSA11. shifted by 24.
 // 63:25 for c14, 62:24 for s14, and 63:63 for c_out14 (last bit of s).
 
-// wire [47:0] iCSA2[1:0][3:0];
-// wire [48:0] oCSA2[1:0][1:0];
-// generate
-//     for (i = 0; i < 2; i = i + 1) begin : gen_CSA2
-//         // Sign extension from previous layer.
-//         assign iCSA2[i][0] = {{8{oCSA1[2*i][0][39]}}, oCSA1[2*i][0]};
-//         assign iCSA2[i][1] = {{8{oCSA1[2*i][1][39]}}, oCSA1[2*i][1]};
-//         assign iCSA2[i][2] = {oCSA1[2*i+1][0], 8'b0};
-//         assign iCSA2[i][3] = {oCSA1[2*i+1][1], 8'b0};
-//         Reducer4to2_Nbit #(48) CSA2_i(
-//             .iW(iCSA2[i][3]), .iX(iCSA2[i][2]), .iY(iCSA2[i][1]), .iZ(iCSA2[i][0]), .iCarry(1'b0), 
-//             .oSum1(oCSA2[i][1][48:1]), .oSum0(oCSA2[i][0][48:0]));
-//         assign oCSA2[i][1][0] = 1'b0;
-//     end
-// endgenerate
-wire [2*N-1:0] iCSA2[1:0][3:0];
-wire [2*N:0] oCSA2[1:0][1:0];
+// CSA Layer 2: 8 numbers -> 2*4-to-2 reducers. -> 4 numbers
+wire [2*N:0] iCSA2[1:0][3:0];
+wire [2*N+1:0] oCSA2[1:0][1:0];
 generate
     for (i = 0; i < 2; i = i + 1) begin : gen_CSA2
-        // Sign extension from previous layer.
-        assign iCSA2[i][0] = oCSA1[2*i][0][63:0];
-        assign iCSA2[i][1] = oCSA1[2*i][1][63:0];
-        assign iCSA2[i][2] = oCSA1[2*i+1][0][63:0];
-        assign iCSA2[i][3] = oCSA1[2*i+1][1][63:0];
-        Reducer4to2_Nbit #(2*N) CSA2_i(
+        for (j = 0; j < 4; j = j + 1)
+            assign iCSA2[i][j] = oCSA1[2*i+j/2][j%2][2*N-1:0];
+        Reducer4to2_Nbit #(2*N+1) CSA2_i(
             .iW(iCSA2[i][3]), .iX(iCSA2[i][2]), .iY(iCSA2[i][1]), .iZ(iCSA2[i][0]), .iCarry(1'b0), 
-            .oSum1(oCSA2[i][1][64:1]), .oSum0(oCSA2[i][0][64:0]));
+            .oSum1(oCSA2[i][1][2*N+1:1]), .oSum0(oCSA2[i][0][2*N+1:0]));
         assign oCSA2[i][1][0] = 1'b0;
     end
 endgenerate
 
-// CSA Layer 2: 8 numbers (40-bit each) -> 2*4-to-2 reducers. -> 4 numbers
 
-// 1st number shifted 0 -> 39:0 oCSA1[0][0]
-// 2nd number shifted 0 -> 39:0 oCSA1[0][1]
-// 3rd number shifted 8 -> 47:8 oCSA1[1][0]
-// 4th number shifted 8 -> 47:8 oCSA1[1][1]
-// 47-0+1=48-bit vectors coming out of CSA21. shifted by 0.
-// 48:1 for c21, 47:0 for s21, and 48:48 for c_out21 (last bit of s).
-// two 49-bit numbers to add in the next layer, shifted by 0.
-
-// 5th number shifted 16 -> 55:16 oCSA1[2][0]
-// 6th number shifted 16 -> 55:16 oCSA1[2][1]
-// 7th number shifted 24 -> 63:24 oCSA1[3][0]
-// 8th number shifted 24 -> 63:24 oCSA1[3][1]
-// 63-16+1=48-bit vectors coming out of CSA21. shifted by 16.
-// 64:17 for c22, 63:16 for s22, and 64:64 for c_out22 (last bit of s).
-// two 49-bit numbers to add in the next layer, shifted by 16.
-
-// wire [64:0] iCSA3[3:0];
-// wire [65:0] oCSA3[1:0];
-
-// assign iCSA3[0] = {{16{oCSA2[0][0][48]}}, oCSA2[0][0]};
-// assign iCSA3[1] = {{16{oCSA2[0][1][48]}}, oCSA2[0][1]};
-// assign iCSA3[2] = {oCSA2[1][0], 16'b0};
-// assign iCSA3[3] = {oCSA2[1][1], 16'b0};
-// Reducer4to2_Nbit #(65) CSA3(
-//     .iW(iCSA3[3]), .iX(iCSA3[2]), .iY(iCSA3[1]), .iZ(iCSA3[0]), .iCarry(1'b0), 
-//     .oSum1(oCSA3[1][65:1]), .oSum0(oCSA3[0][65:0]));
-// assign oCSA3[1][0] = 1'b0;
-wire [2*N-1:0] iCSA3[3:0];
-wire [2*N:0] oCSA3[1:0];
-
+// CSA Layer 3: 4 numbers -> 1*4-to-2 reducer -> 2 numbers
+wire [2*N+1:0] iCSA3[3:0];
+wire [2*N+2:0] oCSA3[1:0];
 generate
     for (i = 0; i < 4; i = i + 1) 
-        assign iCSA3[i] = oCSA2[i/2][i%2][2*N-1:0];
+        assign iCSA3[i] = oCSA2[i/2][i%2][2*N:0];
 endgenerate
-Reducer4to2_Nbit #(64) CSA3(
+Reducer4to2_Nbit #(2*N + 2) CSA3(
     .iW(iCSA3[3]), .iX(iCSA3[2]), .iY(iCSA3[1]), .iZ(iCSA3[0]), .iCarry(1'b0), 
-    .oSum1(oCSA3[1][64:1]), .oSum0(oCSA3[0][64:0]));
+    .oSum1(oCSA3[1][2*N+2:1]), .oSum0(oCSA3[0][2*N+2:0]));
 assign oCSA3[1][0] = 1'b0;
 
-// CSA Layer 3: 4 numbers (49-bit each) -> 1*4-to-2 reducer -> 2 numbers (63-bit each)
-
-// 1st number shifted 0 -> 48:0
-// 2nd number shifted 0 -> 48:1
-// 3rd number shifted 16 -> 64:16
-// 4th number shifted 16 -> 64:17
-// 64-0+1=65-bit vectors coming out of CSA31. shifted by 0.
-// 65:1 for c31, 64:0 for s31, and 65:65 for c_out31 (last bit of s).
-// two 66-bit numbers to add in the next layer. (the bits don't actually add up that much, but I'm just going to keep it as 66 for now).
 
 // Carry-Propagate Addition using final 2 outputs from carry-save adders.
 
 // // Should change to use the CLA adder.
-assign oP = oCSA3[1][63:0] + oCSA3[0][63:0];
+wire [2*N+3:0] oP_ext; 
+assign oP_ext = oCSA3[1] + oCSA3[0];
+assign oP = oP_ext[2*N-1:0];
 
 endmodule
 
