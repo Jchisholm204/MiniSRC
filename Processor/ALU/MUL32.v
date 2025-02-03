@@ -1,5 +1,4 @@
 // TODO: Fix failure on edge cases.
-// TODO: Figure out how to limit the width of the carry-save adders (don't need 64 bits at each level).
 // TODO: Implement the ability to do this with unsigned numbers also. 
 // EXTRA: index the carry-save adder structure so this multiplier works for N being any power of 2.
 
@@ -60,12 +59,13 @@ generate
 endgenerate
 // Now testing to ensure the initial values are calculated correctly.
 /*
-can ignore the uppermost bit since it is always a sign extension.
-         00000000
-000000 0000000000
-0000 0000000000
-00 0000000000
-00000000000
+the s's in this diagram represent the sign bit of the initial values.
+the z's in this diagram represent the padded zero bit of the initial values.
+        00000000
+ssssss0000000000
+ssss0000000000zz
+ss0000000000zzzz
+0000000000zzzzzz
 */
 wire signed [2*N-1:0] shiftedInitialValue[BTH-1:0];
 generate
@@ -85,6 +85,7 @@ endgenerate
 ....................... i = 1, j = 0
 */
 // need to make sure that sign extension is done properly.
+// The lowest 2 bits are piped directly to the output.
 wire signed [2*N-1:2] iCSA1[3:0][3:0];
 wire signed [2*N:2] oCSA1[3:0][1:0];
 genvar j;
@@ -100,36 +101,6 @@ generate
     end
 endgenerate
 
-// 1st number shifted 0 -> (30{32})32:0 (62:0)
-// 2nd number shifted 2 -> (28{34})34:2 (62:2)
-// 3rd number shifted 4 -> (26{36})36:4 (62:4)
-// 4th number shifted 6 -> (24{38})38:6 (62:6)
-// 64-bit vectors coming out of CSA11. shifted by 0.
-// 63:1 for c11, 62:0 for s11, and 63:63 for c_out11 (last bit of s).
-// actually, first 2 bits of 1st number can be assigned directly to oP[1:0].
-
-// 5th number shifted 8  -> (22{40})40:8 (62:8)
-// 6th number shifted 10 -> (20{42})42:10 (62:10)
-// 7th number shifted 12 -> (18{44})44:12 (62:12)
-// 8th number shifted 14 -> (16{46})46:14 (62:14)
-// lower 8 bits (7:0) are all zeros in this adder.
-// 64-bit vectors coming out of CSA11. shifted by 0.
-// 63:1 for c12, 62:0 for s12, and 63:63 for c_out11 (last bit of s).
-
-// 9th number shifted 16  -> (14{48})48:16 (62:16)
-// 10th number shifted 18 -> (12{50})50:18 (62:18)
-// 11th number shifted 20 -> (10{52})52:20 (62:20)
-// 12th number shifted 22 -> (8{54})54:22 (62:22)
-// 64-bit vectors coming out of CSA11. shifted by 0.
-// 63:1 for c12, 62:0 for s12, and 63:63 for c_out11 (last bit of s).
-
-// 13th number shifted 24 -> 56:24 (63:24)
-// 14th number shifted 26 -> 58:26 (63:26)
-// 15th number shifted 28 -> 60:28 (63:28)
-// 16th number shifted 30 -> 62:30 (63:30)
-// 62-24+1=39-bit vectors coming out of CSA11. shifted by 24.
-// 63:25 for c14, 62:24 for s14, and 63:63 for c_out14 (last bit of s).
-
 // CSA Layer 2: 8 numbers -> 2*4-to-2 reducers. -> 4 numbers
 wire [2*N:2] iCSA2[1:0][3:0];
 wire [2*N+1:2] oCSA2[1:0][1:0];
@@ -144,7 +115,6 @@ generate
     end
 endgenerate
 
-
 // CSA Layer 3: 4 numbers -> 1*4-to-2 reducer -> 2 numbers
 wire [2*N+1:2] iCSA3[3:0];
 wire [2*N+2:2] oCSA3[1:0];
@@ -157,10 +127,8 @@ Reducer4to2_Nbit #(2*N) CSA3(
     .oSum1(oCSA3[1][2*N+2:3]), .oSum0(oCSA3[0][2*N+2:2]));
 assign oCSA3[1][2] = 1'b0;
 
-
 // Carry-Propagate Addition using final 2 outputs from carry-save adders.
-
-// // Should change to use the CLA adder.
+// Should change to use the CLA adder.
 wire [2*N+3:2] oP_ext; 
 assign oP_ext = oCSA3[1] + oCSA3[0];
 assign oP = {oP_ext[2*N-1:2], initialValue[0][1:0]};
