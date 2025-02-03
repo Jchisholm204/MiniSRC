@@ -21,7 +21,7 @@ integer seed2 = 2;
 
 initial begin: test
     integer i;
-        // edge cases
+    // edge cases
     I = 64'h00000000_00000000; // success
     #1;
     I = 64'hFFFFFFFF_FFFFFFFF; // success
@@ -34,7 +34,7 @@ initial begin: test
     #1;
     I = 64'h80000000_7FFFFFFF; // success
     #1;
-    I = 64'h80000000_7FFFFFFE; // FAILURE: p_sim=bffffffd00000000, p_ref=c000000100000000
+    I = 64'h80000000_7FFFFFFE; // success
     #1;
     I = 64'h80000000_7FFFFFFD; // success
     #1;
@@ -44,7 +44,7 @@ initial begin: test
     #1;
     I = 64'h80000000_00000001; // success
     #1;
-    I = 64'h80000000_00000002; // FAILURE: p_sim=fffffffb00000000, p_ref=ffffffff00000000
+    I = 64'h80000000_00000002; // success
     #1;
     I = 64'h80000000_00000003; // success
     #1;
