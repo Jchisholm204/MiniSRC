@@ -5,6 +5,8 @@ module Processor(
     oMemRead, oMemWrite
 );
 
+`include "constants.vh"
+
 input wire iClk, nRst, iMemRdy;
 output wire oMemRead, oMemWrite;
 input wire [31:0] iMemData;
@@ -94,7 +96,7 @@ Control Ctrl(
 );
 
 // Program Counter
-PC pc(
+PC #(.StartAddr(`START_PC_ADDRESS)) pc(
     .iClk(Clk),
     .iEn(PC_en),
     .nRst(PC_nRst),

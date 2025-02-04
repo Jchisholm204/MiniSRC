@@ -1,5 +1,5 @@
 module PC #(
-    parameter StartAddr = 32'h00000100
+    parameter StartAddr = 32'h00000000
 ) (
     iClk,
     iEn, nRst,
