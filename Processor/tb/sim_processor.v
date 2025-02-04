@@ -1,5 +1,6 @@
 `timescale 1ns/1ps
 `include "../Control/ISA.vh"
+`include "sim_ISA.vh"
 
 module sim_PROC();
 
@@ -13,7 +14,7 @@ ClockGenerator cg(
 reg proc_reset = 1'b0;
 wire mem_read, mem_write;
 wire [31:0] proc_mem_out, proc_mem_addr;
-reg [31:0] proc_mem_in = {`ISA_ADDI, 27'd0};
+reg [31:0] proc_mem_in = `INS_I(`ISA_ADDI, 4'd1, 4'd1, 19'd10);
 
 Processor proc(
     .iClk(Clk),
@@ -26,5 +27,9 @@ Processor proc(
     .oMemWrite(mem_write)
 );
 
+initial begin
+    #1
+    proc_reset = 1'b1;
+end
 
 endmodule

@@ -6,7 +6,8 @@ module Control (
     // Clock, reset and ready signals
     // Ready is an active high that allows the next step to continue
     iClk, nRst, iRdy,
-    iMemData,
+    // Memory Signals/Control
+    iMemData, oMemRead, oMemWrite,
     // Pipe Control
     oPipe_nRst,
     // Program Counter Control
@@ -28,15 +29,19 @@ module Control (
 // Clock, reset and ready signals
 // Ready is an active high that allows the next step to continue
 input wire iClk, nRst, iRdy;
+// Memory Signals/Control
 input wire [31:0] iMemData;
+output wire oMemRead, oMemWrite;
 // Pipe Control
 output wire oPipe_nRst;
 // Program Counter Control
 output wire oPC_nRst, oPC_en, oPC_jmp, oPC_loadRA, oPC_loadImm;
 // Register File Control
-output wire oRF_Write, oRF_AddrA, oRF_AddrB, oRF_AddrC;
+output wire oRF_Write;
+output wire [3:0] oRF_AddrA, oRF_AddrB, oRF_AddrC;
 // ALU Control
-output wire oALU_Ctrl, oRA_en, oRB_en;
+output wire [3:0] oALU_Ctrl;
+output wire oRA_en, oRB_en;
 output wire oRZH_en, oRZL_en, oRAS_en;
 // Memory Control
 output wire oRMA_en, oRMD_en;
@@ -51,7 +56,6 @@ reg [5:1] Cycle;
 // IR
 wire IR_en;
 wire [31:0] IR_out;
-REG32 IR(.iClk(iClk), .nRst(nRst), .iEn(IR_en), .iD(iMemData), .oQ(IR_out));
 
 // Decoder IO
 wire [3:0] ID_RA, ID_RB, ID_RC;
@@ -82,6 +86,10 @@ begin
         if(iRdy) Cycle = {Cycle[4:1], Cycle[5]};
     end
 end
+
+// Instruction Register
+assign IR_en = Cycle[1];
+REG32 IR(.iClk(iClk), .nRst(nRst), .iEn(IR_en), .iD(iMemData), .oQ(IR_out));
 
 // Decoder
 Decode decoder(
@@ -157,9 +165,12 @@ assign oPC_loadImm = 1'b0;
 // Register File Control Signals
 assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL));
 // Need to adjust this later to use R0 when not specified in INS type
-assign oRF_AddrA = ID_RA;
-assign oRF_AddrB = ID_RB;
-assign oRF_AddrC = ID_RC;
+// assign oRF_AddrA = ID_RA;
+// assign oRF_AddrB = ID_RB;
+// assign oRF_AddrC = ID_RC;
+assign oRF_AddrA = 4'd1;
+assign oRF_AddrB = 4'd1;
+assign oRF_AddrC = 4'd1;
 
 // ALU Control Signals
 assign oALU_Ctrl = `CTRL_ALU_ADD; // NOT DOING THIS NOW
@@ -188,9 +199,12 @@ assign oMUX_WB = ~(OP_LD || OP_LI);
 // Memory Address Output Select
 assign oMUX_MA = ~Cycle[1];
 // ALU Storage Select
-assign oMUX_AS = (OP_MFL || OP_MFH);
+assign oMUX_AS = ~(OP_MFL || OP_MFH);
 // Immediate value output
 assign oImm32 = ID_imm32;
 
+// Memory Read/Write Signals
+assign oMemRead = Cycle[1] || (Cycle[4] && (OP_LD || OP_LI));
+assign oMemWrite = Cycle[4] && OP_ST;
 
 endmodule

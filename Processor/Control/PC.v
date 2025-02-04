@@ -1,12 +1,12 @@
 module PC #(
-    parameter StartAddr = 32'h00000000
+    parameter StartAddr = 32'h00000100
 ) (
     iClk,
     iEn, nRst,
     iJmpEn, iLoadRA, iLoadImm,
     iRA, iImm32,
     oPC,
-    oPC_tmp,
+    oPC_tmp
 );
 
 input wire iClk, iEn, nRst;
@@ -21,7 +21,7 @@ assign add_in = iJmpEn ? iImm32 : 32'h00000004;
 
 CLA pc_adder(
     .iX(add_in),
-    .iY(pc_cur),
+    .iY(pc_out),
     .iCarry(1'b0),
     .oS(add_out),
     // Intentionally leave these ports unconnected

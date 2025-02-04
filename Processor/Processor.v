@@ -11,7 +11,7 @@ input wire [31:0] iMemData;
 output wire [31:0] oMemData, oMemAddr;
 
 wire Clk;
-assign Clk = iClk & ~nRst;
+assign Clk = iClk & nRst;
 wire pipe_rst;
 
 // Program Counter Signals
@@ -25,7 +25,7 @@ wire [31:0] RF_oRegA, RF_oRegB, RF_iRegC;
 
 // ALU IO
 wire [31:0] ALU_iA, ALU_iB, ALU_oC_hi, ALU_oC_lo;
-wire [4:0]  ALU_iCtrl;
+wire [3:0]  ALU_iCtrl;
 wire ALU_oZero, ALU_oNeg;
 
 // ALU Immediate Registers
@@ -56,7 +56,10 @@ Control Ctrl(
     .iClk(iClk),
     .nRst(nRst),
     .iRdy(iMemRdy),
+    // Memory Signals/Control
     .iMemData(iMemData),
+    .oMemRead(oMemRead),
+    .oMemWrite(oMemWrite),
     // Pipe Control
     .oPipe_nRst(pipe_rst),
     // Program Counter Control

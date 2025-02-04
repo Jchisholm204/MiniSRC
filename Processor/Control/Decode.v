@@ -27,6 +27,6 @@ assign oRb    = iINS[22:19];
 assign oRc    = iINS[18:15];
 assign oImm32 = {{13{iINS[18]}}, iINS[18:0]};
 assign oJFR   = {{9{iINS[22]}}, iINS[22:0]};
-assign oJFR   = {{5{iINS[26]}}, iINS[26:0]};
+assign oJMP   = {{5{iINS[26]}}, iINS[26:0]};
 
 endmodule
