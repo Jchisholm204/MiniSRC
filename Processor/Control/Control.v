@@ -143,7 +143,7 @@ assign oRF_AddrB = ID_RB;
 assign oRF_AddrC = ID_RC;
 
 // ALU Control Signals
-assign oALU_Ctrl = 4'b0; // NOT DOING THIS NOW
+assign oALU_Ctrl = `CTRL_ALU_ADD; // NOT DOING THIS NOW
 assign oRA_en = 1'b1; 
 assign oRB_en = 1'b1;
 

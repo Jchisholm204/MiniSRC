@@ -49,6 +49,47 @@ wire MUX_B, MUX_RZHS, MUX_WB, MUX_MA, MUX_AS;
 // Control Signals
 wire [31:0] CT_imm32;
 
+// Control Unit
+Control Ctrl(
+    // Clock, reset and ready signals
+    // Ready is an active high that allows the next step to continue
+    .iClk(iClk),
+    .nRst(nRst),
+    .iRdy(iMemRdy),
+    .iMemData(iMemData),
+    // Pipe Control
+    .oPipe_nRst(pipe_rst),
+    // Program Counter Control
+    .oPC_nRst(PC_nRst), 
+    .oPC_en(PC_en),
+    .oPC_jmp(PC_jmp),
+    .oPC_loadRA(PC_loadRA),
+    .oPC_loadImm(PC_loadImm),
+    // Register File Control
+    .oRF_Write(RF_iWrite),
+    .oRF_AddrA(RF_iAddrA),
+    .oRF_AddrB(RF_iAddrB),
+    .oRF_AddrC(RF_iAddrC),
+    // ALU Control
+    .oALU_Ctrl(ALU_iCtrl),
+    .oRA_en(RA_en), 
+    .oRB_en(RB_en),
+    .oRZH_en(RZH_en),
+    .oRZL_en(RZL_en),
+    .oRAS_en(RAS_en),
+    // Memory Control
+    .oRMA_en(RMA_en),
+    .oRMD_en(RMD_en),
+    // Multiplexers
+    .oMUX_B(MUX_B),
+    .oMUX_RZHS(MUX_RZHS),
+    .oMUX_WB(MUX_WB),
+    .oMUX_MA(MUX_MA),
+    .oMUX_AS(MUX_AS),
+    // Imm32 Output
+    .oImm32(CT_imm32)
+);
+
 // Program Counter
 PC pc(
     .iClk(Clk),
