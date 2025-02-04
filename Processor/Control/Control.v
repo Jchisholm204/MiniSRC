@@ -25,15 +25,24 @@ module Control (
     oImm32
 );
 
+// Clock, reset and ready signals
+// Ready is an active high that allows the next step to continue
 input wire iClk, nRst, iRdy;
 input wire [31:0] iMemData;
+// Pipe Control
 output wire oPipe_nRst;
+// Program Counter Control
 output wire oPC_nRst, oPC_en, oPC_jmp, oPC_loadRA, oPC_loadImm;
+// Register File Control
 output wire oRF_Write, oRF_AddrA, oRF_AddrB, oRF_AddrC;
+// ALU Control
 output wire oALU_Ctrl, oRA_en, oRB_en;
 output wire oRZH_en, oRZL_en, oRAS_en;
+// Memory Control
 output wire oRMA_en, oRMD_en;
+// Multiplexers
 output wire oMUX_B, oMUX_RZHS, oMUX_WB, oMUX_MA, oMUX_AS;
+// Imm32 Output
 output wire [31:0] oImm32;
 
 // Step Counter
@@ -61,6 +70,7 @@ wire OP_JAL, OP_JFR, OP_MFL, OP_MFH;
 // OpCode M-Format Wires
 wire OP_NOP, OP_HLT;
 // OpCode Format Wires
+// (Useful for data path MUX Assignments)
 wire OPF_R, OPF_I, OPF_B, OPF_J, OPF_M;
 
 // Assign Cycle
@@ -100,6 +110,7 @@ assign OP_ROL = (ID_OpCode == `ISA_ROL);
 assign OP_SRL = (ID_OpCode == `ISA_SRL);
 assign OP_SRA = (ID_OpCode == `ISA_SRA);
 assign OP_SLL = (ID_OpCode == `ISA_SLL);
+// Opcode Format Wire (Useful for data path MUX Assignments)
 assign OPF_R  = (OP_LD || OP_LI || OP_ST || OP_ADD || OP_SUB || OP_AND || OP_OR || OP_ROR || OP_ROL || OP_SRL || OP_SRA || OP_SLL);
 // Assign I-Format Wires
 assign OP_ADDI = (ID_OpCode == `ISA_ADDI);
@@ -109,28 +120,36 @@ assign OP_DIV  = (ID_OpCode == `ISA_DIV);
 assign OP_MUL  = (ID_OpCode == `ISA_MUL);
 assign OP_NEG  = (ID_OpCode == `ISA_NEG);
 assign OP_NOT  = (ID_OpCode == `ISA_NOT);
+// Opcode Format Wire (Useful for data path MUX Assignments)
 assign OPF_I   = (OP_ADDI || OP_ANDI || OP_ORI || OP_DIV || OP_MUL || OP_NEG || OP_NOT);
 // Assign B-Format Wires
 assign OP_BRx = (ID_OpCode == `ISA_BRx);
+// Opcode Format Wire (Useful for data path MUX Assignments)
 assign OPF_B = OP_BRx;
 // Assign J-Format Wires
 assign OP_JAL = (ID_OpCode == `ISA_JAL);
 assign OP_JFR = (ID_OpCode == `ISA_JFR);
 assign OP_MFL = (ID_OpCode == `ISA_MFL);
 assign OP_MFH = (ID_OpCode == `ISA_MFH);
+// Opcode Format Wire (Useful for data path MUX Assignments)
 assign OPF_J  = (OP_JAL || OP_JFR || OP_MFL || OP_MFH);
 // Assign M-Format Wires
 assign OP_NOP = (ID_OpCode == `ISA_NOP);
 assign OP_HLT = (ID_OpCode == `ISA_HLT);
+// Opcode Format Wire (Useful for data path MUX Assignments)
 assign OPF_M  =  (OP_NOP || OP_HLT);
 
 // Assign Control outputs based on Codes and Cycle
 
 // Pipe Reset Signal
 assign oPipe_nRst = nRst;
-// Program Counter Control Signals
+
+// Program Counter Control Signals (NOT CORRECT)
+// PC Reset (Should only be reset on CPU reset)
 assign oPC_nRst = nRst;
+// PC Load Enable
 assign oPC_en = Cycle[1] || (Cycle[3] && (OP_BRx || OP_JAL || OP_JFR));
+// PC Jump Enable
 assign oPC_jmp = Cycle[3] && OP_BRx;
 assign oPC_loadRA = Cycle[3] && (OP_JFR || OP_JAL);
 assign oPC_loadImm = 1'b0;
@@ -144,7 +163,9 @@ assign oRF_AddrC = ID_RC;
 
 // ALU Control Signals
 assign oALU_Ctrl = `CTRL_ALU_ADD; // NOT DOING THIS NOW
+// ALU Input A Register Load Enable
 assign oRA_en = 1'b1; 
+// ALU Input B Register Load Enable
 assign oRB_en = 1'b1;
 
 // ALU Result High Load EN
