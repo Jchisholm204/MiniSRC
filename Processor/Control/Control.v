@@ -164,13 +164,17 @@ assign oPC_loadImm = 1'b0;
 
 // Register File Control Signals
 assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL));
-// Need to adjust this later to use R0 when not specified in INS type
-// assign oRF_AddrA = ID_RA;
-// assign oRF_AddrB = ID_RB;
-// assign oRF_AddrC = ID_RC;
-assign oRF_AddrA = 4'd1;
-assign oRF_AddrB = 4'd1;
-assign oRF_AddrC = 4'd1;
+// Note: Most ISA's use RC as the write back address, MiniSRC uses RA 
+// RA is dependent on ISA type, use R0 if RA is not specified
+assign oRF_AddrA = (OPF_R | OPF_I) ? ID_RB : 4'h0;
+// RB is dependent on ISA type, use R0 if RB is not specified
+assign oRF_AddrB = (OPF_R) ? ID_RC : 4'h0;
+// Store is always RA
+assign oRF_AddrC = ID_RA;
+// Test Register Values
+// assign oRF_AddrA = 4'd1;
+// assign oRF_AddrB = 4'd1;
+// assign oRF_AddrC = 4'd1;
 
 // ALU Control Signals
 assign oALU_Ctrl = `CTRL_ALU_ADD; // NOT DOING THIS NOW
