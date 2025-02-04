@@ -1,3 +1,7 @@
+`include "ISA.vh"
+`include "ALU.vh"
+
+
 module Control (
     // Clock, reset and ready signals
     // Ready is an active high that allows the next step to continue
@@ -45,39 +49,6 @@ wire [3:0] ID_RA, ID_RB, ID_RC;
 wire [4:0] ID_OpCode;
 wire [31:0] ID_imm32, ID_JFR, ID_JMP;
 
-// Opcode Signatures
-// R Format Instructions
-localparam INS_LD  = 5'b00000;
-localparam INS_LI  = 5'b00001;
-localparam INS_ST  = 5'b00010;
-localparam INS_ADD = 5'b00011;
-localparam INS_SUB = 5'b00100;
-localparam INS_AND = 5'b00101;
-localparam INS_OR  = 5'b00110;
-localparam INS_ROR = 5'b00111;
-localparam INS_ROL = 5'b01000;
-localparam INS_SRL = 5'b01001;
-localparam INS_SRA = 5'b01010;
-localparam INS_SLL = 5'b01011;
-// I Format Instructions
-localparam INS_ADDI = 5'b01100;
-localparam INS_ANDI = 5'b01101;
-localparam INS_ORI  = 5'b01110;
-localparam INS_DIV = 5'b01111;
-localparam INS_MUL = 5'b10000;
-localparam INS_NEG = 5'b10001;
-localparam INS_NOT = 5'b10010;
-// B Format Instructions
-localparam INS_BRx = 5'b10011;
-// J Format Instructions
-localparam INS_JAL = 5'b10100;
-localparam INS_JFR = 5'b10101;
-localparam INS_MFL = 5'b11000;
-localparam INS_MFH = 5'b11001;
-// M Format Instructions
-localparam INS_NOP = 5'b11010;
-localparam INS_HLT = 5'b11011;
-
 // OpCode R-Format Wires
 wire OP_LD, OP_LI,  OP_ST,  OP_ADD, OP_SUB, OP_AND, 
      OP_OR, OP_ROR, OP_ROL, OP_SRL, OP_SRA, OP_SLL;
@@ -109,48 +80,48 @@ Decode decoder(
     .oRa(ID_RA),
     .oRb(ID_RB),
     .oRc(ID_RC),
-    .oCode(ID_OpCode)
+    .oCode(ID_OpCode),
     .oJFR(ID_JFR),
-    .oJMP(ID_JMP),
+    .oJMP(ID_JMP)
 );
 
 // Assign OP-Code Types
 
 // Assign R-Format Wires
-assign OP_LD  = (ID_OpCode == INS_LD);
-assign OP_LI  = (ID_OpCode == INS_LI);
-assign OP_ST  = (ID_OpCode == INS_ST);
-assign OP_ADD = (ID_OpCode == INS_ADD);
-assign OP_SUB = (ID_OpCode == INS_SUB);
-assign OP_AND = (ID_OpCode == INS_AND);
-assign OP_OR  = (ID_OpCode == INS_OR);
-assign OP_ROR = (ID_OpCode == INS_ROR);
-assign OP_ROL = (ID_OpCode == INS_ROL);
-assign OP_SRL = (ID_OpCode == INS_SRL);
-assign OP_SRA = (ID_OpCode == INS_SRA);
-assign OP_SLL = (ID_OpCode == INS_SLL);
+assign OP_LD  = (ID_OpCode == `ISA_LD);
+assign OP_LI  = (ID_OpCode == `ISA_LI);
+assign OP_ST  = (ID_OpCode == `ISA_ST);
+assign OP_ADD = (ID_OpCode == `ISA_ADD);
+assign OP_SUB = (ID_OpCode == `ISA_SUB);
+assign OP_AND = (ID_OpCode == `ISA_AND);
+assign OP_OR  = (ID_OpCode == `ISA_OR);
+assign OP_ROR = (ID_OpCode == `ISA_ROR);
+assign OP_ROL = (ID_OpCode == `ISA_ROL);
+assign OP_SRL = (ID_OpCode == `ISA_SRL);
+assign OP_SRA = (ID_OpCode == `ISA_SRA);
+assign OP_SLL = (ID_OpCode == `ISA_SLL);
 assign OPF_R  = (OP_LD || OP_LI || OP_ST || OP_ADD || OP_SUB || OP_AND || OP_OR || OP_ROR || OP_ROL || OP_SRL || OP_SRA || OP_SLL);
 // Assign I-Format Wires
-assign OP_ADDI = (ID_OpCode == INS_ADDI);
-assign OP_ANDI = (ID_OpCode == INS_ANDI);
-assign OP_ORI  = (ID_OpCode == INS_ORI);
-assign OP_DIV  = (ID_OpCode == INS_DIV);
-assign OP_MUL  = (ID_OpCode == INS_MUL);
-assign OP_NEG  = (ID_OpCode == INS_NEG);
-assign OP_NOT  = (ID_OpCode == INS_NOT);
+assign OP_ADDI = (ID_OpCode == `ISA_ADDI);
+assign OP_ANDI = (ID_OpCode == `ISA_ANDI);
+assign OP_ORI  = (ID_OpCode == `ISA_ORI);
+assign OP_DIV  = (ID_OpCode == `ISA_DIV);
+assign OP_MUL  = (ID_OpCode == `ISA_MUL);
+assign OP_NEG  = (ID_OpCode == `ISA_NEG);
+assign OP_NOT  = (ID_OpCode == `ISA_NOT);
 assign OPF_I   = (OP_ADDI || OP_ANDI || OP_ORI || OP_DIV || OP_MUL || OP_NEG || OP_NOT);
 // Assign B-Format Wires
-assign OP_BRx = (ID_OpCode == INS_BRx);
+assign OP_BRx = (ID_OpCode == `ISA_BRx);
 assign OPF_B = OP_BRx;
 // Assign J-Format Wires
-assign OP_JAL = (ID_OpCode == INS_JAL);
-assign OP_JFR = (ID_OpCode == INS_JFR);
-assign OP_MFL = (ID_OpCode == INS_MFL);
-assign OP_MFH = (ID_OpCode == INS_MFH);
+assign OP_JAL = (ID_OpCode == `ISA_JAL);
+assign OP_JFR = (ID_OpCode == `ISA_JFR);
+assign OP_MFL = (ID_OpCode == `ISA_MFL);
+assign OP_MFH = (ID_OpCode == `ISA_MFH);
 assign OPF_J  = (OP_JAL || OP_JFR || OP_MFL || OP_MFH);
 // Assign M-Format Wires
-assign OP_NOP = (ID_OpCode == INS_NOP);
-assign OP_HLT = (ID_OpCode == INS_HLT);
+assign OP_NOP = (ID_OpCode == `ISA_NOP);
+assign OP_HLT = (ID_OpCode == `ISA_HLT);
 assign OPF_M  =  (OP_NOP || OP_HLT);
 
 // Assign Control outputs based on Codes and Cycle

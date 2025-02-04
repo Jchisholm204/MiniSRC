@@ -1,3 +1,4 @@
+`include "../Control/ALU.vh"
 module ALU(
     // 32 bit Inputs
     iA, iB, 
@@ -13,20 +14,6 @@ input wire [31:0] iA, iB;
 input wire [3:0] iCtrl;
 output wire [31:0] oC_hi, oC_lo;
 output wire oZero, oNeg;
-
-// Control Parameters
-parameter ALUC_ADD = 4'h0;
-parameter ALUC_SUB = 4'h1;
-parameter ALUC_OR  = 4'h2;
-parameter ALUC_XOR = 4'h3;
-parameter ALUC_AND = 4'h4;
-parameter ALUC_MUL = 4'h5;
-parameter ALUC_DIV = 4'h6;
-parameter ALUC_SLL = 4'h7;
-parameter ALUC_SRL = 4'h8;
-parameter ALUC_SRA = 4'h9;
-parameter ALUC_ROR = 4'hA;
-parameter ALUC_ROL = 4'hB;
 
 // Module output
 wire [31:0] out_hi, out_lo;
@@ -58,8 +45,8 @@ wire [31:0] ROR_out, ROL_out;
 // Adder/Subtract
 
 // XOR input B for subtraction and set carry to 1
-assign cla_iB = (iCtrl == ALUC_SUB) ? 32'hFFFFFFFF ^ iB : iB;
-assign cla_iCarry = (iCtrl == ALUC_SUB);
+assign cla_iB = (iCtrl == `CTRL_ALU_SUB) ? 32'hFFFFFFFF ^ iB : iB;
+assign cla_iCarry = (iCtrl == `CTRL_ALU_SUB);
 
 CLA cla(
     .iX(iA),
@@ -97,8 +84,8 @@ AND band(
 assign sft_data = iA;
 assign sft_shamt = iB[4:0];
 // Negate Arithmetic shift (logic low)
-assign sft_arith = ~(iCtrl == ALUC_SRA);
-assign sft_left  = (iCtrl == ALUC_SLL);
+assign sft_arith = ~(iCtrl == `CTRL_ALU_SRA);
+assign sft_left  = (iCtrl == `CTRL_ALU_SLL);
 
 SHIFT sft(
     .iD(sft_data),
@@ -142,23 +129,23 @@ assign div_rmdr = div_iNegB ? (32'hFFFFFFFF ^ div_r) + 1 : div_r;
 
 // Module Outputs
 // Set low output register
-assign out_lo = (iCtrl == ALUC_ADD) ? cla_out :
-                (iCtrl == ALUC_SUB) ? cla_out :
-                (iCtrl == ALUC_OR)  ? or_out  :
-                (iCtrl == ALUC_XOR) ? xor_out :
-                (iCtrl == ALUC_AND) ? and_out :
-                (iCtrl == ALUC_MUL) ? mul_out[31:0] :
-                (iCtrl == ALUC_DIV) ? div_rmdr :
-                (iCtrl == ALUC_SLL) ? sft_out :
-                (iCtrl == ALUC_SRL) ? sft_out :
-                (iCtrl == ALUC_SRA) ? sft_out :
-                (iCtrl == ALUC_ROR) ? ROR_out:
-                (iCtrl == ALUC_ROL) ? ROL_out:
+assign out_lo = (iCtrl == `CTRL_ALU_ADD) ? cla_out :
+                (iCtrl == `CTRL_ALU_SUB) ? cla_out :
+                (iCtrl == `CTRL_ALU_OR)  ? or_out  :
+                (iCtrl == `CTRL_ALU_XOR) ? xor_out :
+                (iCtrl == `CTRL_ALU_AND) ? and_out :
+                (iCtrl == `CTRL_ALU_MUL) ? mul_out[31:0] :
+                (iCtrl == `CTRL_ALU_DIV) ? div_rmdr :
+                (iCtrl == `CTRL_ALU_SLL) ? sft_out :
+                (iCtrl == `CTRL_ALU_SRL) ? sft_out :
+                (iCtrl == `CTRL_ALU_SRA) ? sft_out :
+                (iCtrl == `CTRL_ALU_ROR) ? ROR_out:
+                (iCtrl == `CTRL_ALU_ROL) ? ROL_out:
                 32'h00000000;
 
 // Set high output register (Zero on anything not needing 64 bits)
-assign out_hi = (iCtrl == ALUC_MUL) ? mul_out[63:32] :
-                (iCtrl == ALUC_DIV) ? div_qtnt :
+assign out_hi = (iCtrl == `CTRL_ALU_MUL) ? mul_out[63:32] :
+                (iCtrl == `CTRL_ALU_DIV) ? div_qtnt :
                 32'h00000000;
 
 // Output register 
@@ -166,10 +153,10 @@ assign oC_lo = out_lo;
 assign oC_hi = out_hi;
 
 // Assign the negative outputs based on the control inputs
-assign oNeg =   (iCtrl == ALUC_ADD) ? cla_neg :
-                (iCtrl == ALUC_SUB) ? cla_neg :
-                (iCtrl == ALUC_MUL) ? mul_neg :
-                (iCtrl == ALUC_DIV) ? div_neg :
+assign oNeg =   (iCtrl == `CTRL_ALU_ADD) ? cla_neg :
+                (iCtrl == `CTRL_ALU_SUB) ? cla_neg :
+                (iCtrl == `CTRL_ALU_MUL) ? mul_neg :
+                (iCtrl == `CTRL_ALU_DIV) ? div_neg :
                 out_lo[31];
 
 // Assign zero if both the high and low registers are zero
