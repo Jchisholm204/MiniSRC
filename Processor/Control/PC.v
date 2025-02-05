@@ -8,6 +8,7 @@ module PC #(
     oPC,
     oPC_tmp
 );
+`include "../constants.vh"
 
 input wire iClk, iEn, nRst;
 input wire iJmpEn, iLoadRA, iLoadImm;
@@ -17,7 +18,7 @@ output wire [31:0] oPC, oPC_tmp;
 wire [31:0] pc_out, pc_tmp_out, add_in, add_out, pc_in;
 
 // PC Adder Selection
-assign add_in = iJmpEn ? iImm32 : 32'h00000001;
+assign add_in = iJmpEn ? iImm32 : `PC_INCREMENT;
 
 CLA pc_adder(
     .iX(add_in),
