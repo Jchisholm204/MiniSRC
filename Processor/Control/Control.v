@@ -166,20 +166,27 @@ assign oPC_loadImm = 1'b0;
 assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL));
 // Note: Most ISA's use RC as the write back address, MiniSRC uses RA 
 // RA is dependent on ISA type, use R0 if RA is not specified
-assign oRF_AddrA =  //(OP_ST) ? ID_RA :
-                    (OPF_R | OPF_I) ? ID_RB : 4'h0;
+assign oRF_AddrA =  (OPF_R | OPF_I) ? ID_RB : 4'h0;
 // RB is dependent on ISA type, use R0 if RB is not specified
 assign oRF_AddrB =  (OP_ST) ? ID_RA :
                     (OPF_R) ? ID_RC : 4'h0;
 // Store is always RA
 assign oRF_AddrC = ID_RA;
-// Test Register Values
-// assign oRF_AddrA = 4'd1;
-// assign oRF_AddrB = 4'd1;
-// assign oRF_AddrC = 4'd1;
 
 // ALU Control Signals
-assign oALU_Ctrl = `CTRL_ALU_ADD; // NOT DOING THIS NOW
+assign oALU_Ctrl =  (OP_ADD || OP_ADDI) ? `CTRL_ALU_ADD :
+                    (OP_SUB)            ? `CTRL_ALU_SUB :
+                    (OP_OR  || OP_ORI)  ? `CTRL_ALU_OR  :
+                    (OP_AND || OP_ANDI) ? `CTRL_ALU_AND :
+                    (OP_MUL)            ? `CTRL_ALU_MUL :
+                    (OP_DIV)            ? `CTRL_ALU_DIV :
+                    (OP_SLL)            ? `CTRL_ALU_SLL :
+                    (OP_SRL)            ? `CTRL_ALU_SRL :
+                    (OP_SRA)            ? `CTRL_ALU_SRA :
+                    (OP_ROR)            ? `CTRL_ALU_ROR :
+                    (OP_ROL)            ? `CTRL_ALU_ROL :
+                    // ALU Add is default for most instructions
+                    `CTRL_ALU_ADD;
 // ALU Input A Register Load Enable
 assign oRA_en = 1'b1; 
 // ALU Input B Register Load Enable
