@@ -15,6 +15,8 @@ module Control (
     // Register File Control
     oRF_Write,
     oRF_AddrA, oRF_AddrB, oRF_AddrC,
+    // Write Back Register Control
+    oRWB_en,
     // ALU Control
     oALU_Ctrl, oRA_en, oRB_en,
     oRZH_en, oRZL_en, oRAS_en,
@@ -39,6 +41,8 @@ output wire oPC_nRst, oPC_en, oPC_jmp, oPC_loadRA, oPC_loadImm;
 // Register File Control
 output wire oRF_Write;
 output wire [3:0] oRF_AddrA, oRF_AddrB, oRF_AddrC;
+// Write Back Register Control
+output wire oRWB_en;
 // ALU Control
 output wire [3:0] oALU_Ctrl;
 output wire oRA_en, oRB_en;
@@ -168,10 +172,13 @@ assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MU
 // RA is dependent on ISA type, use R0 if RA is not specified
 assign oRF_AddrA =  (OPF_R | OPF_I) ? ID_RB : 4'h0;
 // RB is dependent on ISA type, use R0 if RB is not specified
-assign oRF_AddrB =  (OP_ST) ? ID_RA :
+assign oRF_AddrB =  (OPF_I) ? ID_RA :
                     (OPF_R) ? ID_RC : 4'h0;
 // Store is always RA
 assign oRF_AddrC = ID_RA;
+
+// Register File Write Back Register Load Enable
+assign oRWB_en = 1'b1;
 
 // ALU Control Signals
 assign oALU_Ctrl =  (OP_ADD || OP_ADDI) ? `CTRL_ALU_ADD :
@@ -204,14 +211,14 @@ assign oRMA_en = Cycle[1] || Cycle[4];
 // Memory Data Register EN
 assign oRMD_en = 1'b1;
 // ALU B Input Select
-assign oMUX_B = OPF_I;
+assign oMUX_B = OPF_I && ~(OP_DIV || OP_MUL);
 // ALU Result High Select
 assign oMUX_RZHS = (OP_MFH);
 // RF Write Back Select
 assign oMUX_WB = ~(OP_LD || OP_LI);
 // Memory Address Output Select
 // assign oMUX_MA = Cycle[1];
-assign oMUX_MA = (OP_LD || OP_ST || OP_LI);
+assign oMUX_MA = (OP_LD || OP_ST || OP_LI) && Cycle[4];
 // ALU Storage Select
 assign oMUX_AS = ~(OP_MFL || OP_MFH);
 // Immediate value output

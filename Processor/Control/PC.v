@@ -17,7 +17,7 @@ output wire [31:0] oPC, oPC_tmp;
 wire [31:0] pc_out, pc_tmp_out, add_in, add_out, pc_in;
 
 // PC Adder Selection
-assign add_in = iJmpEn ? iImm32 : 32'h00000004;
+assign add_in = iJmpEn ? iImm32 : 32'h00000001;
 
 CLA pc_adder(
     .iX(add_in),

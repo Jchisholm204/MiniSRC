@@ -24,6 +24,8 @@ wire [31:0] PC_out, PC_tOut;
 wire RF_iWrite;
 wire [3:0] RF_iAddrA, RF_iAddrB, RF_iAddrC;
 wire [31:0] RF_oRegA, RF_oRegB, RF_iRegC;
+wire RWB_en;
+wire [31:0] RWB_in;
 
 // ALU IO
 wire [31:0] ALU_iA, ALU_iB, ALU_oC_hi, ALU_oC_lo;
@@ -73,6 +75,7 @@ Control Ctrl(
     .oRF_AddrA(RF_iAddrA),
     .oRF_AddrB(RF_iAddrB),
     .oRF_AddrC(RF_iAddrC),
+    .oRWB_en(RWB_en),
     // ALU Control
     .oALU_Ctrl(ALU_iCtrl),
     .oRA_en(RA_en), 
@@ -159,6 +162,7 @@ assign oMemAddr = MUX_MA ? RZX_out : PC_out;
 assign oMemData = RB_out;
 
 // Write Back
-assign RF_iRegC = MUX_WB ? RZX_out : iMemData;
+assign RWB_in = MUX_WB ? RZX_out : iMemData;
+REG32 RWB(.iClk(iClk), .nRst(pipe_rst), .iEn(RWB_en), .iD(RWB_in), .oQ(RF_iRegC));
 
 endmodule
