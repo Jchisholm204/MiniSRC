@@ -106,9 +106,6 @@ Decode decoder(
 // Assign OP-Code Types
 
 // Assign R-Format Wires
-assign OP_LD  = (ID_OpCode == `ISA_LD);
-assign OP_LI  = (ID_OpCode == `ISA_LI);
-assign OP_ST  = (ID_OpCode == `ISA_ST);
 assign OP_ADD = (ID_OpCode == `ISA_ADD);
 assign OP_SUB = (ID_OpCode == `ISA_SUB);
 assign OP_AND = (ID_OpCode == `ISA_AND);
@@ -119,8 +116,11 @@ assign OP_SRL = (ID_OpCode == `ISA_SRL);
 assign OP_SRA = (ID_OpCode == `ISA_SRA);
 assign OP_SLL = (ID_OpCode == `ISA_SLL);
 // Opcode Format Wire (Useful for data path MUX Assignments)
-assign OPF_R  = (OP_LD || OP_LI || OP_ST || OP_ADD || OP_SUB || OP_AND || OP_OR || OP_ROR || OP_ROL || OP_SRL || OP_SRA || OP_SLL);
+assign OPF_R  = (OP_ADD || OP_SUB || OP_AND || OP_OR || OP_ROR || OP_ROL || OP_SRL || OP_SRA || OP_SLL);
 // Assign I-Format Wires
+assign OP_LD  = (ID_OpCode == `ISA_LD);
+assign OP_LI  = (ID_OpCode == `ISA_LI);
+assign OP_ST  = (ID_OpCode == `ISA_ST);
 assign OP_ADDI = (ID_OpCode == `ISA_ADDI);
 assign OP_ANDI = (ID_OpCode == `ISA_ANDI);
 assign OP_ORI  = (ID_OpCode == `ISA_ORI);
@@ -129,7 +129,7 @@ assign OP_MUL  = (ID_OpCode == `ISA_MUL);
 assign OP_NEG  = (ID_OpCode == `ISA_NEG);
 assign OP_NOT  = (ID_OpCode == `ISA_NOT);
 // Opcode Format Wire (Useful for data path MUX Assignments)
-assign OPF_I   = (OP_ADDI || OP_ANDI || OP_ORI || OP_DIV || OP_MUL || OP_NEG || OP_NOT);
+assign OPF_I   = (OP_LD || OP_LI || OP_ST || OP_ADDI || OP_ANDI || OP_ORI || OP_DIV || OP_MUL || OP_NEG || OP_NOT);
 // Assign B-Format Wires
 assign OP_BRx = (ID_OpCode == `ISA_BRx);
 // Opcode Format Wire (Useful for data path MUX Assignments)
@@ -166,9 +166,11 @@ assign oPC_loadImm = 1'b0;
 assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL));
 // Note: Most ISA's use RC as the write back address, MiniSRC uses RA 
 // RA is dependent on ISA type, use R0 if RA is not specified
-assign oRF_AddrA = (OPF_R | OPF_I) ? ID_RB : 4'h0;
+assign oRF_AddrA =  //(OP_ST) ? ID_RA :
+                    (OPF_R | OPF_I) ? ID_RB : 4'h0;
 // RB is dependent on ISA type, use R0 if RB is not specified
-assign oRF_AddrB = (OPF_R) ? ID_RC : 4'h0;
+assign oRF_AddrB =  (OP_ST) ? ID_RA :
+                    (OPF_R) ? ID_RC : 4'h0;
 // Store is always RA
 assign oRF_AddrC = ID_RA;
 // Test Register Values
@@ -191,7 +193,7 @@ assign oRZL_en = 1'b1;
 assign oRAS_en = (OP_DIV || OP_MUL);
 
 // Memory Address Register EN
-assign oRMA_en = 1'b1;
+assign oRMA_en = Cycle[1] || Cycle[4];
 // Memory Data Register EN
 assign oRMD_en = 1'b1;
 // ALU B Input Select
@@ -201,7 +203,8 @@ assign oMUX_RZHS = (OP_MFH);
 // RF Write Back Select
 assign oMUX_WB = ~(OP_LD || OP_LI);
 // Memory Address Output Select
-assign oMUX_MA = ~Cycle[1];
+// assign oMUX_MA = Cycle[1];
+assign oMUX_MA = (OP_LD || OP_ST || OP_LI);
 // ALU Storage Select
 assign oMUX_AS = ~(OP_MFL || OP_MFH);
 // Immediate value output

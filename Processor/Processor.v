@@ -41,12 +41,10 @@ wire [31:0] RASH_out, RASL_out, RAS_out;
 // ALU Output
 wire [31:0] RZX_out;
 
-// Memory Signals
-wire RMA_en, RMD_en;
-wire [31:0] MemAddr_out, MemData_out;
-
 // Multiplexer Signals
 wire MUX_B, MUX_RZHS, MUX_WB, MUX_MA, MUX_AS;
+// Memory Multiplexers
+wire RMA_en, RMD_en;
 
 // Control Signals
 wire [31:0] CT_imm32;
@@ -157,12 +155,8 @@ assign RZ_out  = MUX_RZHS ? RZH_out : RZL_out;
 assign RZX_out = MUX_AS ? RZ_out : RAS_out;
 
 // Memory
-assign MemAddr_out = MUX_MA ? RZX_out : PC_out;
-assign MemData_out = RA_out;
-
-// Memory Registers
-REG32 RMA(.iClk(iClk), .nRst(pipe_rst), .iEn(RMA_en), .iD(MemAddr_out), .oQ(oMemAddr));
-REG32 RMD(.iClk(iClk), .nRst(pipe_rst), .iEn(RMD_en), .iD(MemData_out), .oQ(oMemData));
+assign oMemAddr = MUX_MA ? RZX_out : PC_out;
+assign oMemData = RB_out;
 
 // Write Back
 assign RF_iRegC = MUX_WB ? RZX_out : iMemData;
