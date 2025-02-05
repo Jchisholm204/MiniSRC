@@ -167,7 +167,7 @@ assign oPC_loadRA = Cycle[3] && (OP_JFR || OP_JAL);
 assign oPC_loadImm = 1'b0;
 
 // Register File Control Signals
-assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL));
+assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL) || OP_MFH || OP_MFL);
 // Note: Most ISA's use RC as the write back address, MiniSRC uses RA 
 // RA is dependent on ISA type, use R0 if RA is not specified
 assign oRF_AddrA =  (OPF_R | OPF_I) ? ID_RB : 4'h0;
