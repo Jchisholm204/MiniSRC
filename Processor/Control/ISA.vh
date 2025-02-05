@@ -16,9 +16,9 @@
 `define ISA_SRA  5'b01010
 `define ISA_SLL  5'b01011
 // I Format Instructions
-`define ISA_ADDI  5'b01100
-`define ISA_ANDI  5'b01101
-`define ISA_ORI   5'b01110
+`define ISA_ADDI 5'b01100
+`define ISA_ANDI 5'b01101
+`define ISA_ORI  5'b01110
 `define ISA_DIV  5'b01111
 `define ISA_MUL  5'b10000
 `define ISA_NEG  5'b10001
