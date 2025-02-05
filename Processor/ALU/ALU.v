@@ -18,8 +18,8 @@ output wire oZero, oNeg;
 // Module output
 wire [31:0] out_hi, out_lo;
 
-// Adder IO
-wire [31:0] cla_out, cla_iB;
+// Adder/Subtract/Not IO
+wire [31:0] cla_out, cla_iB, cla_iA;
 wire cla_iCarry, cla_oCarry, cla_overflow, cla_zero, cla_neg;
 
 // OR/XOR/AND IO
@@ -42,14 +42,21 @@ wire div_iNegA, div_iNegB, div_neg;
 // ROL / ROR IO
 wire [31:0] ROR_out, ROL_out;
 
+// NOT
+wire [31:0] NOT_out;
+
 // Adder/Subtract
 
 // XOR input B for subtraction and set carry to 1
-assign cla_iB = (iCtrl == `CTRL_ALU_SUB) ? 32'hFFFFFFFF ^ iB : iB;
+assign cla_iA = (iCtrl == `CTRL_ALU_NEG) ? 32'd0 : iA;
+
+assign cla_iB = (iCtrl == `CTRL_ALU_SUB) ? 32'hFFFFFFFF ^ iB :
+                (iCtrl == `CTRL_ALU_NEG) ? iA : iB;
+
 assign cla_iCarry = (iCtrl == `CTRL_ALU_SUB);
 
 CLA cla(
-    .iX(iA),
+    .iX(cla_iA),
     .iY(cla_iB),
     .iCarry(cla_iCarry),
     .oS(cla_out),
@@ -124,8 +131,26 @@ assign div_qtnt = div_neg ? (32'hFFFFFFFF ^ div_q) + 1 : div_q;
 assign div_rmdr = div_iNegB ? (32'hFFFFFFFF ^ div_r) + 1 : div_r;
 
 // ROR
+ROR ror(
+    .iD(iA),
+    .iShamt(iB),
+    .oD(ROR_out)
+);
 
 // ROL
+ROL rol(
+    .iD(iA),
+    .iShamt(iB),
+    .oD(ROL_out)
+);
+
+// NOT
+generate
+    genvar i;
+    for(i = 0; i < 32; i = i + 1) begin
+        not (NOT_out[i], iA[i]);
+    end
+endgenerate
 
 // Module Outputs
 // Set low output register
@@ -139,8 +164,9 @@ assign out_lo = (iCtrl == `CTRL_ALU_ADD) ? cla_out :
                 (iCtrl == `CTRL_ALU_SLL) ? sft_out :
                 (iCtrl == `CTRL_ALU_SRL) ? sft_out :
                 (iCtrl == `CTRL_ALU_SRA) ? sft_out :
-                (iCtrl == `CTRL_ALU_ROR) ? ROR_out:
-                (iCtrl == `CTRL_ALU_ROL) ? ROL_out:
+                (iCtrl == `CTRL_ALU_ROR) ? ROR_out :
+                (iCtrl == `CTRL_ALU_ROL) ? ROL_out :
+                (iCtrl == `CTRL_ALU_NOT) ? NOT_out:
                 32'h00000000;
 
 // Set high output register (Zero on anything not needing 64 bits)

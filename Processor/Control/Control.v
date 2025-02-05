@@ -192,6 +192,8 @@ assign oALU_Ctrl =  (OP_ADD || OP_ADDI) ? `CTRL_ALU_ADD :
                     (OP_SRA)            ? `CTRL_ALU_SRA :
                     (OP_ROR)            ? `CTRL_ALU_ROR :
                     (OP_ROL)            ? `CTRL_ALU_ROL :
+                    (OP_NOT)            ? `CTRL_ALU_NOT :
+                    (OP_NEG)            ? `CTRL_ALU_NEG :
                     // ALU Add is default for most instructions
                     `CTRL_ALU_ADD;
 // ALU Input A Register Load Enable

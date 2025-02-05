@@ -13,3 +13,5 @@
 `define CTRL_ALU_SRA 4'h9
 `define CTRL_ALU_ROR 4'hA
 `define CTRL_ALU_ROL 4'hB
+`define CTRL_ALU_NOT 4'hC
+`define CTRL_ALU_NEG 4'hD
