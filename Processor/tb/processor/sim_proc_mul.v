@@ -1,9 +1,11 @@
+// Multiplier Data path simulation
+// Run for 600 ns to see full result
+// Will print out the result
 `timescale 1ns/1ps
-`include "../Control/ISA.vh"
-`include "../constants.vh"
-`include "sim_ISA.vh"
-
-module sim_PROC();
+`include "../../Control/ISA.vh"
+`include "../../constants.vh"
+`include "../sim_ISA.vh"
+module sim_PROC_MUL();
 
 parameter SA = `START_PC_ADDRESS;
 `define N_instructions 5
@@ -36,8 +38,8 @@ Processor proc(
 
 initial begin
     // Initialize Data Memory
-    d_mem[0]  = 32'd55;
-    d_mem[1] = 32'd10;
+    d_mem[0]  = 32'd5;
+    d_mem[1] = 32'd5;
 
     // ld r1, 0(r0)
     i_mem[0] = `INS_I(`ISA_LD, 4'd1, 4'd0, 19'd20);
@@ -46,10 +48,9 @@ initial begin
     // ld r2, 1(r0)
     i_mem[2] = `INS_I(`ISA_LD, 4'd2, 4'd0, 19'd21);
     // div r3, r1, r2
-    i_mem[3] = `INS_I(`ISA_DIV, 4'd2, 4'd1, 19'd0);
-    // i_mem[3] = `INS_R(`ISA_ADD, 4'd3, 4'd1, 4'd2);
+    i_mem[3] = `INS_I(`ISA_MUL, 4'd2, 4'd1, 19'd0);
     // mfh r3
-    i_mem[4] = `INS_J(`ISA_MFH, 4'd3);
+    i_mem[4] = `INS_J(`ISA_MFL, 4'd3);
     // st r3, 2(r0)
     i_mem[5] = `INS_I(`ISA_ST, 4'd3, 4'd0, 19'd2);
     #1

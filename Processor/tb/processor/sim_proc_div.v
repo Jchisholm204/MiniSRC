@@ -1,9 +1,11 @@
+// Divisor Data path simulation
+// Run for 600 ns to see full result
+// Will print out the result
 `timescale 1ns/1ps
-`include "../Control/ISA.vh"
-`include "../constants.vh"
-`include "sim_ISA.vh"
-
-module sim_PROC();
+`include "../../Control/ISA.vh"
+`include "../../constants.vh"
+`include "../sim_ISA.vh"
+module sim_PROC_DIV();
 
 parameter SA = `START_PC_ADDRESS;
 `define N_instructions 5
