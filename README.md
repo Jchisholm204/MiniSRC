@@ -11,8 +11,9 @@ ELEC 374 MiniSRC Processor
     - [ ] branch condition checking
     - [ ] conditional branching
 - [ ] Lab 1 Testing/Simulations
-    - [x] Divider simulation
-    - [x] Multiplier Simulation
+    - Must create data path 
+    - [ ] Divider simulation
+    - [ ] Multiplier Simulation
     - [ ] Logical AND
     - [ ] Logical OR
     - [ ] Adder? (already done addi in div/mul tb)
