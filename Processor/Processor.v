@@ -29,7 +29,9 @@ wire RA_en, RB_en;
 wire RZH_en, RZL_en;
 // ALU Storage Registers
 wire RAS_en;
-// ALU Output
+
+// Jump/Branch Signals
+wire J_zero, J_nZero, J_pos, J_neg;
 
 // Multiplexer Signals
 wire MUX_BIS, MUX_RZHS, MUX_WBM, MUX_MAP, MUX_ASS;
@@ -71,6 +73,11 @@ Control Ctrl(
     .oRZH_en(RZH_en),
     .oRZL_en(RZL_en),
     .oRAS_en(RAS_en),
+    // Jump Feedback
+    .iJ_zero(J_zero),
+    .iJ_nZero(J_nZero),
+    .iJ_pos(J_pos),
+    .iJ_neg(J_neg),
     // Memory Control
     .oRMA_en(RMA_en),
     .oRMD_en(RMD_en),
@@ -112,6 +119,11 @@ Datapath pipe(
     .iRZH_en(RZH_en),
     .iRZL_en(RZL_en),
     .iRAS_en(RAS_en),
+    // Jump Feedback
+    .oJ_zero(J_zero),
+    .oJ_nZero(J_nZero),
+    .oJ_pos(J_pos),
+    .oJ_neg(J_neg),
     // ALU Results
     .oALU_neg(ALU_oNeg),
     .oALU_zero(ALU_oZero),

@@ -20,6 +20,8 @@ module Control (
     // ALU Control
     oALU_Ctrl, oRA_en, oRB_en,
     oRZH_en, oRZL_en, oRAS_en,
+    // Jump Feedback
+    iJ_zero, iJ_nZero, iJ_pos, iJ_neg,
     // Memory Control
     oRMA_en, oRMD_en,
     // Multiplexers
@@ -47,6 +49,8 @@ output wire oRWB_en;
 output wire [3:0] oALU_Ctrl;
 output wire oRA_en, oRB_en;
 output wire oRZH_en, oRZL_en, oRAS_en;
+// Jump Feedback
+input wire iJ_zero, iJ_nZero, iJ_pos, iJ_neg;
 // Memory Control
 output wire oRMA_en, oRMD_en;
 // Multiplexers
@@ -65,6 +69,7 @@ wire [31:0] IR_out;
 wire [3:0] ID_RA, ID_RB, ID_RC;
 wire [4:0] ID_OpCode;
 wire [31:0] ID_imm32, ID_JFR, ID_JMP;
+wire [1:0] ID_BRC;
 
 // OpCode R-Format Wires
 wire OP_LD, OP_LI,  OP_ST,  OP_ADD, OP_SUB, OP_AND, 
@@ -80,6 +85,9 @@ wire OP_NOP, OP_HLT;
 // OpCode Format Wires
 // (Useful for data path MUX Assignments)
 wire OPF_R, OPF_I, OPF_B, OPF_J, OPF_M;
+// Branch Conditional Wires
+wire BR_ZERO, BR_NZRO, BR_POS, BR_NEG;
+wire BR_TRUE;
 
 // Assign Cycle
 always @(posedge iClk or negedge nRst)
@@ -104,7 +112,8 @@ Decode decoder(
     .oRc(ID_RC),
     .oCode(ID_OpCode),
     .oJFR(ID_JFR),
-    .oJMP(ID_JMP)
+    .oJMP(ID_JMP),
+    .oBRC(ID_BRC)
 );
 
 // Assign OP-Code Types
@@ -150,6 +159,13 @@ assign OP_NOP = (ID_OpCode == `ISA_NOP);
 assign OP_HLT = (ID_OpCode == `ISA_HLT);
 // Opcode Format Wire (Useful for data path MUX Assignments)
 assign OPF_M  =  (OP_NOP || OP_HLT);
+
+// Assign Branch Wires
+assign BR_ZERO = (ID_BRC == `ISA_BR_ZERO) && iJ_zero;
+assign BR_NZRO = (ID_BRC == `ISA_BR_ZERO) && iJ_nZero;
+assign BR_POS = (ID_BRC == `ISA_BR_ZERO) &&  iJ_pos;
+assign BR_NEG = (ID_BRC == `ISA_BR_ZERO) &&  iJ_neg;
+assign BR_TRUE = (BR_ZERO || BR_NZRO || BR_POS || BR_NEG) && OP_BRx;
 
 // Assign Control outputs based on Codes and Cycle
 

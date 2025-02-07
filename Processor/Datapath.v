@@ -14,6 +14,8 @@ module Datapath(
     // ALU Control
     iALU_Ctrl, iRA_en, iRB_en,
     iRZH_en, iRZL_en, iRAS_en,
+    // Jump Feedback
+    oJ_zero, oJ_nZero, oJ_pos, oJ_neg,
     // ALU Results
     oALU_neg, oALU_zero,
     // Memory Control
@@ -46,6 +48,8 @@ input wire [3:0] iALU_Ctrl;
 input wire iRA_en, iRB_en;
 input wire iRZH_en, iRZL_en, iRAS_en;
 output wire oALU_neg, oALU_zero;
+// Jump Feedback
+output wire oJ_zero, oJ_nZero, oJ_pos, oJ_neg,
 // Memory Control
 input wire iRMA_en, iRMD_en;
 // Multiplexers
@@ -102,6 +106,13 @@ RegFile RF(
     .oRegB(RF_oRegB),
     .iRegC(RF_iRegC)
 );
+
+// Jump Outputs
+// RB is linked to RA in the ISA
+assign oJ_zero = (RF_oRegB == 32'd0);
+assign oJ_nZero = |RF_oRegB;
+assign oJ_pos   = ~RF_oRegB[31] && oJ_nZero;
+assign oJ_neg   = RF_oRegB[31] && oJ_nZero;
 
 REG32 RA(.iClk(Clk), .nRst(nRst), .iEn(iRA_en), .iD(RF_oRegA), .oQ(RA_out));
 REG32 RB(.iClk(Clk), .nRst(nRst), .iEn(iRB_en), .iD(RF_oRegB), .oQ(RB_out));

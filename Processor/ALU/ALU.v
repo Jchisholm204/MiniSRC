@@ -134,14 +134,14 @@ assign div_rmdr = div_iNegB ? (32'hFFFFFFFF ^ div_r) + 1 : div_r;
 // ROR
 ROR ror(
     .iD(iA),
-    .iShamt(iB),
+    .iShamt(iB[4:0]),
     .oD(ROR_out)
 );
 
 // ROL
 ROL rol(
     .iD(iA),
-    .iShamt(iB),
+    .iShamt(iB[4:0]),
     .oD(ROL_out)
 );
 
