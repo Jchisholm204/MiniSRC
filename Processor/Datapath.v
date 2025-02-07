@@ -19,8 +19,12 @@ module Datapath(
     // Memory Control
     iRMA_en, iRMD_en,
     // Multiplexers
-    iMUX_B, iMUX_RZHS, iMUX_WB, iMUX_MA, iMUX_ASS,
-    // Imm32 Input
+    iMUX_BIS, // ALU B Input/Immediate Select
+    iMUX_RZHS, // ALU Result High Select
+    iMUX_WBM, // Write back in Memory Select
+    iMUX_MAP, // Memory Address out PC Select
+    iMUX_ASS, // ALU Storage Select
+    // Imm32 Output
     iImm32
 );
 
@@ -36,17 +40,17 @@ input wire iPC_nRst, iPC_en, iPC_jmp, iPC_loadRA, iPC_loadImm;
 input wire iRF_Write;
 input wire [3:0] iRF_AddrA, iRF_AddrB, iRF_AddrC;
 // Write Back Register Control
-input wire oRWB_en;
+input wire iRWB_en;
 // ALU Control
-input wire [3:0] oALU_Ctrl;
-input wire oRA_en, oRB_en;
-input wire oRZH_en, oRZL_en, oRAS_en;
+input wire [3:0] iALU_Ctrl;
+input wire iRA_en, iRB_en;
+input wire iRZH_en, iRZL_en, iRAS_en;
 // Memory Control
-input wire oRMA_en, oRMD_en;
+input wire iRMA_en, iRMD_en;
 // Multiplexers
-input wire oMUX_B, oMUX_RZHS, oMUX_WB, oMUX_MA, oMUX_ASS;
+input wire iMUX_BIS, iMUX_RZHS, iMUX_WBM, iMUX_MAP, iMUX_ASS;
 // Imm32 Output
-input wire [31:0] oImm32;
+input wire [31:0] iImm32;
 
 // Internal Clock Signal
 wire Clk;
@@ -73,13 +77,13 @@ wire [31:0] RZX_out;
 // Program Counter
 PC #(.StartAddr(`START_PC_ADDRESS)) pc(
     .iClk(Clk),
-    .iEn(PC_en),
-    .nRst(PC_nRst),
-    .iJmpEn(PC_jmp),
-    .iLoadRA(PC_loadRA),
-    .iLoadImm(PC_loadImm),
+    .iEn(iPC_en),
+    .nRst(iPC_nRst),
+    .iJmpEn(iPC_jmp),
+    .iLoadRA(iPC_loadRA),
+    .iLoadImm(iPC_loadImm),
     .iRA(RA_out),
-    .iImm32(CT_imm32),
+    .iImm32(iImm32),
     .oPC(PC_out),
     .oPC_tmp(PC_tOut)
 );
@@ -104,7 +108,7 @@ REG32 RB(.iClk(Clk), .nRst(nRst), .iEn(iRB_en), .iD(RF_oRegB), .oQ(RB_out));
 // ALU Input Multiplexers
 
 assign ALU_iA = RA_out;
-assign ALU_iB = MUX_B ? CT_imm32 : RB_out;
+assign ALU_iB = MUX_BIS ? CT_imm32 : RB_out;
 
 // ALU
 ALU alu(
@@ -132,11 +136,11 @@ assign RZ_out  = iMUX_RZHS ? RZH_out : RZL_out;
 assign RZX_out = iMUX_ASS ? RAS_out : RZ_out;
 
 // Memory
-assign oMemAddr = MUX_MA ? RZX_out : PC_out;
+assign oMemAddr = MUX_MAP ? PC_out : RZX_out ;
 assign oMemData = RB_out;
 
 // Write Back
-assign RWB_in = MUX_WB ? RZX_out : iMemData;
+assign RWB_in = MUX_WBM ? iMemData : RZX_out ;
 REG32 RWB(.iClk(iClk), .nRst(pipe_rst), .iEn(RWB_en), .iD(RWB_in), .oQ(RF_iRegC));
 
 endmodule
