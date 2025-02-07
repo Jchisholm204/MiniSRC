@@ -45,6 +45,7 @@ input wire iRWB_en;
 input wire [3:0] iALU_Ctrl;
 input wire iRA_en, iRB_en;
 input wire iRZH_en, iRZL_en, iRAS_en;
+output wire oALU_neg, oALU_zero;
 // Memory Control
 input wire iRMA_en, iRMD_en;
 // Multiplexers
@@ -93,10 +94,10 @@ PC #(.StartAddr(`START_PC_ADDRESS)) pc(
 RegFile RF(
     .iClk(Clk),
     .nRst(nRst),
-    .iWrite(iRF_iWrite),
-    .iAddrA(iRF_iAddrA),
-    .iAddrB(iRF_iAddrB),
-    .iAddrC(iRF_iAddrC),
+    .iWrite(iRF_Write),
+    .iAddrA(iRF_AddrA),
+    .iAddrB(iRF_AddrB),
+    .iAddrC(iRF_AddrC),
     .oRegA(RF_oRegA),
     .oRegB(RF_oRegB),
     .iRegC(RF_iRegC)
@@ -108,13 +109,13 @@ REG32 RB(.iClk(Clk), .nRst(nRst), .iEn(iRB_en), .iD(RF_oRegB), .oQ(RB_out));
 // ALU Input Multiplexers
 
 assign ALU_iA = RA_out;
-assign ALU_iB = MUX_BIS ? CT_imm32 : RB_out;
+assign ALU_iB = iMUX_BIS ? iImm32 : RB_out;
 
 // ALU
 ALU alu(
     .iA(ALU_iA),
     .iB(ALU_iB),
-    .iCtrl(iALU_iCtrl),
+    .iCtrl(iALU_Ctrl),
     .oC_hi(ALU_oC_hi),
     .oC_lo(ALU_oC_lo),
     .oZero(oALU_zero),
@@ -136,11 +137,11 @@ assign RZ_out  = iMUX_RZHS ? RZH_out : RZL_out;
 assign RZX_out = iMUX_ASS ? RAS_out : RZ_out;
 
 // Memory
-assign oMemAddr = MUX_MAP ? PC_out : RZX_out ;
+assign oMemAddr = iMUX_MAP ? PC_out : RZX_out ;
 assign oMemData = RB_out;
 
 // Write Back
-assign RWB_in = MUX_WBM ? iMemData : RZX_out ;
-REG32 RWB(.iClk(iClk), .nRst(pipe_rst), .iEn(RWB_en), .iD(RWB_in), .oQ(RF_iRegC));
+assign RWB_in = iMUX_WBM ? iMemData : RZX_out ;
+REG32 RWB(.iClk(iClk), .nRst(pipe_rst), .iEn(iRWB_en), .iD(RWB_in), .oQ(RF_iRegC));
 
 endmodule

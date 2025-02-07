@@ -23,7 +23,7 @@ module Control (
     // Memory Control
     oRMA_en, oRMD_en,
     // Multiplexers
-    oMUX_B, oMUX_RZHS, oMUX_WB, oMUX_MA, oMUX_AS,
+    oMUX_BIS, oMUX_RZHS, oMUX_WBM, oMUX_MAP, oMUX_ASS,
     // Imm32 Output
     oImm32
 );
@@ -50,7 +50,7 @@ output wire oRZH_en, oRZL_en, oRAS_en;
 // Memory Control
 output wire oRMA_en, oRMD_en;
 // Multiplexers
-output wire oMUX_B, oMUX_RZHS, oMUX_WB, oMUX_MA, oMUX_AS;
+output wire oMUX_BIS, oMUX_RZHS, oMUX_WBM, oMUX_MAP, oMUX_ASS;
 // Imm32 Output
 output wire [31:0] oImm32;
 
@@ -212,17 +212,17 @@ assign oRAS_en = (OP_DIV || OP_MUL);
 assign oRMA_en = Cycle[1] || Cycle[4];
 // Memory Data Register EN
 assign oRMD_en = 1'b1;
-// ALU B Input Select
-assign oMUX_B = OPF_I && ~(OP_DIV || OP_MUL);
+// ALU B Input Select (Selects Imm)
+assign oMUX_BIS = OPF_I && ~(OP_DIV || OP_MUL);
 // ALU Result High Select
 assign oMUX_RZHS = (OP_MFH);
 // RF Write Back Select
-assign oMUX_WB = ~(OP_LD || OP_LI);
+assign oMUX_WBM = (OP_LD || OP_LI);
 // Memory Address Output Select
 // assign oMUX_MA = Cycle[1];
-assign oMUX_MA = (OP_LD || OP_ST || OP_LI) && Cycle[4];
+assign oMUX_MAP = ~((OP_LD || OP_ST || OP_LI) && Cycle[4]);
 // ALU Storage Select
-assign oMUX_AS = ~(OP_MFL || OP_MFH);
+assign oMUX_ASS = (OP_MFL || OP_MFH);
 // Immediate value output
 assign oImm32 = ID_imm32;
 

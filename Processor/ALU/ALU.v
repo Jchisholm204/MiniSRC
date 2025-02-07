@@ -49,6 +49,7 @@ wire [31:0] NOT_out;
 
 // XOR input B for subtraction and set carry to 1
 assign cla_iA = (iCtrl == `CTRL_ALU_NEG) ? 32'd0 : iA;
+assign cla_iA = (iCtrl == `CTRL_ALU_NEG) ? 32'd0 : iA;
 
 assign cla_iB = (iCtrl == `CTRL_ALU_SUB) ? 32'hFFFFFFFF ^ iB :
                 (iCtrl == `CTRL_ALU_NEG) ? iA : iB;
