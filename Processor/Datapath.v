@@ -26,6 +26,7 @@ module Datapath(
     iMUX_WBM, // Write back in Memory Select
     iMUX_MAP, // Memory Address out PC Select
     iMUX_ASS, // ALU Storage Select
+    iMUX_WBP, // Write back Program Counter Select
     // Imm32 Output
     iImm32
 );
@@ -53,7 +54,7 @@ output wire oJ_zero, oJ_nZero, oJ_pos, oJ_neg,
 // Memory Control
 input wire iRMA_en, iRMD_en;
 // Multiplexers
-input wire iMUX_BIS, iMUX_RZHS, iMUX_WBM, iMUX_MAP, iMUX_ASS;
+input wire iMUX_BIS, iMUX_RZHS, iMUX_WBM, iMUX_MAP, iMUX_ASS, iMUX_WBP;
 // Imm32 Output
 input wire [31:0] iImm32;
 
@@ -152,7 +153,9 @@ assign oMemAddr = iMUX_MAP ? PC_out : RZX_out ;
 assign oMemData = RB_out;
 
 // Write Back
-assign RWB_in = iMUX_WBM ? iMemData : RZX_out ;
+assign RWB_in = iMUX_WBM ? iMemData :
+                iMUX_WBP ? PC_out   : RZX_out;
+
 REG32 RWB(.iClk(iClk), .nRst(pipe_rst), .iEn(iRWB_en), .iD(RWB_in), .oQ(RF_iRegC));
 
 endmodule

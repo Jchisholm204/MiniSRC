@@ -25,7 +25,7 @@ module Control (
     // Memory Control
     oRMA_en, oRMD_en,
     // Multiplexers
-    oMUX_BIS, oMUX_RZHS, oMUX_WBM, oMUX_MAP, oMUX_ASS,
+    oMUX_BIS, oMUX_RZHS, oMUX_WBM, oMUX_MAP, oMUX_ASS, oMUX_WBP,
     // Imm32 Output
     oImm32
 );
@@ -54,7 +54,7 @@ input wire iJ_zero, iJ_nZero, iJ_pos, iJ_neg;
 // Memory Control
 output wire oRMA_en, oRMD_en;
 // Multiplexers
-output wire oMUX_BIS, oMUX_RZHS, oMUX_WBM, oMUX_MAP, oMUX_ASS;
+output wire oMUX_BIS, oMUX_RZHS, oMUX_WBM, oMUX_MAP, oMUX_ASS, oMUX_WBP;
 // Imm32 Output
 output wire [31:0] oImm32;
 
@@ -178,7 +178,7 @@ assign oPC_nRst = nRst;
 // PC Load Enable
 assign oPC_en = Cycle[1] || (Cycle[3] && (OP_BRx || OP_JAL || OP_JFR));
 // PC Jump Enable
-assign oPC_jmp = Cycle[3] && OP_BRx;
+assign oPC_jmp = Cycle[3] && BR_TRUE;
 assign oPC_loadRA = Cycle[3] && (OP_JFR || OP_JAL);
 assign oPC_loadImm = 1'b0;
 
@@ -186,12 +186,13 @@ assign oPC_loadImm = 1'b0;
 assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL) || OP_MFH || OP_MFL);
 // Note: Most ISA's use RC as the write back address, MiniSRC uses RA 
 // RA is dependent on ISA type, use R0 if RA is not specified
-assign oRF_AddrA =  (OPF_R | OPF_I) ? ID_RB : 4'h0;
+assign oRF_AddrA =  (OPF_R | OPF_I) ? ID_RB :
+                    (OPF_J) ? ID_RA : 4'h0;
 // RB is dependent on ISA type, use R0 if RB is not specified
 assign oRF_AddrB =  (OPF_I) ? ID_RA :
                     (OPF_R) ? ID_RC : 4'h0;
 // Store is always RA
-assign oRF_AddrC = ID_RA;
+assign oRF_AddrC = (OP_JAL) ? 4'hF : ID_RA;
 
 // Register File Write Back Register Load Enable
 assign oRWB_en = 1'b1;
@@ -239,6 +240,9 @@ assign oMUX_WBM = (OP_LD || OP_LI);
 assign oMUX_MAP = ~((OP_LD || OP_ST || OP_LI) && Cycle[4]);
 // ALU Storage Select
 assign oMUX_ASS = (OP_MFL || OP_MFH);
+// Write Back Program Counter Select
+assign oMUX_WBP = OP_JAL;
+
 // Immediate value output
 assign oImm32 = ID_imm32;
 

@@ -34,7 +34,7 @@ wire RAS_en;
 wire J_zero, J_nZero, J_pos, J_neg;
 
 // Multiplexer Signals
-wire MUX_BIS, MUX_RZHS, MUX_WBM, MUX_MAP, MUX_ASS;
+wire MUX_BIS, MUX_RZHS, MUX_WBM, MUX_MAP, MUX_ASS, MUX_WBP;
 // Memory Multiplexers
 wire RMA_en, RMD_en;
 
@@ -87,6 +87,7 @@ Control Ctrl(
     .oMUX_WBM(MUX_WBM),
     .oMUX_MAP(MUX_MAP),
     .oMUX_ASS(MUX_ASS),
+    .oMUX_WBP(MUX_WBP),
     // Imm32 Output
     .oImm32(CT_imm32)
 );
@@ -136,6 +137,7 @@ Datapath pipe(
     .iMUX_WBM(MUX_WBM), // Write back in Memory Select
     .iMUX_MAP(MUX_MAP), // Memory Address out PC Select
     .iMUX_ASS(MUX_ASS), // ALU Storage Select
+    .iMUX_WBP(MUX_WBP),
     // Imm32 Output
     .iImm32(CT_imm32)
 );
