@@ -34,3 +34,12 @@
 `define ISA_NOP  5'b11010
 `define ISA_HLT  5'b11011
 
+// Branch Codes
+// Branch if Zero
+`define ISA_BR_ZERO 2'b00
+// Branch if NonZero
+`define ISA_BR_NZRO 2'b01
+// Branch if Positive
+`define ISA_BR_POSI 2'b10
+// Branch if negative
+`define ISA_BR_NEGA 2'b11

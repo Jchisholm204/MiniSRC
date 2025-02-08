@@ -49,6 +49,7 @@ wire [31:0] NOT_out;
 
 // XOR input B for subtraction and set carry to 1
 assign cla_iA = (iCtrl == `CTRL_ALU_NEG) ? 32'd0 : iA;
+assign cla_iA = (iCtrl == `CTRL_ALU_NEG) ? 32'd0 : iA;
 
 assign cla_iB = (iCtrl == `CTRL_ALU_SUB) ? 32'hFFFFFFFF ^ iB :
                 (iCtrl == `CTRL_ALU_NEG) ? iA : iB;
@@ -133,14 +134,14 @@ assign div_rmdr = div_iNegB ? (32'hFFFFFFFF ^ div_r) + 1 : div_r;
 // ROR
 ROR ror(
     .iD(iA),
-    .iShamt(iB),
+    .iShamt(iB[4:0]),
     .oD(ROR_out)
 );
 
 // ROL
 ROL rol(
     .iD(iA),
-    .iShamt(iB),
+    .iShamt(iB[4:0]),
     .oD(ROL_out)
 );
 
