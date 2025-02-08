@@ -115,6 +115,7 @@ assign oJ_nZero = |RF_oRegB;
 assign oJ_pos   = ~RF_oRegB[31] && oJ_nZero;
 assign oJ_neg   = RF_oRegB[31] && oJ_nZero;
 
+// RF stationary/buffer registers
 REG32 RA(.iClk(Clk), .nRst(nRst), .iEn(iRA_en), .iD(RF_oRegA), .oQ(RA_out));
 REG32 RB(.iClk(Clk), .nRst(nRst), .iEn(iRB_en), .iD(RF_oRegB), .oQ(RB_out));
 
@@ -153,9 +154,11 @@ assign oMemAddr = iMUX_MAP ? PC_out : RZX_out ;
 assign oMemData = RB_out;
 
 // Write Back
+// Select Memory input on WBM, Select PC for JAL, otherwise use ALU result
 assign RWB_in = iMUX_WBM ? iMemData :
                 iMUX_WBP ? PC_out   : RZX_out;
 
+// Write back buffer register
 REG32 RWB(.iClk(iClk), .nRst(pipe_rst), .iEn(iRWB_en), .iD(RWB_in), .oQ(RF_iRegC));
 
 endmodule

@@ -68,7 +68,7 @@ wire [31:0] IR_out;
 // Decoder IO
 wire [3:0] ID_RA, ID_RB, ID_RC;
 wire [4:0] ID_OpCode;
-wire [31:0] ID_imm32, ID_JFR, ID_JMP;
+wire [31:0] ID_imm32, ID_BRD;
 wire [1:0] ID_BRC;
 
 // OpCode R-Format Wires
@@ -111,8 +111,9 @@ Decode decoder(
     .oRb(ID_RB),
     .oRc(ID_RC),
     .oCode(ID_OpCode),
-    .oJFR(ID_JFR),
-    .oJMP(ID_JMP),
+    // Branch Distance
+    .oBRD(ID_BRD),
+    // Branch Code
     .oBRC(ID_BRC)
 );
 
@@ -161,6 +162,7 @@ assign OP_HLT = (ID_OpCode == `ISA_HLT);
 assign OPF_M  =  (OP_NOP || OP_HLT);
 
 // Assign Branch Wires
+// iJ_xxx based on RF_RB in data path
 assign BR_ZERO = (ID_BRC == `ISA_BR_ZERO) && iJ_zero;
 assign BR_NZRO = (ID_BRC == `ISA_BR_ZERO) && iJ_nZero;
 assign BR_POS = (ID_BRC == `ISA_BR_ZERO) &&  iJ_pos;
@@ -186,12 +188,14 @@ assign oPC_loadImm = 1'b0;
 assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL) || OP_MFH || OP_MFL);
 // Note: Most ISA's use RC as the write back address, MiniSRC uses RA 
 // RA is dependent on ISA type, use R0 if RA is not specified
+// RA is used to load PC on JMP/JAL
 assign oRF_AddrA =  (OPF_R | OPF_I) ? ID_RB :
                     (OPF_J) ? ID_RA : 4'h0;
 // RB is dependent on ISA type, use R0 if RB is not specified
 assign oRF_AddrB =  (OPF_I) ? ID_RA :
                     (OPF_R) ? ID_RC : 4'h0;
 // Store is always RA
+// ISA Specification states to store PC in r15 on JAL (Jump and Link)
 assign oRF_AddrC = (OP_JAL) ? 4'hF : ID_RA;
 
 // Register File Write Back Register Load Enable
@@ -244,7 +248,8 @@ assign oMUX_ASS = (OP_MFL || OP_MFH);
 assign oMUX_WBP = OP_JAL;
 
 // Immediate value output
-assign oImm32 = ID_imm32;
+// Assign Imm32 branch distance if the branch is true
+assign oImm32 = BR_TRUE ? ID_BRD : ID_imm32;
 
 // Memory Read/Write Signals
 assign oMemRead = Cycle[1] || (Cycle[4] && (OP_LD || OP_LI));
