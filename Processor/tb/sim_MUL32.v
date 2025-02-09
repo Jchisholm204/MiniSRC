@@ -50,7 +50,7 @@ initial begin: test
     #1;
     I = 64'h80000001_7FFFFFFF; // success
     #1;
-    // These always fail on the top 32 bits, if: 1 < I[31:0] or I[31:0] < -1.
+    // not any more: These always fail on the top 32 bits, if: 1 < I[31:0] or I[31:0] < -1.
     i = 0;
     while (1) begin
         I[63:32] = 32'h80000000;

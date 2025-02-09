@@ -5,6 +5,12 @@ wire iCarry, Carry, Overflow, Zero, Negative;
 reg [31:0] X, Y;
 wire [31:0] sum;
 
+wire signed [31:0] ref_sum;
+assign ref_sum = X + Y;
+
+wire success;
+assign success = (sum == ref_sum);
+
 CLA adder(
     .iX(X),
     .iY(Y),
@@ -16,6 +22,8 @@ CLA adder(
     .oNegative(Negative)
 );
 
+integer seedX = 1;
+integer seedY = 2;
 initial begin
     X = 32'd5;
     Y = 32'd10;
@@ -25,6 +33,16 @@ initial begin
     #10
     X = 32'd400;
     Y = 32'd33;
+    #10
+    // random tests
+    while (1) begin
+        X = $random(seedX);
+        Y = $random(seedY);
+        if (!success) begin
+            $display("X = %d, Y = %d, sum = %d, ref_sum = %d", X, Y, sum, ref_sum);
+        end
+        #10;
+    end
 end
 
 
