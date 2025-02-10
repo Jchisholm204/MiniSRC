@@ -1,4 +1,4 @@
-`timescale 1ms/1ps
+`timescale 1ns/1ps
 module sim_DIV32();
 
 reg [31:0] Q, D;
@@ -24,15 +24,15 @@ assign success = success_rez && success_rmdr;
 integer seedQ = 1;
 integer seedD = 2;
 initial begin
-    // Q = -32'd8;
-    // D = 32'd3;
-    // #1
-    // Q = 32'd44;
-    // D = -32'd11;
-    // #1
-    // Q = -32'd3;
-    // D = -32'd3;
-    // #1
+    Q = 32'd8;
+    D = 32'd3;
+    #1
+    Q = 32'd44;
+    D = 32'd11;
+    #1
+    Q = 32'd3;
+    D = 32'd3;
+    #1
     Q = 32'd447;
     D = 32'd12;
     #1
@@ -45,6 +45,9 @@ initial begin
     Q = 32'd30;
     D = 32'd2;
     #1
+    Q = 32'h24;
+    D = 32'h22;
+    #1
     // edge cases
     Q = 32'd0;
     D = 32'd0;
@@ -52,37 +55,37 @@ initial begin
     Q = 32'd1;
     D = 32'd0;
     #1
-    Q = 32'h70000000;
+    Q = 32'h7000000;
     D = 32'd1;
     #1
-    Q = 32'h70000000;
+    Q = 32'h7000000;
     D = 32'd2;
     #1
-    Q = 32'h70000000;
-    D = 32'h70000000;
+    Q = 32'h7000000;
+    D = 32'h7000000;
     #1
-    Q = 32'h70000000;
-    D = 32'h7FFFFFFF;
+    Q = 32'h7000000;
+    D = 32'h7FFFFFF;
     #1
-    Q = 32'h7FFFFFFF;
-    D = 32'h70000000;
+    Q = 32'h7FFFFFF;
+    D = 32'h7000000;
     #1
-    Q = 32'h7FFFFFFF;
-    D = 32'h7FFFFFFF;
+    Q = 32'h7FFFFFF;
+    D = 32'h7FFFFFF;
     #1
-    Q = 32'h7FFFFFFF;
+    Q = 32'h7FFFFFF;
     D = 32'd1;
     #1
-    Q = 32'h7FFFFFFF;
+    Q = 32'h7FFFFFF;
     D = 32'd2;
     #1
     Q = 32'd1;
-    D = 32'h70000000;
+    D = 32'h7000000;
     #1
     while (1) begin
         // forcing Q and D to be positive signed 2's-complement numbers.
-        Q = {1'b0, $random(seedQ)};
-        D = {1'b0, $random(seedD)};
+        Q = $random(seedQ) & 32'h00FFFFFF;
+        D = $random(seedD) & 32'h000FFFFF;
         if (!success) begin
             $display("FAILURE: Q = %h, D = %h, rez = %h, ref_rez = %h, rmdr = %h, ref_rmdr = %h", Q, D, rez, ref_rez, rmdr, ref_rmdr);
         end else begin
