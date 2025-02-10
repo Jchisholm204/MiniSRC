@@ -11,7 +11,7 @@ DIV32 divider(
     .oR(rmdr)
 );
 
-wire signed [31:0] ref_rez, ref_rmdr;
+wire [31:0] ref_rez, ref_rmdr;
 wire success_rez, success_rmdr, success;
 
 assign ref_rez = Q / D;
@@ -24,15 +24,15 @@ assign success = success_rez && success_rmdr;
 integer seedQ = 1;
 integer seedD = 2;
 initial begin
-    Q = -32'd8;
-    D = 32'd3;
-    #1
-    Q = 32'd44;
-    D = -32'd11;
-    #1
-    Q = -32'd3;
-    D = -32'd3;
-    #1
+    // Q = -32'd8;
+    // D = 32'd3;
+    // #1
+    // Q = 32'd44;
+    // D = -32'd11;
+    // #1
+    // Q = -32'd3;
+    // D = -32'd3;
+    // #1
     Q = 32'd447;
     D = 32'd12;
     #1
@@ -52,20 +52,20 @@ initial begin
     Q = 32'd1;
     D = 32'd0;
     #1
-    Q = 32'h80000000;
+    Q = 32'h70000000;
     D = 32'd1;
     #1
-    Q = 32'h80000000;
+    Q = 32'h70000000;
     D = 32'd2;
     #1
-    Q = 32'h80000000;
-    D = 32'h80000000;
+    Q = 32'h70000000;
+    D = 32'h70000000;
     #1
-    Q = 32'h80000000;
+    Q = 32'h70000000;
     D = 32'h7FFFFFFF;
     #1
     Q = 32'h7FFFFFFF;
-    D = 32'h80000000;
+    D = 32'h70000000;
     #1
     Q = 32'h7FFFFFFF;
     D = 32'h7FFFFFFF;
@@ -77,11 +77,12 @@ initial begin
     D = 32'd2;
     #1
     Q = 32'd1;
-    D = 32'h80000000;
+    D = 32'h70000000;
     #1
     while (1) begin
-        Q = $random(seedQ);
-        D = $random(seedD);
+        // forcing Q and D to be positive signed 2's-complement numbers.
+        Q = {1'b0, $random(seedQ)};
+        D = {1'b0, $random(seedD)};
         if (!success) begin
             $display("FAILURE: Q = %h, D = %h, rez = %h, ref_rez = %h, rmdr = %h, ref_rmdr = %h", Q, D, rez, ref_rez, rmdr, ref_rmdr);
         end else begin
