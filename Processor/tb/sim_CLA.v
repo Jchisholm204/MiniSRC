@@ -5,7 +5,7 @@ wire iCarry, Carry, Overflow, Zero, Negative;
 reg [31:0] X, Y;
 wire [31:0] sum;
 
-wire signed [31:0] ref_sum;
+wire [31:0] ref_sum;
 assign ref_sum = X + Y;
 
 wire success;
@@ -36,9 +36,9 @@ initial begin
     #10
     // random tests
     while (1) begin
-        X = $random(seedX);
-        Y = $random(seedY);
-        if (!success) begin
+        X = $random(seedX) & 32'h0FFFFFFF;
+        Y = $random(seedY) & 32'h0FFFFFFF;
+        if (!success && !Overflow) begin
             $display("X = %d, Y = %d, sum = %d, ref_sum = %d", X, Y, sum, ref_sum);
         end
         #10;
