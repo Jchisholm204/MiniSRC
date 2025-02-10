@@ -131,13 +131,15 @@ endmodule
 
 module BoothEncode_2bit_Nbit #(parameter N = 32) (input signed [N-1:0] iA, output [(N+1)/2-1:0] oSign, output [(N+1)/2-1:0] oMagnitude1, output [(N+1)/2-1:0] oMagnitude0);
 
-wire [N+2:0] A2;
+// prepend with 0 for the first bit pair.
+// sign extend by 1 bit in case N (number of bits) is odd (e.g. treat a 31 bit number as a sign-extended 32-bit number so the most significant booth encoding value gets two bits).
+wire [N+1:0] A2;
 assign A2 = {iA[N-1], iA, 1'b0};
 
 
 genvar i;
 generate
-    for (i = 1; i < N+1; i = i + 2) begin : gen
+    for (i = 1; i+1 <= N+1; i = i + 2) begin : gen
         BoothEncode_2bit be2bit(A2[i+1:i-1], oSign[i/2], {oMagnitude1[i/2], oMagnitude0[i/2]});
     end
 endgenerate
