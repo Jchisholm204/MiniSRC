@@ -38,7 +38,7 @@ initial begin
     while (1) begin
         X = $random(seedX) & 32'h0FFFFFFF;
         Y = $random(seedY) & 32'h0FFFFFFF;
-        if (!success && !Overflow && !Carry) begin
+        if (!success && !Overflow) begin
             $display("X = %d, Y = %d, sum = %d, ref_sum = %d", X, Y, sum, ref_sum);
         end
         #10;
