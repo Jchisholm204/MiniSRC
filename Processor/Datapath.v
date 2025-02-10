@@ -50,7 +50,7 @@ input wire iRA_en, iRB_en;
 input wire iRZH_en, iRZL_en, iRAS_en;
 output wire oALU_neg, oALU_zero;
 // Jump Feedback
-output wire oJ_zero, oJ_nZero, oJ_pos, oJ_neg,
+output wire oJ_zero, oJ_nZero, oJ_pos, oJ_neg;
 // Memory Control
 input wire iRMA_en, iRMD_en;
 // Multiplexers
