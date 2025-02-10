@@ -5,7 +5,7 @@
 `include "../../Control/ISA.vh"
 `include "../../constants.vh"
 `include "../sim_ISA.vh"
-module sim_PROC_OR();
+module sim_PROC_OR;
 
 parameter SA = `START_PC_ADDRESS;
 `define N_instructions 5
