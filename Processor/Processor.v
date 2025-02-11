@@ -36,7 +36,7 @@ wire J_zero, J_nZero, J_pos, J_neg;
 // Multiplexer Signals
 wire MUX_BIS, MUX_RZHS, MUX_WBM, MUX_MAP, MUX_ASS, MUX_WBP;
 // Memory Multiplexers
-wire RMA_en, RMD_en;
+// wire RMA_en, RMD_en;
 
 // Control Signals
 wire [31:0] CT_imm32;
@@ -79,8 +79,8 @@ Control Ctrl(
     .iJ_pos(J_pos),
     .iJ_neg(J_neg),
     // Memory Control
-    .oRMA_en(RMA_en),
-    .oRMD_en(RMD_en),
+    // .oRMA_en(RMA_en),
+    // .oRMD_en(RMD_en),
     // Multiplexers
     .oMUX_BIS(MUX_BIS),
     .oMUX_RZHS(MUX_RZHS),
@@ -128,9 +128,6 @@ Datapath pipe(
     // ALU Results
     .oALU_neg(ALU_oNeg),
     .oALU_zero(ALU_oZero),
-    // Memory Control
-    .iRMA_en(RMA_en),
-    .iRMD_en(RMD_en),
     // Multiplexers
     .iMUX_BIS(MUX_BIS), // ALU B Input/Immediate Select
     .iMUX_RZHS(MUX_RZHS), // ALU Result High Select

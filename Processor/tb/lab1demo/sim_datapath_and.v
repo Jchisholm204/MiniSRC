@@ -41,8 +41,6 @@ wire J_zero, J_nZero, J_pos, J_neg;
 
 // Multiplexer Signals
 reg MUX_BIS, MUX_RZHS, MUX_WBM, MUX_MAP, MUX_ASS, MUX_WBP;
-// Memory Multiplexers
-reg RMA_en, RMD_en;
 
 // Control Signals
 reg [31:0] CT_imm32;
@@ -86,9 +84,6 @@ Datapath DUT(
     // ALU Results
     .oALU_neg(ALU_oNeg),
     .oALU_zero(ALU_oZero),
-    // Memory Control TODO: DELETE THESE SINCE THEY ARE NOT USED
-    .iRMA_en(RMA_en),
-    .iRMD_en(RMD_en),
     // Multiplexers
     .iMUX_BIS(MUX_BIS), // ALU B Input/Immediate Select
     .iMUX_RZHS(MUX_RZHS), // ALU Result High Select

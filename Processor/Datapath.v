@@ -19,7 +19,7 @@ module Datapath(
     // ALU Results
     oALU_neg, oALU_zero,
     // Memory Control
-    iRMA_en, iRMD_en,
+    // iRMA_en, iRMD_en,
     // Multiplexers
     iMUX_BIS, // ALU B Input/Immediate Select
     iMUX_RZHS, // ALU Result High Select
@@ -51,8 +51,6 @@ input wire iRZH_en, iRZL_en, iRAS_en;
 output wire oALU_neg, oALU_zero;
 // Jump Feedback
 output wire oJ_zero, oJ_nZero, oJ_pos, oJ_neg;
-// Memory Control TODO: DELETE THESE SINCE THEY ARE NOT USED
-input wire iRMA_en, iRMD_en;
 // Multiplexers
 input wire iMUX_BIS, iMUX_RZHS, iMUX_WBM, iMUX_MAP, iMUX_ASS, iMUX_WBP;
 // Imm32 Output

@@ -23,7 +23,7 @@ module Control (
     // Jump Feedback
     iJ_zero, iJ_nZero, iJ_pos, iJ_neg,
     // Memory Control
-    oRMA_en, oRMD_en,
+    // oRMA_en, oRMD_en,
     // Multiplexers
     oMUX_BIS, oMUX_RZHS, oMUX_WBM, oMUX_MAP, oMUX_ASS, oMUX_WBP,
     // Imm32 Output
@@ -52,7 +52,7 @@ output wire oRZH_en, oRZL_en, oRAS_en;
 // Jump Feedback
 input wire iJ_zero, iJ_nZero, iJ_pos, iJ_neg;
 // Memory Control
-output wire oRMA_en, oRMD_en;
+// output wire oRMA_en, oRMD_en;
 // Multiplexers
 output wire oMUX_BIS, oMUX_RZHS, oMUX_WBM, oMUX_MAP, oMUX_ASS, oMUX_WBP;
 // Imm32 Output
@@ -230,9 +230,7 @@ assign oRZL_en = 1'b1;
 assign oRAS_en = (OP_DIV || OP_MUL);
 
 // Memory Address Register EN
-assign oRMA_en = Cycle[1] || Cycle[4];
-// Memory Data Register EN
-assign oRMD_en = 1'b1;
+// assign oRMA_en = Cycle[1] || Cycle[4];
 // ALU B Input Select (Selects Imm)
 assign oMUX_BIS = OPF_I && ~(OP_DIV || OP_MUL);
 // ALU Result High Select
