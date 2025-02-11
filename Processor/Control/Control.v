@@ -201,7 +201,7 @@ assign oRF_AddrC = (OP_JAL) ? 4'hF : ID_RA;
 // Register File Write Back Register Load Enable
 assign oRWB_en = 1'b1;
 
-// ALU Control Signals
+// ALU Control Signals Also, this should be renamed to "Ctrl" like the key on the keyboard.
 assign oALU_Ctrl =  (OP_ADD || OP_ADDI) ? `CTRL_ALU_ADD :
                     (OP_SUB)            ? `CTRL_ALU_SUB :
                     (OP_OR  || OP_ORI)  ? `CTRL_ALU_OR  :
@@ -215,7 +215,7 @@ assign oALU_Ctrl =  (OP_ADD || OP_ADDI) ? `CTRL_ALU_ADD :
                     (OP_ROL)            ? `CTRL_ALU_ROL :
                     (OP_NOT)            ? `CTRL_ALU_NOT :
                     (OP_NEG)            ? `CTRL_ALU_NEG :
-                    // ALU Add is default for most instructions
+                    // ALU Add is default for most instructions - so why not remove the (OP_ADD || OP_ADDI) ?
                     `CTRL_ALU_ADD;
 // ALU Input A Register Load Enable
 assign oRA_en = 1'b1; 
