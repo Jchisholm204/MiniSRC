@@ -188,7 +188,7 @@ always @(Present_State) begin
             MUX_MAP <= 1;
             PC_en <= 1;
             PC_jmp <= 1;
-            iMemData <= `INS_I(`ISA_AND, 4'd4, 4'd3, 4'd7);
+            iMemData <= `INS_I(`ISA_OR, 4'd4, 4'd3, 4'd7);
             // Not putting this into IR because the IR is not part of the datapath, it's part of the control unit which is not being tested here.
             #(ClockPeriod_ns) MUX_MAP <= 0;
         end   
@@ -201,7 +201,7 @@ always @(Present_State) begin
             #(ClockPeriod_ns) iMemData <= 0; RA_en <= 0; RB_en <= 0;
         end   
         T2          :   begin
-            // Assert ALU control signal for AND operation.
+            // Assert ALU control signal for OR operation.
             ALU_iCtrl <= `CTRL_ALU_OR;
             // Enable RZH and RZL registers to store the result of the ALU operation.
             RZH_en <= 1; RZL_en <= 1;
