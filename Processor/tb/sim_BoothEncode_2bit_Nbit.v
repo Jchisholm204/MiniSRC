@@ -1,4 +1,4 @@
-`timescale 1ms / 1ps
+`timescale 1ns / 1ps
 module sim_BoothEncode_2bit_Nbit #(parameter N = 32);
 
 reg signed [N-1:0] iA;

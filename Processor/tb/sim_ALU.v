@@ -1,4 +1,4 @@
-`timescale 1ps/1ps
+`timescale 1ns/1ps
 module sim_ALU();
 
 reg [31:0] A, B;

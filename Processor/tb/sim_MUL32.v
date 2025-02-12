@@ -1,4 +1,4 @@
-`timescale 1ms/1ps
+`timescale 1ns/1ps
 
 module sim_MUL32;
 
