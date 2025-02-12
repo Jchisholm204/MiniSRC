@@ -190,7 +190,7 @@ always @(Present_State) begin
             PC_jmp <= 1;
             iMemData <= `INS_I(`ISA_OR, 4'd4, 4'd3, 4'd7);
             // Not putting this into IR because the IR is not part of the datapath, it's part of the control unit which is not being tested here.
-            #(ClockPeriod_ns) MUX_MAP <= 0;
+            #(ClockPeriod_ns) PC_en <= 0; MUX_MAP <= 0;
         end   
         T1          :   begin
             // Decode instruction and load registers into ALU inputs.
