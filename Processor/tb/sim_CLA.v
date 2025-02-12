@@ -1,4 +1,4 @@
-`timescale 1ps/1ps
+`timescale 1ns/1ps
 module sim_CLA();
 
 wire iCarry, Carry, Overflow, Zero, Negative;
@@ -36,8 +36,8 @@ initial begin
     #10
     // random tests
     while (1) begin
-        X = $random(seedX) & 32'h0FFFFFFF;
-        Y = $random(seedY) & 32'h0FFFFFFF;
+        X = $random(seedX) & 32'h00FFFFFF;
+        Y = $random(seedY) & 32'h00FFFFFF;
         if (!success && !Overflow) begin
             $display("X = %d, Y = %d, sum = %d, ref_sum = %d", X, Y, sum, ref_sum);
         end
