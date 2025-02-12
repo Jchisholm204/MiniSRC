@@ -124,7 +124,6 @@ Reducer4to2_Nbit #(2*N-2) CSA3(
 assign oCSA3[1][2] = 1'b0;
 
 // Carry-Propagate Addition using final 2 outputs from carry-save adders.
-// Should change to use the CLA adder.
 assign oP = {oCSA3[1][2*N-1:2] + oCSA3[0][2*N-1:2], initialValue[0][1:0]};
 
 endmodule
@@ -189,21 +188,11 @@ wire w, x, y, z;
 assign {w, x, y, z} = iA;
 
 // used Karnaugh Maps to simplify the equations (https://www.charlie-coleman.com/experiments/kmap/)
-// All the commented out assignments are equivalent to the uncommented equations.
 
-// may have to reduce max fan out of the following equation. Currently, it is 9.
-// assign oSum[1] = (iCarry | w) & (iCarry | x) & (iCarry | y) & (iCarry | z) & (w | x | y | z) & (w | x | ~y | ~z) & (w | ~x | y | ~z) & (w | ~x | ~y | z) & (~w | x | y | ~z) & (~w | x | ~y | z) & (~w | ~x | y | z);
-// assign oSum[1] = (w & x & y & z) | (iCarry & ~w & ~x & ~y & z) | (iCarry & ~w & ~x & y & ~z) | (iCarry & ~w & x & ~y & ~z) | (iCarry & x & y & z) | (iCarry & w & ~x & ~y & ~z) | (iCarry & w & y & z) | (iCarry & w & x & z) | (iCarry & w & x & y);
 assign oSum[1] = (w & x & y & z) | (iCarry & (w ^ x ^ y ^ z));
 
-
-// may have to reduce fan out of the following equation. Currently, it is 16.
-// assign oSum[0] = (iCarry | w | x | y | z) & (iCarry | w | x | ~y | ~z) & (iCarry | w | ~x | y | ~z) & (iCarry | w | ~x | ~y | z) & (iCarry | ~w | x | y | ~z) & (iCarry | ~w | x | ~y | z) & (iCarry | ~w | ~x | y | z) & (iCarry | ~w | ~x | ~y | ~z) & (~iCarry | w | x | y | ~z) & (~iCarry | w | x | ~y | z) & (~iCarry | w | ~x | y | z) & (~iCarry | w | ~x | ~y | ~z) & (~iCarry | ~w | x | y | z) & (~iCarry | ~w | x | ~y | ~z) & (~iCarry | ~w | ~x | y | ~z) & (~iCarry | ~w | ~x | ~y | z);
-// assign oSum[0] = (~iCarry & ~w & ~x & ~y & z) | (~iCarry & ~w & ~x & y & ~z) | (~iCarry & ~w & x & ~y & ~z) | (~iCarry & ~w & x & y & z) | (~iCarry & w & ~x & ~y & ~z) | (~iCarry & w & ~x & y & z) | (~iCarry & w & x & ~y & z) | (~iCarry & w & x & y & ~z) | (iCarry & ~w & ~x & ~y & ~z) | (iCarry & ~w & ~x & y & z) | (iCarry & ~w & x & ~y & z) | (iCarry & ~w & x & y & ~z) | (iCarry & w & ~x & ~y & z) | (iCarry & w & ~x & y & ~z) | (iCarry & w & x & ~y & ~z) | (iCarry & w & x & y & z);
 assign oSum[0] = iCarry ^ w ^ x ^ y ^ z;
 
-// Two or more of the inputs are 1.
-// assign oCarry = (y & z) | (x & z) | (x & y) | (w & z) | (w & y) | (w & x);
 assign oCarry = (w | x | y) & (w | x | z) & (w | y | z) & (x | y | z);
 
 endmodule
