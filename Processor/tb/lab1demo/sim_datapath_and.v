@@ -188,7 +188,7 @@ always @(Present_State) begin
             MUX_MAP <= 1;
             PC_en <= 1;
             PC_jmp <= 1;
-            iMemData <= `INS_I(`ISA_AND, 4'd4, 4'd3, 4'd7);
+            iMemData <= `INS_R(`ISA_AND, 4'd4, 4'd3, 4'd7);
             // Not putting this into IR because the IR is not part of the datapath, it's part of the control unit which is not being tested here.
             #(ClockPeriod_ns) PC_en <= 0; MUX_MAP <= 0;
         end   
