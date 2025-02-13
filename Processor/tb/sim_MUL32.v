@@ -49,6 +49,8 @@ initial begin: test
     #1;
     I = 64'h80000001_7FFFFFFF; 
     #1;
+    I = 64'h80000000_FFFFFFFF; 
+    #1;
     // i = 0;
     // while (1) begin
         // I[63:32] = 32'h80000000;
