@@ -49,7 +49,7 @@ wire [31:0] NOT_out;
 
 // XOR input B for subtraction and set carry to 1
 assign cla_iA = (iCtrl == `CTRL_ALU_NEG) ? 32'd0 : iA;
-assign cla_iA = (iCtrl == `CTRL_ALU_NEG) ? 32'd0 : iA;
+// assign cla_iA = (iCtrl == `CTRL_ALU_NEG) ? 32'd0 : iA;
 
 assign cla_iB = (iCtrl == `CTRL_ALU_SUB) ? 32'hFFFFFFFF ^ iB :
                 (iCtrl == `CTRL_ALU_NEG) ? 32'hFFFFFFFF ^ iA : iB;
@@ -173,7 +173,8 @@ assign out_lo = (iCtrl == `CTRL_ALU_ADD) ? cla_out :
                 (iCtrl == `CTRL_ALU_SRA) ? sft_out :
                 (iCtrl == `CTRL_ALU_ROR) ? ROR_out :
                 (iCtrl == `CTRL_ALU_ROL) ? ROL_out :
-                (iCtrl == `CTRL_ALU_NOT) ? NOT_out:
+                (iCtrl == `CTRL_ALU_NOT) ? NOT_out :
+                (iCtrl == `CTRL_ALU_NEG) ? cla_out :
                 32'h00000000;
 
 // Set high output register (Zero on anything not needing 64 bits)
