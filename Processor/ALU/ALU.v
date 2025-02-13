@@ -105,7 +105,13 @@ SHIFT sft(
 
 // Multiplier
 
-assign mul_out = iA * iB;
+MUL32 mul(
+    .iA(iA),
+    .iB(iB),
+    .oP(mul_out)
+);
+
+// assign mul_out = iA * iB;
 assign mul_neg = mul_out[63];
 
 // Divider
