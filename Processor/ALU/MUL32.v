@@ -6,7 +6,6 @@
 // Multiply (multiplicand) A by (multiplier) B to get (product) P.
 module MUL32 (input signed [31:0] iA, input signed [31:0] iB, output signed [63:0] oP);
 
-// Compute the Booth Encoding of the multiplier (B).
 localparam N = 32;
 
 // The number of booth encoded values.
@@ -33,6 +32,7 @@ assign negA = notA + 1'b1;
 assign A2 = {iA[N-1], iA, 1'b0};
 assign negA2 = {negA[N:0], 1'b0};
 
+// Compute the Booth Encoding of the multiplier (B).
 genvar i;
 generate
 for (i = 0; i < N+2; i = i + 1) begin : gen_notA
@@ -130,13 +130,13 @@ endmodule
 
 module BoothEncode_2bit_Nbit #(parameter N = 32) (input signed [N-1:0] iA, output [(N+1)/2-1:0] oSign, output [(N+1)/2-1:0] oMagnitude1, output [(N+1)/2-1:0] oMagnitude0);
 
-wire [N+2:0] A2;
+wire [N+1:0] A2;
 assign A2 = {iA[N-1], iA, 1'b0};
 
 
 genvar i;
 generate
-    for (i = 1; i < N+1; i = i + 2) begin : gen
+    for (i = 1; i+1 <= N+1; i = i + 2) begin : gen
         BoothEncode_2bit be2bit(A2[i+1:i-1], oSign[i/2], {oMagnitude1[i/2], oMagnitude0[i/2]});
     end
 endgenerate
@@ -182,7 +182,7 @@ assign oSum0[N] = carry[N];
 
 endmodule
 
-// oCarry is of the same place value of the most significant bit of the sum.
+// oCarry is of the same place value of the most significant bit of the sum. https://www.geoffknagge.com/fyp/carrysave.shtml
 module Reducer4to2 (input [3:0] iA, input iCarry, output [1:0] oSum, output oCarry);
 wire w, x, y, z;
 assign {w, x, y, z} = iA;
