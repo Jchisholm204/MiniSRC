@@ -93,7 +93,7 @@ assign sft_data = iA;
 assign sft_shamt = iB[4:0];
 // Negate Arithmetic shift (logic low)
 assign sft_arith = ~(iCtrl == `CTRL_ALU_SRA);
-assign sft_left  = (iCtrl == `CTRL_ALU_SLL);
+assign sft_left  = ~(iCtrl == `CTRL_ALU_SLL);
 
 SHIFT sft(
     .iD(sft_data),
