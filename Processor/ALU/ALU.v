@@ -52,9 +52,9 @@ assign cla_iA = (iCtrl == `CTRL_ALU_NEG) ? 32'd0 : iA;
 assign cla_iA = (iCtrl == `CTRL_ALU_NEG) ? 32'd0 : iA;
 
 assign cla_iB = (iCtrl == `CTRL_ALU_SUB) ? 32'hFFFFFFFF ^ iB :
-                (iCtrl == `CTRL_ALU_NEG) ? iA : iB;
+                (iCtrl == `CTRL_ALU_NEG) ? 32'hFFFFFFFF ^ iA : iB;
 
-assign cla_iCarry = (iCtrl == `CTRL_ALU_SUB);
+assign cla_iCarry = (iCtrl == `CTRL_ALU_SUB || iCtrl == `CTRL_ALU_NEG);
 
 CLA cla(
     .iX(cla_iA),

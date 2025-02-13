@@ -2,9 +2,9 @@
 // Run for 600 ns to see full result
 // Will print out the result
 `timescale 1ns/1ps
-`include "../../Control/ISA.vh"
-`include "../../constants.vh"
-`include "../sim_ISA.vh"
+`include "./Control/ISA.vh"
+`include "./constants.vh"
+`include "./sim_ISA.vh"
 module sim_PROC_MUL;
 
 parameter SA = `START_PC_ADDRESS;
