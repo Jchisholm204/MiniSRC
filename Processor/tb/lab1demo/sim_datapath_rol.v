@@ -150,7 +150,7 @@ always @(Present_State) begin
             CT_imm32 <= 0;
         end 
         Reg_load1a  :   begin
-            iMemData <= 32'h22;
+            iMemData <= 32'hFE000022;
             MUX_WBM <= 1;
             RWB_en <= 1;
             #(ClockPeriod_ns) MUX_WBM <= 0; RWB_en <= 0;
