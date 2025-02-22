@@ -10,7 +10,7 @@
 // B Type instruction macro
 // 19 bit constant C
 // 4 bit constant c2
-`define INS_B(code, ra, c2, c) {code, ra, rb, c}
+`define INS_B(code, ra, c2, c) {code, ra, 2'b00, c2, c}
 
 // J Type instruction macro
 `define INS_J(code, ra) {code, ra, 23'd0}

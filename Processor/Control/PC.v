@@ -3,22 +3,22 @@ module PC #(
 ) (
     iClk,
     iEn, nRst,
-    iJmpEn, iLoadRA, iLoadImm,
-    iRA, iImm32,
+    iLoadEn, iOffsetEn,
+    iLoad, iOffset,
     oPC,
     oPC_tmp
 );
 `include "../constants.vh"
 
 input wire iClk, iEn, nRst;
-input wire iJmpEn, iLoadRA, iLoadImm;
-input wire [31:0] iRA, iImm32;
+input wire iLoadEn, iOffsetEn;
+input wire [31:0] iLoad, iOffset;
 output wire [31:0] oPC, oPC_tmp;
 
 wire [31:0] pc_out, pc_tmp_out, add_in, add_out, pc_in;
 
 // PC Adder Selection
-assign add_in = iJmpEn ? iImm32 : `PC_INCREMENT;
+assign add_in = iOffsetEn ? iOffset : `PC_INCREMENT;
 
 CLA pc_adder(
     .iX(add_in),
@@ -33,9 +33,7 @@ CLA pc_adder(
 );
 
 // PC Input Selection
-assign pc_in  = iLoadImm ? iImm32 :
-                iLoadRA  ? iRA    :
-                add_out;
+assign pc_in  = iLoadEn ? iLoad : add_out;
 
 REG32 #(.RESET(StartAddr)) pc(
     .iClk(iClk),
@@ -48,7 +46,7 @@ REG32 #(.RESET(StartAddr)) pc(
 REG32 pc_tmp(
     .iClk(iClk),
     .nRst(nRst),
-    .iEn(iEn && (iLoadImm || iLoadRA)),
+    .iEn(iEn && (iLoadEn || iOffsetEn)),
     .iD(pc_out),
     .oQ(pc_tmp_out)
 );

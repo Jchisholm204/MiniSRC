@@ -13,7 +13,7 @@ input wire [31:0] iMemData;
 output wire [31:0] oMemData, oMemAddr;
 
 // Program Counter Signals
-wire PC_nRst, PC_en, PC_jmp, PC_loadRA, PC_loadImm;
+wire PC_nRst, PC_en, PC_load, PC_offset;
 
 // Register File IO
 wire RF_iWrite;
@@ -57,9 +57,8 @@ Control Ctrl(
     // Program Counter Control
     .oPC_nRst(PC_nRst), 
     .oPC_en(PC_en),
-    .oPC_jmp(PC_jmp),
-    .oPC_loadRA(PC_loadRA),
-    .oPC_loadImm(PC_loadImm),
+    .oPC_load(PC_load),
+    .oPC_offset(PC_offset),
     // Register File Control
     .oRF_Write(RF_iWrite),
     .oRF_AddrA(RF_iAddrA),
@@ -103,9 +102,8 @@ Datapath pipe(
     // Program Counter Control
     .iPC_nRst(PC_nRst),
     .iPC_en(PC_en),
-    .iPC_jmp(PC_jmp),
-    .iPC_loadRA(PC_loadRA),
-    .iPC_loadImm(PC_loadImm),
+    .iPC_load(PC_load),
+    .iPC_offset(PC_offset),
     // Register File Control
     .iRF_Write(RF_iWrite),
     .iRF_AddrA(RF_iAddrA),

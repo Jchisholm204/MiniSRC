@@ -11,7 +11,7 @@ module Control (
     // Pipe Control
     oPipe_nRst,
     // Program Counter Control
-    oPC_nRst, oPC_en, oPC_jmp, oPC_loadRA, oPC_loadImm,
+    oPC_nRst, oPC_en, oPC_load, oPC_offset,
     // Register File Control
     oRF_Write,
     oRF_AddrA, oRF_AddrB, oRF_AddrC,
@@ -39,7 +39,7 @@ output wire oMemRead, oMemWrite;
 // Pipe Control
 output wire oPipe_nRst;
 // Program Counter Control
-output wire oPC_nRst, oPC_en, oPC_jmp, oPC_loadRA, oPC_loadImm;
+output wire oPC_nRst, oPC_en, oPC_load, oPC_offset;
 // Register File Control
 output wire oRF_Write;
 output wire [3:0] oRF_AddrA, oRF_AddrB, oRF_AddrC;
@@ -164,9 +164,9 @@ assign OPF_M  =  (OP_NOP || OP_HLT);
 // Assign Branch Wires
 // iJ_xxx based on RF_RB in data path
 assign BR_ZERO = (ID_BRC == `ISA_BR_ZERO) && iJ_zero;
-assign BR_NZRO = (ID_BRC == `ISA_BR_ZERO) && iJ_nZero;
-assign BR_POS = (ID_BRC == `ISA_BR_ZERO) &&  iJ_pos;
-assign BR_NEG = (ID_BRC == `ISA_BR_ZERO) &&  iJ_neg;
+assign BR_NZRO = (ID_BRC == `ISA_BR_NZRO) && iJ_nZero;
+assign BR_POS = (ID_BRC == `ISA_BR_POSI) &&  iJ_pos;
+assign BR_NEG = (ID_BRC == `ISA_BR_NEGA) &&  iJ_neg;
 assign BR_TRUE = (BR_ZERO || BR_NZRO || BR_POS || BR_NEG) && OP_BRx;
 
 // Assign Control outputs based on Codes and Cycle
@@ -178,11 +178,10 @@ assign oPipe_nRst = nRst;
 // PC Reset (Should only be reset on CPU reset)
 assign oPC_nRst = nRst;
 // PC Load Enable
-assign oPC_en = Cycle[1] || (Cycle[3] && (OP_BRx || OP_JAL || OP_JFR));
+assign oPC_en = Cycle[1] || (Cycle[3] && (BR_TRUE || OP_JAL || OP_JFR));
 // PC Jump Enable
-assign oPC_jmp = Cycle[3] && BR_TRUE;
-assign oPC_loadRA = Cycle[3] && (OP_JFR || OP_JAL);
-assign oPC_loadImm = 1'b0;
+assign oPC_offset = Cycle[3] && BR_TRUE;
+assign oPC_load = Cycle[3] && (OP_JFR || OP_JAL);
 
 // Register File Control Signals
 assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL) || OP_MFH || OP_MFL);
@@ -192,7 +191,7 @@ assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MU
 assign oRF_AddrA =  (OPF_R | OPF_I) ? ID_RB :
                     (OPF_J) ? ID_RA : 4'h0;
 // RB is dependent on ISA type, use R0 if RB is not specified
-assign oRF_AddrB =  (OPF_I) ? ID_RA :
+assign oRF_AddrB =  (OPF_I | OPF_B) ? ID_RA :
                     (OPF_R) ? ID_RC : 4'h0;
 // Store is always RA
 // ISA Specification states to store PC in r15 on JAL (Jump and Link)
@@ -247,7 +246,7 @@ assign oMUX_WBP = OP_JAL;
 
 // Immediate value output
 // Assign Imm32 branch distance if the branch is true
-assign oImm32 = BR_TRUE ? ID_BRD : ID_imm32;
+assign oImm32 = OP_BRx ? ID_BRD : ID_imm32;
 
 // Memory Read/Write Signals
 assign oMemRead = Cycle[1] || (Cycle[4] && (OP_LD || OP_LI));
