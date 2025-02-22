@@ -36,24 +36,26 @@ Processor proc(
 
 initial begin
     // Initialize Data Memory
-    d_mem[0]  = 32'd10;
-    d_mem[1] = 32'd0;
+    d_mem[0]  = 32'd3;
+    d_mem[1] = 32'd5;
 
     // ld r1, 0(r0)
     i_mem[0] = `INS_I(`ISA_LD, 4'd1, 4'd0, 19'd20);
+    // jal r1
+    i_mem[1] = `INS_J(`ISA_JAL, 4'd1);
     // brzr r1, -1
-    i_mem[1] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_ZERO, -19'd1);
+    // i_mem[1] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_ZERO, -19'd1);
     // ld r2, 1(r0)
     i_mem[2] = `INS_I(`ISA_LD, 4'd1, 4'd0, 19'd21);
     // brzr r1, -1
-    i_mem[3] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_ZERO, -19'd1);
     // i_mem[3] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_ZERO, -19'd1);
-    // i_mem[3] = `INS_R(`ISA_ADD, 4'd3, 4'd1, 4'd2);
+    // i_mem[3] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_ZERO, -19'd1);
+    i_mem[3] = `INS_R(`ISA_ADD, 4'd3, 4'd1, 4'd2);
     // mfh r3
     // i_mem[4] = `INS_J(`ISA_MFH, 4'd3);
-    i_mem[4] = `INS_M(`ISA_NOP);
+    // i_mem[3] = `INS_M(`ISA_NOP);
     // jal r0
-    i_mem[5] = `INS_J(`ISA_JAL, 4'd0);
+    i_mem[4] = `INS_J(`ISA_JFR, 4'hF);
     #1
     nRst = 1'b1;
 end

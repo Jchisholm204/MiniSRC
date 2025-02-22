@@ -184,7 +184,7 @@ assign oPC_offset = Cycle[3] && BR_TRUE;
 assign oPC_load = Cycle[3] && (OP_JFR || OP_JAL);
 
 // Register File Control Signals
-assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL) || OP_MFH || OP_MFL);
+assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL) || OP_MFH || OP_MFL || OP_JAL);
 // Note: Most ISA's use RC as the write back address, MiniSRC uses RA 
 // RA is dependent on ISA type, use R0 if RA is not specified
 // RA is used to load PC on JMP/JAL

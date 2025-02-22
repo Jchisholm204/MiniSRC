@@ -47,7 +47,7 @@ REG32 pc_tmp(
     .iClk(iClk),
     .nRst(nRst),
     .iEn(iEn && (iLoadEn || iOffsetEn)),
-    .iD(pc_out),
+    .iD(add_out),
     .oQ(pc_tmp_out)
 );
 

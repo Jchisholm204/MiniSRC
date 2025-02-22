@@ -153,7 +153,7 @@ assign oMemData = RB_out;
 // Write Back
 // Select Memory input on WBM, Select PC for JAL, otherwise use ALU result
 assign RWB_in = iMUX_WBM ? iMemData :
-                iMUX_WBP ? PC_out   : RZX_out;
+                iMUX_WBP ? PC_tOut   : RZX_out;
 
 // Write back buffer register
 REG32 RWB(.iClk(iClk), .nRst(pipe_rst), .iEn(iRWB_en), .iD(RWB_in), .oQ(RF_iRegC));
