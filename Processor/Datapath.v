@@ -4,6 +4,8 @@ module Datapath(
     // Memory Signals
     iMemData,
     oMemAddr, oMemData,
+    // Port IO
+    iPORT, oPORT,
     // Program Counter Control
     iPC_nRst, iPC_en, iPC_load, iPC_offset,
     // Register File Control
@@ -27,6 +29,7 @@ module Datapath(
     iMUX_MAP, // Memory Address out PC Select
     iMUX_ASS, // ALU Storage Select
     iMUX_WBP, // Write back Program Counter Select
+    iMUX_WBE, // Write back in External Port Select
     // Imm32 Output
     iImm32
 );
@@ -37,6 +40,9 @@ input wire iClk, nRst;
 // Memory Signals
 input wire [31:0] iMemData;
 output wire [31:0] oMemData, oMemAddr;
+// Port IO
+input wire [31:0] iPORT;
+output wire [31:0] oPORT;
 // Program Counter Control
 input wire iPC_nRst, iPC_en, iPC_load, iPC_offset;
 // Register File Control
@@ -52,7 +58,7 @@ output wire oALU_neg, oALU_zero;
 // Jump Feedback
 output wire oJ_zero, oJ_nZero, oJ_pos, oJ_neg;
 // Multiplexers
-input wire iMUX_BIS, iMUX_RZHS, iMUX_WBM, iMUX_MAP, iMUX_ASS, iMUX_WBP;
+input wire iMUX_BIS, iMUX_RZHS, iMUX_WBM, iMUX_MAP, iMUX_ASS, iMUX_WBP, iMUX_WBE;
 // Imm32 Output
 input wire [31:0] iImm32;
 
@@ -77,6 +83,7 @@ wire [31:0] RZH_out, RZL_out, RZ_out;
 wire [31:0] RASH_out, RASL_out, RAS_out;
 // ALU Output
 wire [31:0] RZX_out;
+
 
 // Program Counter
 PC #(.StartAddr(`START_PC_ADDRESS)) pc(
@@ -149,11 +156,13 @@ assign RZX_out = iMUX_ASS ? RAS_out : RZ_out;
 // Memory
 assign oMemAddr = iMUX_MAP ? PC_out : RZX_out ;
 assign oMemData = RB_out;
+assign oPORT = RB_out;
 
 // Write Back
 // Select Memory input on WBM, Select PC for JAL, otherwise use ALU result
 assign RWB_in = iMUX_WBM ? iMemData :
-                iMUX_WBP ? PC_tOut   : RZX_out;
+                iMUX_WBE ? iPORT    :
+                iMUX_WBP ? PC_tOut  : RZX_out;
 
 // Write back buffer register
 REG32 RWB(.iClk(iClk), .nRst(pipe_rst), .iEn(iRWB_en), .iD(RWB_in), .oQ(RF_iRegC));

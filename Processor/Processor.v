@@ -2,7 +2,8 @@ module Processor(
     iClk, nRst,
     oMemAddr, oMemData,
     iMemData, iMemRdy,
-    oMemRead, oMemWrite
+    oMemRead, oMemWrite,
+    iPORT, oPORT
 );
 
 `include "constants.vh"
@@ -11,6 +12,8 @@ input wire iClk, nRst, iMemRdy;
 output wire oMemRead, oMemWrite;
 input wire [31:0] iMemData;
 output wire [31:0] oMemData, oMemAddr;
+input wire [31:0] iPORT;
+output wire [31:0] oPORT;
 
 // Program Counter Signals
 wire PC_nRst, PC_en, PC_load, PC_offset;
@@ -33,10 +36,12 @@ wire RAS_en;
 // Jump/Branch Signals
 wire J_zero, J_nZero, J_pos, J_neg;
 
+// External Port Signals
+wire REP_en;
+wire [31:0] REP_in;
+
 // Multiplexer Signals
-wire MUX_BIS, MUX_RZHS, MUX_WBM, MUX_MAP, MUX_ASS, MUX_WBP;
-// Memory Multiplexers
-// wire RMA_en, RMD_en;
+wire MUX_BIS, MUX_RZHS, MUX_WBM, MUX_MAP, MUX_ASS, MUX_WBP, MUX_WBE;
 
 // Control Signals
 wire [31:0] CT_imm32;
@@ -77,9 +82,8 @@ Control Ctrl(
     .iJ_nZero(J_nZero),
     .iJ_pos(J_pos),
     .iJ_neg(J_neg),
-    // Memory Control
-    // .oRMA_en(RMA_en),
-    // .oRMD_en(RMD_en),
+    // External Port Register Enable
+    .oREP_en(REP_en),
     // Multiplexers
     .oMUX_BIS(MUX_BIS),
     .oMUX_RZHS(MUX_RZHS),
@@ -87,6 +91,7 @@ Control Ctrl(
     .oMUX_MAP(MUX_MAP),
     .oMUX_ASS(MUX_ASS),
     .oMUX_WBP(MUX_WBP),
+    .oMUX_WBE(MUX_WBE),
     // Imm32 Output
     .oImm32(CT_imm32)
 );
@@ -99,6 +104,9 @@ Datapath pipe(
     .iMemData(iMemData),
     .oMemAddr(oMemAddr),
     .oMemData(oMemData),
+    // Port Signals
+    .iPORT(iPORT),
+    .oPORT(REP_in),
     // Program Counter Control
     .iPC_nRst(PC_nRst),
     .iPC_en(PC_en),
@@ -133,8 +141,11 @@ Datapath pipe(
     .iMUX_MAP(MUX_MAP), // Memory Address out PC Select
     .iMUX_ASS(MUX_ASS), // ALU Storage Select
     .iMUX_WBP(MUX_WBP),
+    .iMUX_WBE(MUX_WBE),
     // Imm32 Output
     .iImm32(CT_imm32)
 );
+
+REG32 REP(.iClk(iClk), .nRst(nRst), .iEn(REP_en), .iD(REP_in), .oQ(oPORT));
 
 endmodule

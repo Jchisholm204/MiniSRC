@@ -28,6 +28,8 @@
 // J Format Instructions
 `define ISA_JAL  5'b10100
 `define ISA_JFR  5'b10101
+`define ISA_IN   5'b10110
+`define ISA_OUT  5'b10111
 `define ISA_MFL  5'b11000
 `define ISA_MFH  5'b11001
 // M Format Instructions

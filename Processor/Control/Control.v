@@ -22,10 +22,10 @@ module Control (
     oRZH_en, oRZL_en, oRAS_en,
     // Jump Feedback
     iJ_zero, iJ_nZero, iJ_pos, iJ_neg,
-    // Memory Control
-    // oRMA_en, oRMD_en,
+    // Port Register enable
+    oREP_en,
     // Multiplexers
-    oMUX_BIS, oMUX_RZHS, oMUX_WBM, oMUX_MAP, oMUX_ASS, oMUX_WBP,
+    oMUX_BIS, oMUX_RZHS, oMUX_WBM, oMUX_MAP, oMUX_ASS, oMUX_WBP, oMUX_WBE,
     // Imm32 Output
     oImm32
 );
@@ -51,10 +51,10 @@ output wire oRA_en, oRB_en;
 output wire oRZH_en, oRZL_en, oRAS_en;
 // Jump Feedback
 input wire iJ_zero, iJ_nZero, iJ_pos, iJ_neg;
-// Memory Control
-// output wire oRMA_en, oRMD_en;
+// External Port Enable
+output wire oREP_en;
 // Multiplexers
-output wire oMUX_BIS, oMUX_RZHS, oMUX_WBM, oMUX_MAP, oMUX_ASS, oMUX_WBP;
+output wire oMUX_BIS, oMUX_RZHS, oMUX_WBM, oMUX_MAP, oMUX_ASS, oMUX_WBP, oMUX_WBE;
 // Imm32 Output
 output wire [31:0] oImm32;
 
@@ -79,7 +79,7 @@ wire OP_ADDI, OP_ANDI, OP_ORI, OP_DIV, OP_MUL, OP_NEG, OP_NOT;
 // OpCode B-Format Wires
 wire OP_BRx;
 // OpCode J-Format Wires
-wire OP_JAL, OP_JFR, OP_MFL, OP_MFH;
+wire OP_JAL, OP_JFR, OP_IN, OP_OUT, OP_MFL, OP_MFH;
 // OpCode M-Format Wires
 wire OP_NOP, OP_HLT;
 // OpCode Format Wires
@@ -151,6 +151,8 @@ assign OPF_B = OP_BRx;
 // Assign J-Format Wires
 assign OP_JAL = (ID_OpCode == `ISA_JAL);
 assign OP_JFR = (ID_OpCode == `ISA_JFR);
+assign OP_IN  = (ID_OpCode == `ISA_IN);
+assign OP_OUT = (ID_OpCode == `ISA_OUT);
 assign OP_MFL = (ID_OpCode == `ISA_MFL);
 assign OP_MFH = (ID_OpCode == `ISA_MFH);
 // Opcode Format Wire (Useful for data path MUX Assignments)
@@ -184,7 +186,7 @@ assign oPC_offset = Cycle[3] && BR_TRUE;
 assign oPC_load = Cycle[3] && (OP_JFR || OP_JAL);
 
 // Register File Control Signals
-assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL) || OP_MFH || OP_MFL || OP_JAL);
+assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MUL) || OP_MFH || OP_MFL || OP_JAL || OP_IN);
 // Note: Most ISA's use RC as the write back address, MiniSRC uses RA 
 // RA is dependent on ISA type, use R0 if RA is not specified
 // RA is used to load PC on JMP/JAL
@@ -228,8 +230,9 @@ assign oRZL_en = 1'b1;
 // ALU Result Save EN
 assign oRAS_en = (OP_DIV || OP_MUL);
 
-// Memory Address Register EN
-// assign oRMA_en = Cycle[1] || Cycle[4];
+// External Port Register Enable
+assign eREP_en = OP_OUT;
+
 // ALU B Input Select (Selects Imm)
 assign oMUX_BIS = OPF_I && ~(OP_DIV || OP_MUL);
 // ALU Result High Select
@@ -243,6 +246,8 @@ assign oMUX_MAP = ~((OP_LD || OP_ST || OP_LI) && Cycle[4]);
 assign oMUX_ASS = (OP_MFL || OP_MFH);
 // Write Back Program Counter Select
 assign oMUX_WBP = OP_JAL;
+// Write Back External Port Select
+assign oMUX_WBE = OP_IN;
 
 // Immediate value output
 // Assign Imm32 branch distance if the branch is true
