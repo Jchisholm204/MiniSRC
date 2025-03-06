@@ -1,12 +1,12 @@
 `timescale 1ns/1ps
-`include "../Control/ISA.vh"
-`include "../constants.vh"
-`include "sim_ISA.vh"
+`include "../../Control/ISA.vh"
+`include "../../constants.vh"
+`include "../sim_ISA.vh"
 
-module sim_PROC();
+module sim_LAB2_BRx();
 
 parameter SA = `START_PC_ADDRESS;
-`define N_instructions 5
+`define N_instructions 9
 
 wire Clk;
 reg nRst = 1'b0;
@@ -36,26 +36,31 @@ Processor proc(
 
 initial begin
     // Initialize Data Memory
-    d_mem[0]  = 32'd3;
-    d_mem[1] = 32'd5;
+    d_mem[0]  = 32'd2;
+    d_mem[1] = 32'd1;
 
     // ld r1, 0(r0)
     i_mem[0] = `INS_I(`ISA_LD, 4'd1, 4'd0, 19'd20);
-    // jal r1
-    i_mem[1] = `INS_J(`ISA_JAL, 4'd1);
+    // addi r1, r1, -1
+    i_mem[1] = `INS_I(`ISA_ADDI, 4'd1, 4'd1, -19'd1);
     // brzr r1, -1
-    // i_mem[1] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_ZERO, -19'd1);
+    i_mem[2] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_NZRO, -19'd1);
     // ld r2, 1(r0)
-    i_mem[2] = `INS_I(`ISA_LD, 4'd1, 4'd0, 19'd21);
+    i_mem[3] = `INS_I(`ISA_LD, 4'd1, 4'd0, 19'd21);
     // brzr r1, -1
+    i_mem[4] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_ZERO, -19'd1);
+    // brzr r0, 1
+    i_mem[5] = `INS_B(`ISA_BRx, 4'd0, `ISA_BR_ZERO, 19'd1);
+    i_mem[6] = `INS_J(`ISA_JFR, 4'd0);
+    i_mem[7] = `INS_J(`ISA_JFR, 4'd0);
+    i_mem[8] = `INS_J(`ISA_JFR, 4'd0);
     // i_mem[3] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_ZERO, -19'd1);
-    // i_mem[3] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_ZERO, -19'd1);
-    i_mem[3] = `INS_R(`ISA_ADD, 4'd3, 4'd1, 4'd2);
+    // i_mem[3] = `INS_R(`ISA_ADD, 4'd3, 4'd1, 4'd2);
     // mfh r3
     // i_mem[4] = `INS_J(`ISA_MFH, 4'd3);
     // i_mem[3] = `INS_M(`ISA_NOP);
-    // jal ra
-    i_mem[4] = `INS_J(`ISA_JFR, 4'hF);
+    // jal r0
+    // i_mem[4] = `INS_J(`ISA_JFR, 4'hF);
     #1
     nRst = 1'b1;
 end
