@@ -156,7 +156,7 @@ assign OP_OUT = (ID_OpCode == `ISA_OUT);
 assign OP_MFL = (ID_OpCode == `ISA_MFL);
 assign OP_MFH = (ID_OpCode == `ISA_MFH);
 // Opcode Format Wire (Useful for data path MUX Assignments)
-assign OPF_J  = (OP_JAL || OP_JFR || OP_MFL || OP_MFH);
+assign OPF_J  = (OP_JAL || OP_JFR || OP_MFL || OP_MFH || OP_IN || OP_OUT);
 // Assign M-Format Wires
 assign OP_NOP = (ID_OpCode == `ISA_NOP);
 assign OP_HLT = (ID_OpCode == `ISA_HLT);
@@ -193,7 +193,7 @@ assign oRF_Write = Cycle[5] && ((OPF_R && ~OP_ST) || (OPF_I && ~OP_DIV && ~OP_MU
 assign oRF_AddrA =  (OPF_R | OPF_I) ? ID_RB :
                     (OPF_J) ? ID_RA : 4'h0;
 // RB is dependent on ISA type, use R0 if RB is not specified
-assign oRF_AddrB =  (OPF_I | OPF_B) ? ID_RA :
+assign oRF_AddrB =  (OPF_I | OPF_B | OPF_J) ? ID_RA :
                     (OPF_R) ? ID_RC : 4'h0;
 // Store is always RA
 // ISA Specification states to store PC in r15 on JAL (Jump and Link)
@@ -231,7 +231,7 @@ assign oRZL_en = 1'b1;
 assign oRAS_en = (OP_DIV || OP_MUL);
 
 // External Port Register Enable
-assign eREP_en = OP_OUT;
+assign oREP_en = OP_OUT && Cycle[4];
 
 // ALU B Input Select (Selects Imm)
 assign oMUX_BIS = OPF_I && ~(OP_DIV || OP_MUL);
