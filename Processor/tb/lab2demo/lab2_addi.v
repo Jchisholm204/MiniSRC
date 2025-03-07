@@ -3,7 +3,7 @@
 `include "../../constants.vh"
 `include "../sim_ISA.vh"
 
-module sim_LAB2_BRx();
+module sim_LAB2_ADD();
 
 parameter SA = `START_PC_ADDRESS;
 `define N_instructions 9
