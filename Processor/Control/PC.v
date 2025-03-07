@@ -2,7 +2,7 @@ module PC #(
     parameter StartAddr = 32'h00000000
 ) (
     iClk,
-    iEn, nRst,
+    iEn, iTmpEn, nRst,
     iLoadEn, iOffsetEn,
     iLoad, iOffset,
     oPC,
@@ -10,7 +10,7 @@ module PC #(
 );
 `include "../constants.vh"
 
-input wire iClk, iEn, nRst;
+input wire iClk, iEn, iTmpEn, nRst;
 input wire iLoadEn, iOffsetEn;
 input wire [31:0] iLoad, iOffset;
 output wire [31:0] oPC, oPC_tmp;
@@ -46,7 +46,7 @@ REG32 #(.RESET(StartAddr)) pc(
 REG32 pc_tmp(
     .iClk(iClk),
     .nRst(nRst),
-    .iEn(iEn && (iLoadEn || iOffsetEn)),
+    .iEn(iTmpEn),
     .iD(add_out),
     .oQ(pc_tmp_out)
 );

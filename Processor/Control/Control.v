@@ -11,7 +11,7 @@ module Control (
     // Pipe Control
     oPipe_nRst,
     // Program Counter Control
-    oPC_nRst, oPC_en, oPC_load, oPC_offset,
+    oPC_nRst, oPC_en, oPC_tmpEn, oPC_load, oPC_offset,
     // Register File Control
     oRF_Write,
     oRF_AddrA, oRF_AddrB, oRF_AddrC,
@@ -39,7 +39,7 @@ output wire oMemRead, oMemWrite;
 // Pipe Control
 output wire oPipe_nRst;
 // Program Counter Control
-output wire oPC_nRst, oPC_en, oPC_load, oPC_offset;
+output wire oPC_nRst, oPC_en, oPC_tmpEn, oPC_load, oPC_offset;
 // Register File Control
 output wire oRF_Write;
 output wire [3:0] oRF_AddrA, oRF_AddrB, oRF_AddrC;
@@ -176,11 +176,12 @@ assign BR_TRUE = (BR_ZERO || BR_NZRO || BR_POS || BR_NEG) && OP_BRx;
 // Pipe Reset Signal
 assign oPipe_nRst = nRst;
 
-// Program Counter Control Signals (NOT CORRECT)
+// Program Counter Control Signals
 // PC Reset (Should only be reset on CPU reset)
 assign oPC_nRst = nRst;
 // PC Load Enable
 assign oPC_en = Cycle[1] || (Cycle[3] && (BR_TRUE || OP_JAL || OP_JFR));
+assign oPC_tmpEn = Cycle[1];
 // PC Jump Enable
 assign oPC_offset = Cycle[3] && BR_TRUE;
 assign oPC_load = Cycle[3] && (OP_JFR || OP_JAL);

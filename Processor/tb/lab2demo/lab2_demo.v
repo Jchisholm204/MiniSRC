@@ -23,6 +23,8 @@ reg [31:0] i_mem[0:`N_instructions];
 reg [31:0] d_mem[0:255];
 // `INS_I(`ISA_ADDI, 4'd1, 4'd1, 19'd10);
 
+wire [31:0] port_out;
+
 Processor proc(
     .iClk(Clk),
     .nRst(nRst),
@@ -31,7 +33,9 @@ Processor proc(
     .iMemData(proc_mem_in),
     .iMemRdy(1'b1),
     .oMemRead(mem_read),
-    .oMemWrite(mem_write)
+    .oMemWrite(mem_write),
+    .iPORT(32'd123),
+    .oPORT(port_out)
 );
 
 initial begin
@@ -41,23 +45,31 @@ initial begin
 
     // ld r1, 0(r0)
     i_mem[0] = `INS_I(`ISA_LD, 4'd1, 4'd0, 19'd20);
-    // neg r1, r1
+    // addi r1, r1, 5
     i_mem[1] = `INS_I(`ISA_ADDI, 4'd1, 4'd1, 19'd5);
-    // ld r2, 1(r0)
-    i_mem[2] = `INS_I(`ISA_LD, 4'd2, 4'd0, 19'd21);
-    // div r3, r1, r2
-    i_mem[3] = `INS_I(`ISA_DIV, 4'd2, 4'd1, 19'd0);
-    // i_mem[3] = `INS_R(`ISA_ADD, 4'd3, 4'd1, 4'd2);
-    // mfh r3
-    i_mem[4] = `INS_J(`ISA_MFH, 4'd3);
-    // st r3, 2(r0)
-    i_mem[5] = `INS_I(`ISA_ST, 4'd3, 4'd0, 19'd2);
-    // mfl r3
-    i_mem[6] = `INS_J(`ISA_MFL, 4'd3);
-    // st r3, 2(r0)
-    i_mem[7] = `INS_I(`ISA_ST, 4'd3, 4'd0, 19'd3);
-    // jmp to beginning
-    i_mem[8] = `INS_J(`ISA_JFR, 4'd0);
+    // in r5
+    i_mem[2] = `INS_J(`ISA_IN, 4'd5);
+    // out r1
+    i_mem[3] = `INS_J(`ISA_OUT, 4'd1);
+
+    // // ld r1, 0(r0)
+    // i_mem[0] = `INS_I(`ISA_LD, 4'd1, 4'd0, 19'd20);
+    // // neg r1, r1
+    // i_mem[1] = `INS_I(`ISA_ADDI, 4'd1, 4'd1, 19'd5);
+    // // ld r2, 1(r0)
+    // i_mem[2] = `INS_I(`ISA_LD, 4'd2, 4'd0, 19'd21);
+    // // div r3, r1, r2
+    // i_mem[3] = `INS_I(`ISA_DIV, 4'd2, 4'd1, 19'd0);
+    // // mfh r3
+    // i_mem[4] = `INS_J(`ISA_MFH, 4'd3);
+    // // st r3, 2(r0)
+    // i_mem[5] = `INS_I(`ISA_ST, 4'd3, 4'd0, 19'd2);
+    // // mfl r3
+    // i_mem[6] = `INS_J(`ISA_MFL, 4'd3);
+    // // st r3, 2(r0)
+    // i_mem[7] = `INS_I(`ISA_ST, 4'd3, 4'd0, 19'd3);
+    // // jmp to beginning
+    // i_mem[8] = `INS_J(`ISA_JFR, 4'd0);
     #1
     nRst = 1'b1;
 end

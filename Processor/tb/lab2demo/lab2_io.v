@@ -45,10 +45,11 @@ initial begin
 
     // ld r1, 0(r0)
     i_mem[0] = `INS_I(`ISA_LD, 4'd1, 4'd0, 19'd20);
-    // addi r1, r1, -1
+    // addi r1, r1, 5
     i_mem[1] = `INS_I(`ISA_ADDI, 4'd1, 4'd1, 19'd5);
-    // brzr r1, -1
+    // in r5
     i_mem[2] = `INS_J(`ISA_IN, 4'd5);
+    // out r1
     i_mem[3] = `INS_J(`ISA_OUT, 4'd1);
     // // ld r2, 1(r0)
     // i_mem[3] = `INS_I(`ISA_LD, 4'd1, 4'd0, 19'd21);
