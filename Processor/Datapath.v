@@ -7,7 +7,7 @@ module Datapath(
     // Port IO
     iPORT, oPORT,
     // Program Counter Control
-    iPC_nRst, iPC_en, iPC_load, iPC_offset,
+    iPC_nRst, iPC_en, iPC_tmpEn, iPC_load, iPC_offset,
     // Register File Control
     iRF_Write,
     iRF_AddrA, iRF_AddrB, iRF_AddrC,
@@ -44,7 +44,7 @@ output wire [31:0] oMemData, oMemAddr;
 input wire [31:0] iPORT;
 output wire [31:0] oPORT;
 // Program Counter Control
-input wire iPC_nRst, iPC_en, iPC_load, iPC_offset;
+input wire iPC_nRst, iPC_en, iPC_tmpEn, iPC_load, iPC_offset;
 // Register File Control
 input wire iRF_Write;
 input wire [3:0] iRF_AddrA, iRF_AddrB, iRF_AddrC;
@@ -89,6 +89,7 @@ wire [31:0] RZX_out;
 PC #(.StartAddr(`START_PC_ADDRESS)) pc(
     .iClk(Clk),
     .iEn(iPC_en),
+    .iTmpEn(iPC_tmpEn),
     .nRst(iPC_nRst),
     .iLoadEn(iPC_load),
     .iOffsetEn(iPC_offset),

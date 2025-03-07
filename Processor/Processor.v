@@ -16,7 +16,7 @@ input wire [31:0] iPORT;
 output wire [31:0] oPORT;
 
 // Program Counter Signals
-wire PC_nRst, PC_en, PC_load, PC_offset;
+wire PC_nRst, PC_en, PC_tmpEn, PC_load, PC_offset;
 
 // Register File IO
 wire RF_iWrite;
@@ -62,6 +62,7 @@ Control Ctrl(
     // Program Counter Control
     .oPC_nRst(PC_nRst), 
     .oPC_en(PC_en),
+    .oPC_tmpEn(PC_tmpEn),
     .oPC_load(PC_load),
     .oPC_offset(PC_offset),
     // Register File Control
@@ -110,6 +111,7 @@ Datapath pipe(
     // Program Counter Control
     .iPC_nRst(PC_nRst),
     .iPC_en(PC_en),
+    .iPC_tmpEn(PC_tmpEn),
     .iPC_load(PC_load),
     .iPC_offset(PC_offset),
     // Register File Control
