@@ -6,10 +6,8 @@
 module sim_LAB3_prog();
 
 parameter SA = `START_PC_ADDRESS;
-// TODO: set correct number of instructions
-`define N_instructions 100
-// TODO: set correct amount of data memory
-`define N_data 256
+// largest valid memory address
+`define MEM_MAX ((8'hB9) + 3)
 
 wire Clk;
 reg nRst = 1'b0;
@@ -22,8 +20,7 @@ ClockGenerator cg(
 wire mem_read, mem_write;
 wire [31:0] proc_mem_out, proc_mem_addr;
 reg [31:0] proc_mem_in;
-reg [31:0] i_mem[0:`N_instructions-1];
-reg [31:0] d_mem[0:`N_data-1];
+reg [31:0] mem[0:`MEM_MAX];
 wire [31:0] oPort;
 
 Processor proc(
@@ -40,77 +37,30 @@ Processor proc(
 );
 
 initial begin
-    // TODO: Initialize Data Memory
-    d_mem[0]  = 32'd2;
-    d_mem[1] = 32'd1;
+    // Initialize Data Memory
+    // Initialize memory locations 0x54 and 0x92 with the 32-bit hexadecimal values 0x97 and 0x46, respectively.
+    mem[8'h54]  = 32'h97;
+    mem[8'h92] = 32'h46;
 
-    // TODO: put the correct instructions here.
-    // brzr r1, 27
-    // addi r1, r0, 1
-    i_mem[0] = `INS_I(`ISA_ADDI, 4'd1, 4'd0, 19'd1);
-    // branch not taken
-    i_mem[1] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_ZERO, 19'd`BRANCH_OFFSET);
-    // addi r1, r0, 0
-    i_mem[2] = `INS_I(`ISA_ADDI, 4'd1, 4'd0, 19'd0);
-    // branch taken
-    i_mem[3] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_ZERO, 19'd`BRANCH_OFFSET);
-    // instruction should get ignored
-    // addi r1, r0, 0xBAD
-    i_mem[4] = `INS_I(`ISA_ADDI, 4'd1, 4'd0, 19'hBAD);
+    // TODO: Initialize Instruction Memory.
+    // Encode your program in memory with the starting address zero
+    mem[8'h0] = `INS_I(`ISA_ADDI, 4'd3, 4'd0, 19'h65);
 
-    // brnz r1, 27
-    // branch not taken
-    i_mem[4+`BRANCH_OFFSET*4] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_NZRO, 19'd`BRANCH_OFFSET);
-    // addi r1, r0, -1
-    i_mem[5+`BRANCH_OFFSET*4] = `INS_I(`ISA_ADDI, 4'd1, 4'd0, -19'd1);
-    // branch taken
-    i_mem[6+`BRANCH_OFFSET*4] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_NZRO, 19'd27);
-    // instruction should get ignored
-    // addi r1, r0, 0xBAD
-    i_mem[7+`BRANCH_OFFSET*4] = `INS_I(`ISA_ADDI, 4'd1, 4'd0, 19'hBAD);
-
-    // brpl r1, 27
-    // branch not taken
-    i_mem[7+`BRANCH_OFFSET*4*2] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_POSI, 19'd`BRANCH_OFFSET);
-    // addi r1, r0, 1
-    i_mem[8+`BRANCH_OFFSET*4*2] = `INS_I(`ISA_ADDI, 4'd1, 4'd0, 19'd1);
-    // branch taken
-    i_mem[9+`BRANCH_OFFSET*4*2] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_POSI, 19'd`BRANCH_OFFSET);
-    // instruction should get ignored
-    // addi r1, r0, 0xBAD
-    i_mem[10+`BRANCH_OFFSET*4*2] = `INS_I(`ISA_ADDI, 4'd1, 4'd0, 19'hBAD);
-
-    // brmi r2, 27
-    // branch not taken
-    i_mem[10+`BRANCH_OFFSET*4*3] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_NEGA, 19'd`BRANCH_OFFSET);
-    // addi r1, r0, -1
-    i_mem[11+`BRANCH_OFFSET*4*3] = `INS_I(`ISA_ADDI, 4'd1, 4'd0, -19'd1);
-    // branch taken
-    i_mem[12+`BRANCH_OFFSET*4*3] = `INS_B(`ISA_BRx, 4'd1, `ISA_BR_NEGA, 19'd`BRANCH_OFFSET);
-    // instruction should get ignored
-    // addi r1, r0, 0xBAD
-    i_mem[13+`BRANCH_OFFSET*4*3] = `INS_I(`ISA_ADDI, 4'd1, 4'd0, 19'hBAD);
-    
-    // loop back to beginning using jump
-    i_mem[13+`BRANCH_OFFSET*4*4] = `INS_J(`ISA_JFR, 4'd0);
     #1
+    // Initialize registers R0 - R15 and the PC to 0 with the Reset input signal. 
     nRst = 1'b1;
 end
 
 always @(mem_read, mem_write) begin
-    if(mem_read) begin
-        if(proc_mem_addr < `N_instructions) begin
-            proc_mem_in = i_mem[((proc_mem_addr-SA))];
-        end
-        else begin
-            proc_mem_in = d_mem[proc_mem_addr-`N_instructions];
-        end
-    end
-    else begin
+    if (proc_mem_addr > `MEM_MAX) begin
+        $display("Memory address out of bounds: %0d", proc_mem_addr);
         proc_mem_in = `INS_M(`ISA_NOP);
     end
-    if(mem_write) begin
-        d_mem[proc_mem_addr] = proc_mem_out;
+    else if (mem_read) begin
+        proc_mem_in = mem[proc_mem_addr];
+    end
+    else if (mem_write) begin
+        mem[proc_mem_addr] = proc_mem_out;
         $display("Write addr: %0d data: %0d", proc_mem_addr, proc_mem_out);
     end
 end
