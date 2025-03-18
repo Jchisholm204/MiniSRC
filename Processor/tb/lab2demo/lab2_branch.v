@@ -7,6 +7,7 @@ module sim_LAB2_BRx();
 
 parameter SA = `START_PC_ADDRESS;
 `define BRANCH_OFFSET 27
+// `BRANCH_OFFSET*4*4 because branch jumps are multiplied by 4 since memory is byte addressed
 `define N_instructions (13+`BRANCH_OFFSET*4*4 + 1)
 
 wire Clk;
@@ -88,8 +89,8 @@ initial begin
     // addi r1, r0, 0xBAD
     i_mem[13+`BRANCH_OFFSET*4*3] = `INS_I(`ISA_ADDI, 4'd1, 4'd0, 19'hBAD);
     
-    // loop back to beginning using jump
-    i_mem[13+`BRANCH_OFFSET*4*4] = `INS_J(`ISA_JFR, 4'd0);
+    // halt
+    i_mem[13+`BRANCH_OFFSET*4*4] = `INS_M(`ISA_HLT);
     #1
     nRst = 1'b1;
 end

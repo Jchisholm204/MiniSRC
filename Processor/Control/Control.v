@@ -95,7 +95,7 @@ begin
     if(!nRst)
         Cycle = 5'b00001;
     else begin
-        if(iRdy) Cycle = {Cycle[4:1], Cycle[5]};
+        if(iRdy && !OP_HLT) Cycle = {Cycle[4:1], Cycle[5]};
     end
 end
 

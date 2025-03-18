@@ -34,7 +34,7 @@
 `define ISA_MFH  5'b11001
 // M Format Instructions
 `define ISA_NOP  5'b11010
-`define ISA_HLT  5'b11011
+`define ISA_HLT  5'b11011 // TODO: internally implemented by preventing the step counter from incrementing in the control unit.
 
 // Branch Codes
 // Branch if Zero
