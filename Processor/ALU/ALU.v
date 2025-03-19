@@ -35,7 +35,7 @@ wire [63:0] mul_out;
 wire mul_neg;
 
 // Divider IO
-wire [31:0] div_q, div_r, div_m, div_d;
+wire [31:0] div_q, div_r, div_dividend, div_divisor;
 wire [31:0] div_rmdr, div_qtnt;
 wire div_iNegA, div_iNegB, div_neg;
 
@@ -122,12 +122,12 @@ assign div_iNegB = iB[31];
 assign div_neg = div_iNegA ^ div_iNegB;
 
 // If the divisor or dividend is negative, make it positive
-assign div_m = div_iNegA ? 32'hFFFFFFFF ^ (iA - 1) : iA;
-assign div_d = div_iNegB ? 32'hFFFFFFFF ^ (iB - 1) : iB;
+assign div_dividend = div_iNegA ? 32'hFFFFFFFF ^ (iA - 1) : iA;
+assign div_divisor = div_iNegB ? 32'hFFFFFFFF ^ (iB - 1) : iB;
 
 DIV32 div(
-    .iQ(div_m),
-    .iD(div_d),
+    .iQ(div_dividend),
+    .iD(div_divisor),
     .oQ(div_q),
     .oR(div_r)
 );
