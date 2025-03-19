@@ -7,7 +7,7 @@ module sim_LAB3_prog();
 
 parameter SA = `START_PC_ADDRESS;
 // largest valid memory address
-`define MEM_MAX ((8'hB9) + 3)
+`define MEM_MAX ((8'hB9) + 4)
 
 wire Clk;
 reg nRst = 1'b0;
