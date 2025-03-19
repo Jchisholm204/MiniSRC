@@ -3,9 +3,6 @@
 
 // Opcode Signatures
 // R Format Instructions
-`define ISA_LD   5'b00000
-`define ISA_LI   5'b00001
-`define ISA_ST   5'b00010
 `define ISA_ADD  5'b00011
 `define ISA_SUB  5'b00100
 `define ISA_AND  5'b00101
@@ -16,6 +13,9 @@
 `define ISA_SRA  5'b01010
 `define ISA_SLL  5'b01011
 // I Format Instructions
+`define ISA_LD   5'b00000
+`define ISA_LI   5'b00001
+`define ISA_ST   5'b00010
 `define ISA_ADDI 5'b01100
 `define ISA_ANDI 5'b01101
 `define ISA_ORI  5'b01110
