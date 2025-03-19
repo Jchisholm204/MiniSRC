@@ -167,7 +167,7 @@ assign out_lo = (iCtrl == `CTRL_ALU_ADD) ? cla_out :
                 (iCtrl == `CTRL_ALU_XOR) ? xor_out :
                 (iCtrl == `CTRL_ALU_AND) ? and_out :
                 (iCtrl == `CTRL_ALU_MUL) ? mul_out[31:0] :
-                (iCtrl == `CTRL_ALU_DIV) ? div_rmdr :
+                (iCtrl == `CTRL_ALU_DIV) ? div_qtnt :
                 (iCtrl == `CTRL_ALU_SLL) ? sft_out :
                 (iCtrl == `CTRL_ALU_SRL) ? sft_out :
                 (iCtrl == `CTRL_ALU_SRA) ? sft_out :
@@ -179,7 +179,7 @@ assign out_lo = (iCtrl == `CTRL_ALU_ADD) ? cla_out :
 
 // Set high output register (Zero on anything not needing 64 bits)
 assign out_hi = (iCtrl == `CTRL_ALU_MUL) ? mul_out[63:32] :
-                (iCtrl == `CTRL_ALU_DIV) ? div_qtnt :
+                (iCtrl == `CTRL_ALU_DIV) ? div_rmdr :
                 32'h00000000;
 
 // Output register 
