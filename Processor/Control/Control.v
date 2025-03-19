@@ -198,7 +198,7 @@ assign oRF_AddrB =  (OPF_I | OPF_B | OPF_J) ? ID_RA :
                     (OPF_R) ? ID_RC : 4'h0;
 // Store is always RA
 // ISA Specification states to store PC in r15 on JAL (Jump and Link)
-assign oRF_AddrC = (OP_JAL) ? 4'hF : ID_RA;
+assign oRF_AddrC = (OP_JAL) ? 4'h8 : ID_RA;
 
 // Register File Write Back Register Load Enable
 assign oRWB_en = 1'b1;
