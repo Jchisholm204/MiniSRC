@@ -101,9 +101,6 @@ initial begin
 end
 
 always @(mem_read, mem_write) begin
-    if (mem_read) begin
-        $display("Read addr: 0x%0h", proc_mem_addr);
-    end
     if (proc_mem_addr > `MEM_MAX) begin
         $display("Memory address out of bounds: 0x%0h", proc_mem_addr);
         proc_mem_in = `INS_M(`ISA_NOP);
