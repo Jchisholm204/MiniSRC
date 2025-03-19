@@ -6,8 +6,8 @@
 module sim_LAB3_prog();
 
 parameter SA = `START_PC_ADDRESS;
-// largest valid memory address
-`define MEM_MAX ((8'hB9) + 4)
+// largest valid memory address, doing +1 because in logical simulation, the pc is incremented before the oMemRead signal is de-asserted for a split-second on the transition from clock cycle 1 to clock cycle 2. TODO: confirm this is not an issue in hardware with propagation delays.
+`define MEM_MAX ((8'hBC) + 1)
 
 wire Clk;
 reg nRst = 1'b0;
@@ -101,6 +101,9 @@ initial begin
 end
 
 always @(mem_read, mem_write) begin
+    if (mem_read) begin
+        $display("Read addr: 0x%0h", proc_mem_addr);
+    end
     if (proc_mem_addr > `MEM_MAX) begin
         $display("Memory address out of bounds: 0x%0h", proc_mem_addr);
         proc_mem_in = `INS_M(`ISA_NOP);
