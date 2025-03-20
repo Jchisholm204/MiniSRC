@@ -1,0 +1,193 @@
+// memory data file (do not edit the following line - required for mem load use)
+// instance=/sim_LAB3_prog/mem
+// format=bin addressradix=h dataradix=b version=1.0 wordsperline=1
+ @0 01100001100000000000000001100101
+ @1 01100001100110000000000000000011
+ @2 00000001000000000000000001010100
+ @3 01100001000100000000000000000001
+ @4 00000100100101111111111111111010
+ @5 01100000100000000000000000000011
+ @6 01100001100000000000000001010111
+ @7 00000010000110000000000000000011
+ @8 01100001100110000000000000000011
+ @9 00000010000111111111111111111010
+ @a 11010000000000000000000000000000
+ @b 10011010000100000000000000000001
+ @c 01100011000110000000000000000111
+ @d 01100010101101111111111111111100
+ @e 11010000000000000000000000000000
+ @f 11010000000000000000000000000000
+@10 00011001100110001000000000000000
+@11 01100010001000000000000000000010
+@12 10001010001000000000000000000000
+@13 10010010001000000000000000000000
+@14 01101010001000000000000000001111
+@15 00111001010010001000000000000000
+@16 01110010000100000000000000000111
+@17 01010001001000001000000000000000
+@18 01010001100110001000000000000000
+@19 00010001100000000000000010010010
+@1a 01000001110010001000000000000000
+@1b 00110010100011001000000000000000
+@1c 00101001000111001000000000000000
+@1d 00010010100100000000000001010100
+@1e 00100100100110101000000000000000
+@1f 01011001000110001000000000000000
+@20 01100010100000000000000000001000
+@21 01100011000000000000000000010111
+@22 10000010101100000000000000000000
+@23 11001010000000000000000000000000
+@24 11000011100000000000000000000000
+@25 01111010101100000000000000000000
+@26 01100101001010000000000000000001
+@27 01100101101101111111111111111101
+@28 01100110001110000000000000000001
+@29 01100110101000000000000000000100
+@2a 10100110000000000000000000000000
+@2b 11011000000000000000000000000000
+@2c xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@2d xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@2e xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@2f xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@30 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@31 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@32 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@33 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@34 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@35 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@36 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@37 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@38 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@39 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@3a xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@3b xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@3c xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@3d xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@3e xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@3f xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@40 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@41 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@42 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@43 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@44 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@45 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@46 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@47 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@48 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@49 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@4a xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@4b xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@4c xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@4d xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@4e xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@4f xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@50 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@51 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@52 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@53 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@54 00000000000000000000000001000111
+@55 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@56 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@57 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@58 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@59 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@5a xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@5b xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@5c xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@5d xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@5e xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@5f xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@60 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@61 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@62 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@63 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@64 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@65 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@66 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@67 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@68 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@69 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@6a xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@6b xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@6c xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@6d xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@6e xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@6f xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@70 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@71 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@72 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@73 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@74 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@75 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@76 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@77 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@78 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@79 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@7a xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@7b xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@7c xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@7d xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@7e xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@7f xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@80 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@81 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@82 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@83 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@84 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@85 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@86 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@87 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@88 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@89 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@8a xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@8b xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@8c xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@8d xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@8e xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@8f xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@90 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@91 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@92 00000000000000000000000000001011
+@93 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@94 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@95 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@96 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@97 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@98 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@99 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@9a xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@9b xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@9c xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@9d xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@9e xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@9f xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@a0 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@a1 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@a2 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@a3 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@a4 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@a5 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@a6 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@a7 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@a8 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@a9 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@aa xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@ab xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@ac xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@ad xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@ae xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@af xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@b0 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@b1 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@b2 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@b3 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@b4 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@b5 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@b6 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@b7 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@b8 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+@b9 00011111110101100000000000000000
+@ba 00100111010111101000000000000000
+@bb 00100111111111110000000000000000
+@bc 10101100000000000000000000000000
+@bd xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

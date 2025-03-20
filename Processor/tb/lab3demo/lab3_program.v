@@ -51,7 +51,7 @@ initial begin
     mem[8'h04] = `INS_I(`ISA_LD, 4'd9, 4'd2, -19'd6); // ld R0, -6(R2) ; R0 = (0x92) = 0x46 // ld R9, -6(R2) ; R9 = (0x92) = 0x46
     mem[8'h05] = `INS_I(`ISA_ADDI, 4'd1, 4'd0, 19'd3); // ldi R1, 3 ; R1 = 3 
     mem[8'h06] = `INS_I(`ISA_ADDI, 4'd3, 4'd0, 19'h57); // ldi R3, 0x57 ; R3 = 0x57 
-    mem[8'h07] = `INS_B(`ISA_BRx, 4'd3, `ISA_BR_NEGA, 19'd3); // brmi R3, 3 ; continue with the next instruction (will not branch) 
+    mem[8'h07] = `INS_B(`ISA_BRx, 4, `ISA_BR_NEGA, 19'd3); // brmi R3, 3 ; continue with the next instruction (will not branch) 
     mem[8'h08] = `INS_I(`ISA_ADDI, 4'd3, 4'd3, 19'd3); // ldi R3, 3(R3) ; R3 = 0x5A 
     mem[8'h09] = `INS_I(`ISA_LD, 4'd4, 4'd3, -19'd6); // ld R4, -6(R3) ; R4 = (0x5A - 6) = 0x97 
     mem[8'h0A] = `INS_M(`ISA_NOP); // nop
