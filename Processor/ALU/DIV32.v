@@ -16,7 +16,7 @@ assign A[0] = 32'd0;
 // Create 31 divisor levels
 generate
     genvar i;
-    for(i = 0; i < 31; i = i + 1) begin
+    for(i = 0; i < 31; i = i + 1) begin : gen_div_lvl
         DIV_LEVEL divlvl (
             .iA(A[i]),
             .iQ(iQ[31-i]),

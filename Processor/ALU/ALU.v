@@ -68,21 +68,21 @@ CLA cla(
 );
 
 // OR
-OR bor(
+ALU_OR bor(
     .iA(iA),
     .iB(iB),
     .oC(or_out)
 );
 
 // XOR
-XOR bxor(
+ALU_XOR bxor(
     .iA(iA),
     .iB(iB),
     .oC(xor_out)
 );
 
 // AND
-AND band(
+ALU_AND band(
     .iA(iA),
     .iB(iB),
     .oC(and_out)
@@ -154,7 +154,7 @@ ROL rol(
 // NOT
 generate
     genvar i;
-    for(i = 0; i < 32; i = i + 1) begin
+    for(i = 0; i < 32; i = i + 1) begin : alu_not_gen
         not (NOT_out[i], iA[i]);
     end
 endgenerate

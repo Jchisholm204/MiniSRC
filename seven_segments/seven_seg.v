@@ -26,3 +26,4 @@ always @(iNum) begin
     endcase
 end
 
+endmodule

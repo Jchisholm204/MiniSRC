@@ -88,8 +88,9 @@ genvar j;
 generate
     // i is the index of each reducer in the first layer.
     for (i = 0; i < 4; i = i + 1) begin : gen_CSA1
-        for (j = 0; j < 4; j = j + 1)
+        for (j = 0; j < 4; j = j + 1) begin : gen_CSA1_shift
             assign iCSA1[i][j] = shiftedInitialValue[4*i+j][2*N-1:2];
+        end
         Reducer4to2_Nbit #(2*N-2) CSA1_i(
             .iW(iCSA1[i][3]), .iX(iCSA1[i][2]), .iY(iCSA1[i][1]), .iZ(iCSA1[i][0]), .iCarry(1'b0), 
             .oSum1(oCSA1[i][1][2*N:3]), .oSum0(oCSA1[i][0][2*N:2]));
@@ -102,8 +103,9 @@ wire [2*N-1:2] iCSA2[1:0][3:0];
 wire [2*N:2] oCSA2[1:0][1:0];
 generate
     for (i = 0; i < 2; i = i + 1) begin : gen_CSA2
-        for (j = 0; j < 4; j = j + 1)
+        for (j = 0; j < 4; j = j + 1) begin : gen_CSA2_shift
             assign iCSA2[i][j] = oCSA1[2*i+j/2][j%2][2*N-1:2];
+        end
         Reducer4to2_Nbit #(2*N-2) CSA2_i(
             .iW(iCSA2[i][3]), .iX(iCSA2[i][2]), .iY(iCSA2[i][1]), .iZ(iCSA2[i][0]), .iCarry(1'b0), 
             .oSum1(oCSA2[i][1][2*N:3]), .oSum0(oCSA2[i][0][2*N:2]));
@@ -115,8 +117,9 @@ endgenerate
 wire [2*N-1:2] iCSA3[3:0];
 wire [2*N:2] oCSA3[1:0];
 generate
-    for (i = 0; i < 4; i = i + 1) 
+    for (i = 0; i < 4; i = i + 1) begin : gen_CAS3
         assign iCSA3[i] = oCSA2[i/2][i%2][2*N-1:2];
+    end
 endgenerate
 Reducer4to2_Nbit #(2*N-2) CSA3(
     .iW(iCSA3[3]), .iX(iCSA3[2]), .iY(iCSA3[1]), .iZ(iCSA3[0]), .iCarry(1'b0), 

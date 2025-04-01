@@ -45,3 +45,5 @@ SevenSeg s8(
     .iNum(iNum[31:28]),
     .oSeg(oSeg8)
 );
+
+endmodule
