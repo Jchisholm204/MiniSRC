@@ -126,8 +126,8 @@ assign div_dividend = div_iNegA ? 32'hFFFFFFFF ^ (iA - 1) : iA;
 assign div_divisor = div_iNegB ? 32'hFFFFFFFF ^ (iB - 1) : iB;
 
 DIV32 div(
-    .iQ(div_dividend),
-    .iD(div_divisor),
+    .iQ(div_divisor),
+    .iD(div_dividend),
     .oQ(div_q),
     .oR(div_r)
 );

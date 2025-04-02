@@ -23,22 +23,22 @@ always @(posedge iClk) begin
     oData <= mem[Addri];
 end
 
-// initial $readmemh("program.hex", mem);
+initial $readmemh("program.hex", mem);
 
-initial begin 
-    // Set the output port to the value in R1
-    mem[0] = `INS_J(`ISA_OUT, 4'h1);
-    // Increase R1 by 1
-    mem[1] = `INS_I(`ISA_ADDI, 4'h1, 4'h1, 19'd1);
-    // Load the counter value from the in port into R2
-    mem[2] = `INS_J(`ISA_IN, 4'h2);
-    // Loop for the duration of R2
-    mem[3] = `INS_I(`ISA_ADDI, 4'h3, 4'h3, 19'd1);
-    mem[4] = `INS_R(`ISA_SUB, 4'h4, 4'h2, 4'h3);
-    mem[5] = `INS_B(`ISA_BRx, 4'h4, `ISA_BR_POSI, -19'd3);
-    mem[6] = `INS_I(`ISA_ADDI, 4'h3, 4'h0, 19'd0);
-    // Go back to the beginning of the code
-    mem[7] = `INS_J(`ISA_JFR, 4'h0);
-end
+// initial begin 
+//     // Set the output port to the value in R1
+//     mem[0] = `INS_J(`ISA_OUT, 4'h1);
+//     // Increase R1 by 1
+//     mem[1] = `INS_I(`ISA_ADDI, 4'h1, 4'h1, 19'd1);
+//     // Load the counter value from the in port into R2
+//     mem[2] = `INS_J(`ISA_IN, 4'h2);
+//     // Loop for the duration of R2
+//     mem[3] = `INS_I(`ISA_ADDI, 4'h3, 4'h3, 19'd1);
+//     mem[4] = `INS_R(`ISA_SUB, 4'h4, 4'h2, 4'h3);
+//     mem[5] = `INS_B(`ISA_BRx, 4'h4, `ISA_BR_POSI, -19'd3);
+//     mem[6] = `INS_I(`ISA_ADDI, 4'h3, 4'h0, 19'd0);
+//     // Go back to the beginning of the code
+//     mem[7] = `INS_J(`ISA_JFR, 4'h0);
+// end
 
 endmodule

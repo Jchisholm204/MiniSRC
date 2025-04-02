@@ -21,13 +21,13 @@ assign oLEDR = proc_mem_addr[19:2];
 
 assign proc_port_in = {14'd0, iSW};
 
-// clock_div cd_main(
-//     .iClk(iCLK_50),
-//     .nRst(nRst),
-//     .oClk(Clk)
-// );
+clock_div cd_main(
+    .iClk(iCLK_50),
+    .nRst(nRst),
+    .oClk(Clk)
+);
 
-assign Clk = iCLK_50;
+// assign Clk = iCLK_50;
 
 // clock_div #(.div(8'hFF)) cd_main(
 //     .iClk(iCLK_50),

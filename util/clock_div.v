@@ -1,4 +1,4 @@
-module clock_div #(parameter div = 32'd5)(
+module clock_div #(parameter div = 32'd100000)(
     iClk, nRst,
     oClk
 );

@@ -45,40 +45,43 @@ target:
     ; Setting Up Argument Registers
     ldi R10, 1(R5)     ; R10 = 9
     ldi R11, -3(R6)    ; R11 = 0x14
-    ldi R12, 1(R7)     ; R12 = 0xB9
+    ldi R12, 0x22B(R7)     ; R12 = 0xB9 << 2
     ldi R13, 4(R4)     ; R13 = 4
-    jal R12            ; Jump to subA (R12), store return address in R8
+    ; jal R12            ; Jump to subA (R12), store return address in R8
 
     ; Loop and Display Logic
     in R4               ; Read switch input (SW[0] to SW[7] = 0xC0) into R4
-    st 0x55, R4         ; Store for next iteration
-    ldi R1, 0x2E        ; Address of loop
+    st 0x154, R4         ; Store for next iteration
+    ldi R1, 0xB4        ; Address of loop
     ldi R7, 1           ; R7 = 1
     ldi R5, 40          ; Loop counter (40 iterations)
 
 loop:
     out R4              ; Display R4 on 7-segment display
     ldi R5, -1(R5)      ; Decrement loop counter
-    brzr R5, 8          ; If zero, branch to "done"
-    ld R6, 0xF0         ; Load delay counter
+    brzr R5, 9          ; If zero, branch to "done"
+    addi R6, R0, 0x0A         ; Load delay counter
 
 loop2:
-    ldi R6, -1(R6)      ; Decrement delay counter
+    ; out R6
     nop
-    brnz R6, -3         ; Repeat delay if R6 ≠ 0
+    ldi R6, -1(R6)      ; Decrement delay counter
+    brpl R6, -3         ; Repeat delay if R6 ≠ 0
     
     shr R4, R4, R7      ; Shift R4 right
-    brnz R4, -9         ; Repeat loop if R4 ≠ 0
-    ld R4, 0x55         ; Reload initial value from address 0x55
+    brpl R4, -9         ; Repeat loop if R4 ≠ 0
+    ld R4, 0x154         ; Reload initial value from address 0x55
     jr R1               ; Jump to loop
 
 done:
+    nop
     ldi R4, 0xAA        ; Final display value
     out R4              ; Display 0xAA
     halt                ; Halt execution
 
 
 subA: ORG 0xB9          ; Subroutine: subA
+    add R8, R0, R15
     add R15, R10, R12   ; R15 = 0xC2
     sub R14, R11, R13   ; R14 = 0x10
     sub R15, R15, R14   ; R15 = 0xB2

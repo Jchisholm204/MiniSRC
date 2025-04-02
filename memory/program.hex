@@ -38,28 +38,28 @@
  @23 7B280000 // div R6, R5        ; HI = 7 , LO = 2
  @24 0D280001 // ldi R10, 1(R5)    ; Setting Up Argument Registers ; R10 = 9
  @25 0DB7FFFD // ldi R11, -3(R6)   ; R11 = 0x14
- @26 0E380001 // ldi R12, 1(R7)    ; R12 = 0xB9
+ @26 0E38022B // ldi R12, 0x22B(R7); R12 = 0xB9 << 2
  @27 0EA00004 // ldi R13, 4(R4)    ; R13 = 4
- @28 A6000000 // jal R12           ; Jump to subA (R12), store return address in R8
- @29 B2000000 // in R4             ; Loop and Display Logic ; Read switch input (SW[0] to SW[7] = 0xC0) into R4
- @2A 12000055 // st 0x55, R4       ; Store for next iteration
- @2B 0880002E // ldi R1, 0x2E      ; Address of loop
- @2C 0B800001 // ldi R7, 1         ; R7 = 1
- @2D 0A800028 // ldi R5, 40        ; Loop counter (40 iterations)
+ @28 B2000000 // in R4             ; jal R12            ; Jump to subA (R12), store return address in R8 ; Loop and Display Logic ; Read switch input (SW[0] to SW[7] = 0xC0) into R4
+ @29 12000154 // st 0x154, R4      ; Store for next iteration
+ @2A 088000B4 // ldi R1, 0xB4      ; Address of loop
+ @2B 0B800001 // ldi R7, 1         ; R7 = 1
+ @2C 0A800028 // ldi R5, 40        ; Loop counter (40 iterations)
 //   loop:
- @2E BA000000 // out R4            ; Display R4 on 7-segment display
- @2F 0AAFFFFF // ldi R5, -1(R5)    ; Decrement loop counter
- @30 9A800008 // brzr R5, 8        ; If zero, branch to "done"
- @31 030000F0 // ld R6, 0xF0       ; Load delay counter
+ @2D BA000000 // out R4            ; Display R4 on 7-segment display
+ @2E 0AAFFFFF // ldi R5, -1(R5)    ; Decrement loop counter
+ @2F 9A800009 // brzr R5, 9        ; If zero, branch to "done"
+ @30 6300000A // addi R6, R0, 0x0A ; Load delay counter
 //   loop2:
+ @31 D0000000 // nop               ; out R6
  @32 0B37FFFF // ldi R6, -1(R6)    ; Decrement delay counter
- @33 D0000000 // nop               
- @34 9B0FFFFD // brnz R6, -3       ; Repeat delay if R6  0
- @35 4A238000 // shr R4, R4, R7    ; Shift R4 right
- @36 9A0FFFF7 // brnz R4, -9       ; Repeat loop if R4  0
- @37 02000055 // ld R4, 0x55       ; Reload initial value from address 0x55
- @38 A8800000 // jr R1             ; Jump to loop
+ @33 9B17FFFD // brpl R6, -3       ; Repeat delay if R6  0
+ @34 4A238000 // shr R4, R4, R7    ; Shift R4 right
+ @35 9A17FFF7 // brpl R4, -9       ; Repeat loop if R4  0
+ @36 02000154 // ld R4, 0x154      ; Reload initial value from address 0x55
+ @37 A8800000 // jr R1             ; Jump to loop
 //   done:
+ @38 D0000000 // nop               
  @39 0A0000AA // ldi R4, 0xAA      ; Final display value
  @3A BA000000 // out R4            ; Display 0xAA
  @3B D8000000 // halt              ; Halt execution
@@ -189,11 +189,11 @@
  @B7 00000000
  @B8 00000000
 //   subA:
- @B9 1FD60000 // add R15, R10, R12 ; Subroutine: subA ; R15 = 0xC2
- @BA 275E8000 // sub R14, R11, R13 ; R14 = 0x10
- @BB 27FF0000 // sub R15, R15, R14 ; R15 = 0xB2
- @BC AC000000 // jr R8             ; Return from subroutine
- @BD 00000000
+ @B9 1C078000 // add R8, R0, R15   ; Subroutine: subA
+ @BA 1FD60000 // add R15, R10, R12 ; R15 = 0xC2
+ @BB 275E8000 // sub R14, R11, R13 ; R14 = 0x10
+ @BC 27FF0000 // sub R15, R15, R14 ; R15 = 0xB2
+ @BD AC000000 // jr R8             ; Return from subroutine
  @BE 00000000
  @BF 00000000
  @C0 00000000
