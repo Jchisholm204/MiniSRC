@@ -1,4 +1,4 @@
-module clock_div #(parameter div = 1)(
+module clock_div #(parameter div = 32'd5000000)(
     iClk, nRst,
     oClk
 );
@@ -6,17 +6,17 @@ module clock_div #(parameter div = 1)(
 input wire iClk, nRst;
 output reg oClk;
 
-reg [7:0] count;
+reg [31:0] count;
 
 always @(posedge iClk, negedge nRst) begin
     if(~nRst) begin 
         oClk = 1'b0;
-        count = 8'h00;
+        count = 32'd0;
     end
     else begin
-        count = count + 8'h01;
+        count = count + 32'd1;
         if(count == div) begin
-            count = 8'h00;
+            count = 32'd0;
             oClk = ~oClk;
         end
     end

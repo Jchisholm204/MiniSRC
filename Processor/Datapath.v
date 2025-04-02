@@ -157,7 +157,8 @@ assign RZX_out = iMUX_ASS ? RAS_out : RZ_out;
 // Memory
 assign oMemAddr = iMUX_MAP ? PC_out : RZX_out ;
 assign oMemData = RB_out;
-assign oPORT = RB_out;
+    // iRF_AddrA, iRF_AddrB, iRF_AddrC,
+assign oPORT = {RF_oRegA[15:0], RF_oRegB[15:0]};
 
 // Write Back
 // Select Memory input on WBM, Select PC for JAL, otherwise use ALU result

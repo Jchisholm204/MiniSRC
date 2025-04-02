@@ -135,7 +135,7 @@ assign OPF_R  = (OP_ADD || OP_SUB || OP_AND || OP_OR || OP_ROR || OP_ROL || OP_S
 assign OP_LD  = (ID_OpCode == `ISA_LD);
 assign OP_LI  = (ID_OpCode == `ISA_LI);
 assign OP_ST  = (ID_OpCode == `ISA_ST);
-assign OP_ADDI = (ID_OpCode == `ISA_ADDI);
+assign OP_ADDI = (ID_OpCode == `ISA_ADDI) || OP_LI;
 assign OP_ANDI = (ID_OpCode == `ISA_ANDI);
 assign OP_ORI  = (ID_OpCode == `ISA_ORI);
 assign OP_DIV  = (ID_OpCode == `ISA_DIV);
@@ -143,7 +143,7 @@ assign OP_MUL  = (ID_OpCode == `ISA_MUL);
 assign OP_NEG  = (ID_OpCode == `ISA_NEG);
 assign OP_NOT  = (ID_OpCode == `ISA_NOT);
 // Opcode Format Wire (Useful for data path MUX Assignments)
-assign OPF_I   = (OP_LD || OP_LI || OP_ST || OP_ADDI || OP_ANDI || OP_ORI || OP_DIV || OP_MUL || OP_NEG || OP_NOT);
+assign OPF_I   = (OP_LD || OP_ST || OP_ADDI || OP_ANDI || OP_ORI || OP_DIV || OP_MUL || OP_NEG || OP_NOT);
 // Assign B-Format Wires
 assign OP_BRx = (ID_OpCode == `ISA_BRx);
 // Opcode Format Wire (Useful for data path MUX Assignments)
@@ -239,10 +239,10 @@ assign oMUX_BIS = OPF_I && ~(OP_DIV || OP_MUL);
 // ALU Result High Select
 assign oMUX_RZHS = (OP_MFH);
 // RF Write Back Select
-assign oMUX_WBM = (OP_LD || OP_LI);
+assign oMUX_WBM = (OP_LD);
 // Memory Address Output Select
 // assign oMUX_MA = Cycle[1];
-assign oMUX_MAP = ~((OP_LD || OP_ST || OP_LI) && Cycle[4]);
+assign oMUX_MAP = ~((OP_LD || OP_ST) && Cycle[4]);
 // ALU Storage Select
 assign oMUX_ASS = (OP_MFL || OP_MFH);
 // Write Back Program Counter Select
@@ -255,7 +255,7 @@ assign oMUX_WBE = OP_IN;
 assign oImm32 = OP_BRx ? ID_BRD : ID_imm32;
 
 // Memory Read/Write Signals
-assign oMemRead = Cycle[1] || (Cycle[4] && (OP_LD || OP_LI));
+assign oMemRead = Cycle[1] || (Cycle[4] && OP_LD);
 assign oMemWrite = Cycle[4] && OP_ST;
 
 endmodule

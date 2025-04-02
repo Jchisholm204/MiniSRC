@@ -17,13 +17,21 @@ wire [31:0] proc_mem_addr, proc_mem_out, proc_mem_in;
 wire proc_mem_read, proc_mem_write;
 wire [31:0] proc_port_out, proc_port_in;
 
+assign oLEDR = proc_mem_addr[19:2];
+
 assign proc_port_in = {14'd0, iSW};
 
-clock_div #(.div(8'h0A)) cd_main(
+clock_div cd_main(
     .iClk(iCLK_50),
     .nRst(nRst),
     .oClk(Clk)
 );
+
+// clock_div #(.div(8'hFF)) cd_main(
+//     .iClk(iCLK_50),
+//     .nRst(nRst),
+//     .oClk(Clk)
+// );
 
 debounce rst_db(
     .iClk(iCLK_50),
