@@ -148,7 +148,7 @@ Datapath pipe(
     .iImm32(CT_imm32)
 );
 
-// REG32 REP(.iClk(iClk), .nRst(nRst), .iEn(REP_en), .iD(REP_in), .oQ(oPORT));
-assign oPORT = REP_in;
+REG32 REP(.iClk(iClk), .nRst(nRst), .iEn(REP_en), .iD(REP_in), .oQ(oPORT));
+// assign oPORT = REP_in;
 
 endmodule

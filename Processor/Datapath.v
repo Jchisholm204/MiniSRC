@@ -158,7 +158,8 @@ assign RZX_out = iMUX_ASS ? RAS_out : RZ_out;
 assign oMemAddr = iMUX_MAP ? PC_out : RZX_out ;
 assign oMemData = RB_out;
     // iRF_AddrA, iRF_AddrB, iRF_AddrC,
-assign oPORT = {RF_oRegA[15:0], RF_oRegB[15:0]};
+// assign oPORT = {RF_oRegA[15:0], RF_oRegB[15:0]};
+assign oPORT = RB_out;
 
 // Write Back
 // Select Memory input on WBM, Select PC for JAL, otherwise use ALU result
@@ -167,6 +168,6 @@ assign RWB_in = iMUX_WBM ? iMemData :
                 iMUX_WBP ? PC_tOut  : RZX_out;
 
 // Write back buffer register
-REG32 RWB(.iClk(iClk), .nRst(pipe_rst), .iEn(iRWB_en), .iD(RWB_in), .oQ(RF_iRegC));
+REG32 RWB(.iClk(iClk), .nRst(nRst), .iEn(iRWB_en), .iD(RWB_in), .oQ(RF_iRegC));
 
 endmodule

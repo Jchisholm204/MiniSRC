@@ -11,9 +11,9 @@ output reg [31:0] oQ;
 always@(posedge iClk or negedge nRst)
 begin
     if(!nRst)
-        oQ = RESET;
+        oQ <= RESET;
     else begin
-        if(iEn) oQ = iD;
+        if(iEn) oQ <= iD;
     end
 end
 

@@ -18,7 +18,7 @@
 #
 # Quartus II 64-Bit
 # Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition
-# Date created = 16:46:44  April 01, 2025
+# Date created = 21:29:30  April 01, 2025
 #
 # -------------------------------------------------------------------------- #
 #
@@ -40,20 +40,35 @@ set_global_assignment -name FAMILY "Cyclone II"
 set_global_assignment -name DEVICE EP2C35F672C6
 set_global_assignment -name TOP_LEVEL_ENTITY miniSRC
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "13.0 SP1"
-set_global_assignment -name PROJECT_CREATION_TIME_DATE "16:46:44  APRIL 01, 2025"
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "21:29:30  APRIL 01, 2025"
 set_global_assignment -name LAST_QUARTUS_VERSION "13.0 SP1"
+set_global_assignment -name VERILOG_FILE seven_segments/seven_seg.v
+set_global_assignment -name VERILOG_FILE seven_segments/sev_segs.v
+set_global_assignment -name VERILOG_FILE memory/MMU.v
+set_global_assignment -name VERILOG_FILE memory/memory.v
+set_global_assignment -name VERILOG_FILE Processor/ALU/XOR.v
+set_global_assignment -name VERILOG_FILE Processor/ALU/SHIFT.v
+set_global_assignment -name VERILOG_FILE Processor/ALU/ROL_ROR.v
+set_global_assignment -name VERILOG_FILE Processor/ALU/OR.v
+set_global_assignment -name VERILOG_FILE Processor/ALU/MUL32.v
+set_global_assignment -name VERILOG_FILE Processor/ALU/DIV32.v
+set_global_assignment -name VERILOG_FILE Processor/ALU/CLA.v
+set_global_assignment -name VERILOG_FILE Processor/ALU/AND.v
+set_global_assignment -name VERILOG_FILE Processor/ALU/ALU.v
+set_global_assignment -name VERILOG_FILE Processor/Control/PC.v
+set_global_assignment -name VERILOG_FILE Processor/Control/Decode.v
+set_global_assignment -name VERILOG_FILE Processor/Control/Control.v
+set_global_assignment -name VERILOG_FILE Processor/RegFile.v
+set_global_assignment -name VERILOG_FILE Processor/REG32.v
+set_global_assignment -name VERILOG_FILE Processor/Processor.v
+set_global_assignment -name VERILOG_FILE Processor/Datapath.v
+set_global_assignment -name VERILOG_FILE util/debounce.v
+set_global_assignment -name VERILOG_FILE util/clock_div.v
+set_global_assignment -name VERILOG_FILE miniSRC.v
 set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
 set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 1
-set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (Verilog)"
-set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "VERILOG HDL" -section_id eda_simulation
-set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
-set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "3.3-V LVTTL"
 set_location_assignment PIN_N25 -to iSW[0]
 set_location_assignment PIN_N26 -to iSW[1]
 set_location_assignment PIN_P25 -to iSW[2]
@@ -209,60 +224,8 @@ set_location_assignment PIN_D6 -to VGA_BLANK
 set_location_assignment PIN_A7 -to VGA_HS
 set_location_assignment PIN_D8 -to VGA_VS
 set_location_assignment PIN_B7 -to VGA_SYNC
-set_global_assignment -name VERILOG_FILE memory/MMU.v
-set_global_assignment -name VERILOG_FILE memory/memory.v
-set_global_assignment -name VERILOG_FILE util/debounce.v
-set_global_assignment -name VERILOG_FILE util/clock_div.v
-set_global_assignment -name VERILOG_FILE miniSRC.v
-set_global_assignment -name VERILOG_FILE seven_segments/seven_seg.v
-set_global_assignment -name VERILOG_FILE seven_segments/sev_segs.v
-set_global_assignment -name VERILOG_FILE Processor/ALU/XOR.v
-set_global_assignment -name VERILOG_FILE Processor/ALU/SHIFT.v
-set_global_assignment -name VERILOG_FILE Processor/ALU/ROL_ROR.v
-set_global_assignment -name VERILOG_FILE Processor/ALU/OR.v
-set_global_assignment -name VERILOG_FILE Processor/ALU/MUL32.v
-set_global_assignment -name VERILOG_FILE Processor/ALU/DIV32.v
-set_global_assignment -name VERILOG_FILE Processor/ALU/CLA.v
-set_global_assignment -name VERILOG_FILE Processor/ALU/AND.v
-set_global_assignment -name VERILOG_FILE Processor/ALU/ALU.v
-set_global_assignment -name VERILOG_FILE Processor/Control/PC.v
-set_global_assignment -name VERILOG_FILE Processor/Control/Decode.v
-set_global_assignment -name VERILOG_FILE Processor/Control/Control.v
-set_global_assignment -name VERILOG_FILE Processor/RegFile.v
-set_global_assignment -name VERILOG_FILE Processor/REG32.v
-set_global_assignment -name VERILOG_FILE Processor/Processor.v
-set_global_assignment -name VERILOG_FILE Processor/Datapath.v
-set_global_assignment -name CDF_FILE seven_segments/output_files/Chain1.cdf
-set_global_assignment -name SYNTH_TIMING_DRIVEN_SYNTHESIS OFF
-set_global_assignment -name REMOVE_DUPLICATE_REGISTERS ON
-set_global_assignment -name OPTIMIZE_HOLD_TIMING "IO PATHS AND MINIMUM TPD PATHS"
-set_global_assignment -name OPTIMIZE_MULTI_CORNER_TIMING ON
-set_global_assignment -name OPTIMIZE_POWER_DURING_FITTING OFF
-set_global_assignment -name FLOW_DISABLE_ASSEMBLER ON
-set_global_assignment -name FLOW_ENABLE_RTL_VIEWER OFF
-set_global_assignment -name TIMEQUEST_MULTICORNER_ANALYSIS OFF
-set_global_assignment -name EXTRACT_VERILOG_STATE_MACHINES OFF
-set_global_assignment -name EXTRACT_VHDL_STATE_MACHINES OFF
-set_global_assignment -name AUTO_ROM_RECOGNITION ON
-set_global_assignment -name AUTO_RAM_RECOGNITION ON
-set_global_assignment -name CYCLONEII_OPTIMIZATION_TECHNIQUE AREA
-set_global_assignment -name ROUTER_TIMING_OPTIMIZATION_LEVEL MINIMUM
-set_global_assignment -name IO_PLACEMENT_OPTIMIZATION OFF
-set_global_assignment -name CYCLONEII_M4K_COMPATIBILITY OFF
-set_global_assignment -name ADV_NETLIST_OPT_SYNTH_WYSIWYG_REMAP OFF
-set_global_assignment -name AUTO_SHIFT_REGISTER_RECOGNITION ALWAYS
-set_global_assignment -name SMART_RECOMPILE OFF
-set_global_assignment -name REMOVE_REDUNDANT_LOGIC_CELLS ON
-set_global_assignment -name MUX_RESTRUCTURE ON
-set_global_assignment -name ALLOW_ANY_ROM_SIZE_FOR_RECOGNITION ON
-set_global_assignment -name ALLOW_ANY_RAM_SIZE_FOR_RECOGNITION ON
-set_global_assignment -name ALLOW_ANY_SHIFT_REGISTER_SIZE_FOR_RECOGNITION ON
-set_global_assignment -name ALLOW_SHIFT_REGISTER_MERGING_ACROSS_HIERARCHIES ALWAYS
-set_global_assignment -name PHYSICAL_SYNTHESIS_COMBO_LOGIC_FOR_AREA OFF
-set_global_assignment -name PHYSICAL_SYNTHESIS_MAP_LOGIC_TO_MEMORY_FOR_AREA OFF
-set_global_assignment -name FITTER_EFFORT "STANDARD FIT"
-set_global_assignment -name PLACEMENT_EFFORT_MULTIPLIER 1.0
-set_global_assignment -name FITTER_AGGRESSIVE_ROUTABILITY_OPTIMIZATION ALWAYS
-set_global_assignment -name OPTIMIZE_TIMING OFF
-set_global_assignment -name SAVE_DISK_SPACE OFF
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name CDF_FILE output_files/Chain1.cdf
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
