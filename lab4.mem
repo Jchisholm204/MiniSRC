@@ -1,0 +1,131 @@
+// memory data file (do not edit the following line - required for mem load use)
+// instance=/sim_LAB4_prog/word_mem
+// format=hex addressradix=h dataradix=h version=1.0 wordsperline=8
+  @0 09800065 09980003 01000054 09100001 0017fffa 08800003 09800057 99980003
+  @8 09980003 021ffffa d0000000 9a100002 0b180007 0ab7fffc 19988000 62200002
+ @10 8a200000 92200000 6a20000f 39008000 72100007 00000003 49988000 11800092
+ @18 41808000 32880000 29180000 12900054 201a8000 59188000 0a800008 0b000017
+ @20 83280000 ca000000 c3800000 7b280000 0000000b 0db7fffd 0e38022b 0000000b
+ @28 b2000000 12000154 088000b4 0b800001 0a800028 ba000000 0aafffff 9a800009
+ @30 6300000a d0000000 0b37ffff 9b17fffd 4a238000 9a17fff7 02000154 a8800000
+ @38 d0000000 0a0000aa ba000000 d8000000 00000000 00000000 00000000 00000000
+ @40 00000000 00000000 00000000 00000000 00000000 000000c0 00000000 00000000
+ @48 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @50 00000000 00000000 00000000 00000000 00000097 000000c0 00000000 00000000
+ @58 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @60 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @68 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @70 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @78 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @80 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @88 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @90 00000000 00000000 00000046 00000000 00000000 00000000 00000000 00000000
+ @98 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @a0 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @a8 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @b0 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @b8 00000000 1c078000 1fd60000 275e8000 27ff0000 ac000000 00000000 00000000
+ @c0 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @c8 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @d0 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @d8 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @e0 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @e8 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @f0 0000ffff 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ @f8 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@100 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@108 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@110 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@118 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@120 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@128 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@130 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@138 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@140 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@148 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@150 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@158 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@160 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@168 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@170 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@178 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@180 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@188 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@190 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@198 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@1a0 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@1a8 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@1b0 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@1b8 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@1c0 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@1c8 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@1d0 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@1d8 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@1e0 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@1e8 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@1f0 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@1f8 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+@200 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@208 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@210 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@218 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@220 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@228 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@230 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@238 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@240 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@248 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@250 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@258 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@260 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@268 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@270 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@278 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@280 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@288 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@290 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@298 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@2a0 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@2a8 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@2b0 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@2b8 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@2c0 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@2c8 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@2d0 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@2d8 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@2e0 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@2e8 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@2f0 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@2f8 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@300 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@308 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@310 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@318 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@320 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@328 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@330 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@338 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@340 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@348 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@350 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@358 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@360 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@368 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@370 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@378 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@380 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@388 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@390 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@398 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@3a0 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@3a8 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@3b0 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@3b8 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@3c0 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@3c8 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@3d0 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@3d8 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@3e0 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@3e8 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@3f0 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
+@3f8 xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx xxxxxxxx
