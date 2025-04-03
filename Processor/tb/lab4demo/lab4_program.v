@@ -21,12 +21,12 @@ wire [31:0] proc_mem_out, proc_byte_mem_addr;
 reg [31:0] proc_mem_in;
 reg [31:0] word_mem[0:`MEM_MAX];
 wire [31:0] oPort;
-wire [31:0] iPort = 32'h00000000; // No input port
+wire [31:0] iPort = 32'h000000C0; // No input port
 
 wire [31:2] word_addr;
 assign word_addr = proc_byte_mem_addr[31:2];
 
-always @(posedge Clk) begin
+always @(proc_mem_out, proc_mem_in, word_addr) begin
     if(mem_write)
         word_mem[word_addr] <= proc_mem_out;
     proc_mem_in <= word_mem[word_addr];
@@ -34,7 +34,7 @@ end
 
 initial begin
     // replace with the correct absolute path to the program.hex file
-    $readmemh("C:/Users/Hendrix/GitHub/MiniSRC/Processor/tb/lab4demo/program.hex", word_mem);
+    $readmemh("Processor/tb/lab4demo/program.hex", word_mem);
     #1;
     nRst = 1'b1; // Release reset after 1ns
 end
