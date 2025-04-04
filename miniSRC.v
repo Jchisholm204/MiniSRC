@@ -2,7 +2,15 @@ module miniSRC(
     iCLK_50, iCLK_27,
     iSW, iKEY,
     oHEX0, oHEX1, oHEX2, oHEX3, oHEX4, oHEX5, oHEX6, oHEX7,
-    oLEDR, oLEDG
+    oLEDR, oLEDG,
+    oVGA_R,
+    oVGA_G,
+    oVGA_B,
+    oVGA_Clk,
+    oVGA_Blank,
+    oVGA_HSync,
+    oVGA_VSync,
+    oVGA_Sync
 );
 
 input wire iCLK_50, iCLK_27;
@@ -11,6 +19,8 @@ input wire [3:0] iKEY;
 output wire [6:0] oHEX0, oHEX1, oHEX2, oHEX3, oHEX4, oHEX5, oHEX6, oHEX7;
 output wire [17:0] oLEDR;
 output wire [7:0] oLEDG;
+output wire [9:0] oVGA_R, oVGA_G, oVGA_B;
+output wire oVGA_Clk, oVGA_Blank, oVGA_Sync, oVGA_HSync, oVGA_VSync;
 
 wire Clk, nRst;
 wire [31:0] proc_mem_addr, proc_mem_out, proc_mem_in;
@@ -54,13 +64,35 @@ Processor proc(
     .oPORT(proc_port_out)
 );
 
-MMU mem_manage_unit(
+// Memory Select Wires
+wire mems_dimem, mems_vga;
+
+assign mems_dimem = proc_mem_addr[31:30] == 2'b00;
+assign mems_vga = proc_mem_addr[31:30] == 2'b01;
+
+memory mem(
     .iClk(Clk),
-    .iRead(proc_mem_read), 
-    .iWrite(proc_mem_write),
+    .iRead(proc_mem_read & mems_dimem), 
+    .iWrite(proc_mem_write & mems_dimem),
     .iData(proc_mem_out),
     .iAddr(proc_mem_addr),
     .oData(proc_mem_in)
+);
+
+vga_interface vga(
+    .iClk_50(iClk_50),
+    .nRst(nRst),
+    .iCR(proc_mem_out),
+    .iAddr(proc_mem_addr),
+    .iWrite(proc_mem_write & mems_vga),
+    .oVGA_R(oVGA_R),
+    .oVGA_G(oVGA_G),
+    .oVGA_B(oVGA_B),
+    .oVGA_Clk(oVGA_Clk),
+    .oVGA_Blank(oVGA_Blank),
+    .oVGA_HSync(oVGA_HSync),
+    .oVGA_VSync(oVGA_VSync),
+    .oVGA_Sync(oVGA_Sync)
 );
 
 SevSegs hex_disp(
@@ -74,5 +106,6 @@ SevSegs hex_disp(
     .oSeg7(oHEX6),
     .oSeg8(oHEX7)
 );
+
 
 endmodule

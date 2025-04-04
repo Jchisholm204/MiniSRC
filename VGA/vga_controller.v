@@ -13,14 +13,19 @@ module vga_controller(
     oVGA_Blank,
     oVGA_HSync,
     oVGA_VSync,
-    oVGA_Sync,
+    oVGA_Sync
 );
 
 input wire iClk_50, nRst;
 input wire [29:0]  iVGA_colorData;
 output wire [31:0] oVGA_colorAddress;
-output wire [9:0] oVGA_R, oVGA_G, oVGA_B;
-output wire oVGA_Clk, oVGA_Blank, oVGA_HSync, oVGA_VSync, oVGA_Sync;
+output reg [9:0] oVGA_R, oVGA_G, oVGA_B;
+output wire oVGA_Clk, oVGA_Blank, oVGA_Sync, oVGA_HSync, oVGA_VSync;
+
+reg VGA_HSync, VGA_VSync;
+
+assign oVGA_HSync = VGA_HSync;
+assign oVGA_VSync = VGA_VSync;
 
 parameter WIDTH = 16'd639;
 parameter HEIGHT = 16'd479;
@@ -129,7 +134,27 @@ always @(posedge Clk_25, negedge nRst) begin
                 hState_next = SS_AV;
             end
         endcase
+        case(vState)
+            `SS_AV: VGA_VSync <= 1'b1;
+            `SS_FP: VGA_VSync <= 1'b1;
+            `SS_SP: VGA_VSync <= 1'b0;
+            `SS_BP: VGA_VSync <= 1'b1;
+            `SS_BL: VGA_VSync <= 1'b0;
+            default: VGA_VSync <= 1'bx;
+        endcase
+        case(hState)
+            `SS_AV: VGA_HSync <= 1'b1;
+            `SS_FP: VGA_HSync <= 1'b1;
+            `SS_SP: VGA_HSync <= 1'b0;
+            `SS_BP: VGA_HSync <= 1'b1;
+            `SS_BL: VGA_HSync <= 1'b0;
+            default: VGA_HSync <= 1'bx;
+        endcase
     end
 end
+
+assign oVGA_Clk   = iClk_50;
+assign oVGA_Blank = VGA_VSync && VGA_HSync;
+assign oVGA_Sync  = VGA_HSync;
 
 endmodule
