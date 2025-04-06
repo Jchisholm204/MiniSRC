@@ -11,6 +11,7 @@ add wave -noupdate -radix hexadecimal /sim_LAB4_prog/proc_mem_in
 add wave -noupdate -radix hexadecimal /sim_LAB4_prog/proc_byte_mem_addr
 add wave -noupdate -radix hexadecimal /sim_LAB4_prog/word_addr
 add wave -noupdate -radix hexadecimal /sim_LAB4_prog/oPort
+add wave -noupdate -radix hexadecimal /sim_LAB4_prog/iPort
 add wave -noupdate -radix hexadecimal /sim_LAB4_prog/proc/pipe/RF/r1_out
 add wave -noupdate -radix hexadecimal /sim_LAB4_prog/proc/pipe/RF/r2_out
 add wave -noupdate -radix hexadecimal /sim_LAB4_prog/proc/pipe/RF/r3_out

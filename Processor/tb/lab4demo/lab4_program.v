@@ -3,10 +3,11 @@
 `include "../../constants.vh"
 `include "../sim_ISA.vh"
 
+// Complete simulation in 153100ns with iPort = 0x00000000.
+
 module sim_LAB4_prog();
 
 parameter SA = `START_PC_ADDRESS;
-`define MEM_MAX (1023)
 
 wire Clk;
 reg nRst = 1'b0;
@@ -19,24 +20,29 @@ ClockGenerator cg(
 wire mem_read, mem_write;
 wire [31:0] proc_mem_out, proc_byte_mem_addr;
 reg [31:0] proc_mem_in;
-reg [31:0] word_mem[0:`MEM_MAX];
 wire [31:0] oPort;
-wire [31:0] iPort = 32'h000000C0; // No input port
+wire [31:0] iPort = 32'h00000000; 
 
 wire [31:2] word_addr;
 assign word_addr = proc_byte_mem_addr[31:2];
+
+`define MEM_MAX (511)
+reg [31:0] word_mem[0:`MEM_MAX];
+
+integer i;
+initial begin
+    for (i = 0; i <= `MEM_MAX; i = i + 1) begin
+        word_mem[i] = 32'h00000000; // Initialize memory to zero
+    end
+    $readmemh("Processor/tb/lab4demo/program.hex", word_mem); // initialize memory with program
+    #1;
+    nRst = 1'b1; // Release reset after 1ns
+end
 
 always @(proc_mem_out, proc_mem_in, word_addr) begin
     if(mem_write)
         word_mem[word_addr] <= proc_mem_out;
     proc_mem_in <= word_mem[word_addr];
-end
-
-initial begin
-    // replace with the correct absolute path to the program.hex file
-    $readmemh("Processor/tb/lab4demo/program.hex", word_mem);
-    #1;
-    nRst = 1'b1; // Release reset after 1ns
 end
 
 Processor proc(
