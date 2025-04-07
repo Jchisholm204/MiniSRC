@@ -1,3 +1,4 @@
+
 `timescale 1ns/1ps
 `include "../../Control/ISA.vh"
 `include "../../constants.vh"
@@ -34,7 +35,8 @@ initial begin
     for (i = 0; i <= `MEM_MAX; i = i + 1) begin
         word_mem[i] = 32'h00000000; // Initialize memory to zero
     end
-    $readmemh("Processor/tb/lab4demo/program.hex", word_mem); // initialize memory with program
+    // initialize memory with program
+    $readmemh("Processor/tb/lab4demo/program.hex", word_mem);
     #1;
     nRst = 1'b1; // Release reset after 1ns
 end
